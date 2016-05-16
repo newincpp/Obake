@@ -63,47 +63,44 @@ VulkanRenderer::~VulkanRenderer()
 void VulkanRenderer::_InitInstance()
 {
 	// Contains info in regards to the application
-	VkApplicationInfo applicationInfo{};
-	// Contains info in regards to the Vulkan instance
-	VkInstanceCreateInfo instanceCreateInfo{};
-
-	// Filling the VkApplicationInfo struct:
+	VkApplicationInfo applicationInfo =
 	{
 		// (MANDATORY) sType is the type of the structure
-		applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+		applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
 		// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
-		applicationInfo.pNext = NULL;
+		applicationInfo.pNext = NULL,
 		// (MANDATORY) The name of our application
-		applicationInfo.pApplicationName = "Vulkan Test";
+		applicationInfo.pApplicationName = "Vulkan Test",
 		// A developer-supplied version number of the application
-		applicationInfo.applicationVersion = 1;
+		applicationInfo.applicationVersion = 1,
 		// (MANDATORY) The name of the engine (if any) that was used to create the application
-		applicationInfo.pEngineName = nullptr;
+		applicationInfo.pEngineName = nullptr,
 		// A developer-supplied version number of the engine
-		applicationInfo.engineVersion = 1;
+		applicationInfo.engineVersion = 1,
 		// (MANDATORY) The version of the Vulkan API that is being used
-		applicationInfo.apiVersion = VK_MAKE_VERSION(1, 0, 11);
-	}
+		applicationInfo.apiVersion = VK_MAKE_VERSION(1, 0, 11)
+	};
 
-	// Filling the VkInstanceCreateInfo:
+	// Contains info in regards to the Vulkan instance
+	VkInstanceCreateInfo instanceCreateInfo =
 	{
 		// (MANDATORY) sType is the type of the structure
-		instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+		instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
-		instanceCreateInfo.pNext = &_debugCallbackCreateInfo;
+		instanceCreateInfo.pNext = &_debugCallbackCreateInfo,
 		// - Is reserved for future use -
-		instanceCreateInfo.flags = 0;
+		instanceCreateInfo.flags = 0,
 		// A pointer to a valid VkApplicationInfo structure
-		instanceCreateInfo.pApplicationInfo = &applicationInfo;
+		instanceCreateInfo.pApplicationInfo = &applicationInfo,
 		// The number of layers that are enabled
-		instanceCreateInfo.enabledLayerCount = _instanceLayers.size();
+		instanceCreateInfo.enabledLayerCount = _instanceLayers.size(),
 		// An array of pointer that contains the names of the layers to activate
-		instanceCreateInfo.ppEnabledLayerNames = _instanceLayers.data();
+		instanceCreateInfo.ppEnabledLayerNames = _instanceLayers.data(),
 		// The number of extensions that are enabled
-		instanceCreateInfo.enabledExtensionCount = _instanceExtensions.size();
+		instanceCreateInfo.enabledExtensionCount = _instanceExtensions.size(),
 		// An array of pointers that contains the names of the extensions to activate
-		instanceCreateInfo.ppEnabledExtensionNames = _instanceExtensions.data();
-	}
+		instanceCreateInfo.ppEnabledExtensionNames = _instanceExtensions.data()
+	};
 
 	VkResult err = VkResult::VK_SUCCESS;
 	//Creates the Vulkan Instance
@@ -125,8 +122,6 @@ void VulkanRenderer::_DeInitInstance()
 
 void VulkanRenderer::_InitDevice()
 {
-	VkDeviceQueueCreateInfo deviceQueueCreateInfo{};
-	VkDeviceCreateInfo deviceCreateInfo{};
 
 	//Getting the devices and picking the one we want:
 	{
@@ -194,47 +189,47 @@ void VulkanRenderer::_InitDevice()
 	}
 
 
-	// Filling the VkDeviceQueueCreateInfo struct:
-	{
-		float queuePriorities[]{ 1.0f };
+	float queuePriorities[]{ 1.0f };
 
+	VkDeviceQueueCreateInfo deviceQueueCreateInfo =
+	{
 		// (MANDATORY) sType is the type of the structure
-		deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
-		deviceCreateInfo.pNext = NULL;
+		deviceCreateInfo.pNext = NULL,
 		// - Is reserved for future use -
-		deviceCreateInfo.flags = 0;
+		deviceCreateInfo.flags = 0,
 		// An unsigned integer indicating the index of the queue family to create on this device.
-		deviceQueueCreateInfo.queueFamilyIndex = _graphicsFamilyIndex;
+		deviceQueueCreateInfo.queueFamilyIndex = _graphicsFamilyIndex,
 		// The number of queues to create in the queue family
-		deviceQueueCreateInfo.queueCount = 1;
+		deviceQueueCreateInfo.queueCount = 1,
 		// An array of queueCount normalized floating point values, specifying priorities of work that will be submitted to each created queue.
-		deviceQueueCreateInfo.pQueuePriorities = queuePriorities;
-	}
+		deviceQueueCreateInfo.pQueuePriorities = queuePriorities
+	};
 
-	// Filling the VkDeviceCreateInfo struct:
+	VkDeviceCreateInfo deviceCreateInfo =
 	{
 		// (MANDATORY) sType is the type of the structure
-		deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+		deviceCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
-		deviceCreateInfo.pNext = NULL;
+		deviceCreateInfo.pNext = NULL,
 		// - Is reserved for future use -
-		deviceCreateInfo.flags = 0;
+		deviceCreateInfo.flags = 0,
 		// The number of VkDeviceQueueCreateInfo that will be passed to pQueueCreateInfos
-		deviceCreateInfo.queueCreateInfoCount = 1;
+		deviceCreateInfo.queueCreateInfoCount = 1,
 		// A pointer to an array of VkDeviceQueueCreateInfo structures describing the queues that are requested to be created along with the logical device
-		deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo;
+		deviceCreateInfo.pQueueCreateInfos = &deviceQueueCreateInfo,
 		// (DEPRECATED)
-		deviceCreateInfo.enabledLayerCount = 0;
+		deviceCreateInfo.enabledLayerCount = 0,
 		// (DEPRECATED)
-		deviceCreateInfo.ppEnabledLayerNames = 0;
+		deviceCreateInfo.ppEnabledLayerNames = 0,
 		// The number of extensions that are enabled
-		deviceCreateInfo.enabledExtensionCount = _deviceExtensions.size();
+		deviceCreateInfo.enabledExtensionCount = _deviceExtensions.size(),
 		// An array of pointers that contains the names of the extensions to activate
-		deviceCreateInfo.ppEnabledExtensionNames = _deviceExtensions.data();
+		deviceCreateInfo.ppEnabledExtensionNames = _deviceExtensions.data(),
 		// Is NULL or a pointer to a VkPhysicalDeviceFeatures structure that contains boolean indicators of all the features to be enabled
-		deviceCreateInfo.pEnabledFeatures = NULL;
-	}
+		deviceCreateInfo.pEnabledFeatures = NULL
+	};
 
 	// Creates a Vulkan Device
 	if (vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device) != VK_SUCCESS)
@@ -255,7 +250,6 @@ void VulkanRenderer::_DeInitDevice()
 
 void VulkanRenderer::_SetupDebug()
 {
-
 	// Filling the VkDebugReportCallbackCreateInfoEXT struct:
 	{
 		_debugCallbackCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT;
@@ -282,7 +276,7 @@ void VulkanRenderer::_InitDebug()
 	fvkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(_instance, "vkDestroyDebugReportCallbackEXT");
 	if (fvkCreateDebugReportCallbackEXT == nullptr || fvkDestroyDebugReportCallbackEXT == nullptr)
 	{
-		assert(1 && "##Vulkan ERROR: Can't fetch debug function pointers.");
+		assert(0 && "##Vulkan ERROR: Can't fetch debug function pointers.");
 	}
 
 	fvkCreateDebugReportCallbackEXT(_instance, &_debugCallbackCreateInfo, nullptr, &_debugReport);
