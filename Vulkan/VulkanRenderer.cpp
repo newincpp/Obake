@@ -62,6 +62,17 @@ VulkanRenderer::~VulkanRenderer()
 
 void VulkanRenderer::_InitInstance()
 {
+
+	// Filling the _instanceExtension array with the name of the extensions we wish to activate:
+	{
+#if defined(_WIN32)
+		// DEPRECATED
+		//_instanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+#elif defined(__linux__)
+		_instanceExtensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
+#endif
+	}
+
 	// Contains info in regards to the application
 	VkApplicationInfo applicationInfo =
 	{
@@ -196,9 +207,9 @@ void VulkanRenderer::_InitDevice()
 		// (MANDATORY) sType is the type of the structure
 		deviceQueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 		// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
-		deviceCreateInfo.pNext = NULL,
+		deviceQueueCreateInfo.pNext = NULL,
 		// - Is reserved for future use -
-		deviceCreateInfo.flags = 0,
+		deviceQueueCreateInfo.flags = 0,
 		// An unsigned integer indicating the index of the queue family to create on this device.
 		deviceQueueCreateInfo.queueFamilyIndex = _graphicsFamilyIndex,
 		// The number of queues to create in the queue family
