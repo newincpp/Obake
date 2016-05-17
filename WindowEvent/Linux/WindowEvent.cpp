@@ -50,12 +50,11 @@ void WindowEvent::_setupWindow() {
 	xcb_create_window(_connection,
 			XCB_COPY_FROM_PARENT,
 			_window, _screen->root,
-			0, 0, width, height, 0, // TODO
+			0, 0, width, height, 0, // TODO: put dynamic width and height
 			XCB_WINDOW_CLASS_INPUT_OUTPUT,
 			_screen->root_visual,
 			XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK, value_list);
 
-	/* Magic code that will send notification when window is destroyed */
 	xcb_intern_atom_cookie_t cookie = xcb_intern_atom(_connection, 1, 12, "WM_PROTOCOLS");
 	xcb_intern_atom_reply_t* reply = xcb_intern_atom_reply(_connection, cookie, 0);
 
