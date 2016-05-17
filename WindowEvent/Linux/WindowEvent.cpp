@@ -33,29 +33,27 @@ void WindowEvent::destroyWindow() {
 }
 
 void WindowEvent::_setupWindow() {
-	uint32_t value_mask, value_list[32];
+	uint32_t value_list[2];
+	uint16_t width = 1920;
+	uint16_t height = 1024;
 
 	_window = xcb_generate_id(_connection);
 
-	value_mask = XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK;
 	value_list[0] = _screen->black_pixel;
-	value_list[1] =
-		XCB_EVENT_MASK_KEY_RELEASE |
-		XCB_EVENT_MASK_EXPOSURE |
-		XCB_EVENT_MASK_STRUCTURE_NOTIFY |
-		XCB_EVENT_MASK_POINTER_MOTION |
-		XCB_EVENT_MASK_BUTTON_PRESS |
-		XCB_EVENT_MASK_BUTTON_RELEASE;
+	value_list[1] = XCB_EVENT_MASK_KEY_PRESS |
+			XCB_EVENT_MASK_EXPOSURE |
+			XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+			XCB_EVENT_MASK_POINTER_MOTION |
+			XCB_EVENT_MASK_BUTTON_PRESS |
+			XCB_EVENT_MASK_BUTTON_RELEASE;
 
-	uint16_t width = 1920;
-	uint16_t height = 1024;
 	xcb_create_window(_connection,
 			XCB_COPY_FROM_PARENT,
 			_window, _screen->root,
 			0, 0, width, height, 0, // TODO
 			XCB_WINDOW_CLASS_INPUT_OUTPUT,
 			_screen->root_visual,
-			value_mask, value_list);
+			XCB_CW_BACK_PIXEL | XCB_CW_EVENT_MASK, value_list);
 
 	/* Magic code that will send notification when window is destroyed */
 	xcb_intern_atom_cookie_t cookie = xcb_intern_atom(_connection, 1, 12, "WM_PROTOCOLS");
@@ -88,7 +86,7 @@ void WindowEvent::refresh() {
 	} else if (_lastEvent->response_type == XCB_BUTTON_PRESS) {
 		std::cout << "mouse" << std::endl;
 		destroyWindow();	
-	} else if (_lastEvent->response_type == XCB_KEY_RELEASE) { // "press" seems ignored while "released" seems to be called while pressed...
+	} else if (_lastEvent->response_type == XCB_KEY_PRESS) { // "press" seems ignored while "released" seems to be called while pressed...
 		std::cout << "keyboard" << std::endl;
 		destroyWindow();	
 	}
