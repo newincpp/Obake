@@ -25,6 +25,11 @@ Obake::EventsManager::EventsManager()
 	event2("toto", 5);
 	event2("HEY", 2);
 	event2("HOHO", 3);
+	event2.unbind(this, &EventsManager::event2test1);
+	event2.unbind(this, &EventsManager::event2test2);
+	event2("toto", 5);
+	event2("HEY", 2);
+	event2("HOHO", 3);
 }
 
 void Obake::EventsManager::event1test1(int print)

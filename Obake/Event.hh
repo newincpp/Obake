@@ -56,13 +56,13 @@ namespace Obake {
 		template<class CALLBACK_TARGET_CLASS>
 		size_t _generateHash(CALLBACK_TARGET_CLASS* callbackTarget_, RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(ARGS...))
 		{
-			char test1[20];
-			char test2[20];
-			sprintf_s(test1, "%p", memberFunction_);
-			sprintf_s(test2, "%p", callbackTarget_);
+			char buff1[20];
+			char buff2[20];
+			sprintf_s(buff1, "%p", memberFunction_);
+			sprintf_s(buff2, "%p", callbackTarget_);
 
-			size_t h1 = std::hash<std::string>()(test1);
-			size_t h2 = std::hash<std::string>()(test2);
+			size_t h1 = std::hash<std::string>()(buff1);
+			size_t h2 = std::hash<std::string>()(buff2);
 			return h1 ^ (h2 << 1);
 		}
 
@@ -83,8 +83,8 @@ namespace Obake {
 					_receivers[generatedHash] = bindFunction<CALLBACK_TARGET_CLASS, RETURN_TYPE, ARGS...>(memberFunction_, callbackTarget_);
 		}
 
-		template<class CALLBACK_TARGET_CLASS, typename RETURN_TYPE>
-		void unbind(RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(), CALLBACK_TARGET_CLASS* callbackTarget_)
+		template<class CALLBACK_TARGET_CLASS>
+		void unbind(CALLBACK_TARGET_CLASS* callbackTarget_, RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(ARGS...))
 		{
 			_receivers.erase(_receivers.find(_generateHash(callbackTarget_, memberFunction_)));
 		}
