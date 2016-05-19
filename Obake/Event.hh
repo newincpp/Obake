@@ -3,7 +3,6 @@
 #include <iostream>
 #include <functional>
 #include <string>
-#include <memory>
 
 namespace Obake {
 
@@ -45,7 +44,12 @@ namespace Obake {
 			std::placeholders::_4, std::placeholders::_5));
 	}
 
-	class EventBase {};
+	class EventBase 
+	{
+	public:
+		virtual ~EventBase() {};
+		explicit EventBase() { };
+	};
 
 	template<typename RETURN_TYPE, typename... ARGS>
 	class Event : public EventBase
@@ -96,21 +100,5 @@ namespace Obake {
 				receiver.second(params...);
 			}
 		}
-	};
-
-	class EventsManager
-	{
-	private:
-		std::map<std::string, Obake::EventBase> _events;
-
-	public:
-		~EventsManager();
-		explicit EventsManager();
-
-		void event1test1(int print);
-		void event1test2(int print);
-
-		void event2test1(std::string printStr, int param2);
-		void event2test2(std::string printStr, int param2);
 	};
 }
