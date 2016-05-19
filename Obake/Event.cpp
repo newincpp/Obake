@@ -9,30 +9,40 @@ Obake::EventsManager::~EventsManager()
 
 Obake::EventsManager::EventsManager()
 {
-	Event test;
+	Event<void, int> event1;
+	Event<void, std::string, int> event2;
 
-	/*printf("WUT M8 ABAOUA: %p\n", &EventsManager::ABAOUABAA);
-	printf("WUT M8 DZAZEA: %p\n", &EventsManager::DZAZEA);*/
-	test.Bind(&EventsManager::ABAOUABAA, this);
-	test.Bind(&EventsManager::DZAZEA, this);
-	test.Bind(&EventsManager::ABAOUABAA, this);
-	//auto blabla = std::bind(&EventsManager::ABAOUABAA, this);
-	//std::cout << "BIND: " << &blabla << std::endl;DZAZEA
-	//test += std::bind(&EventsManager::DZAZEA, this);
+	event1.bind(this, &EventsManager::event1test1);
+	event1.bind(this, &EventsManager::event1test2);
+	event1.bind(this, &EventsManager::event1test1);
 
-	//test();
+	event1(5);
 
-	//test -= std::bind(&EventsManager::ABAOUABAA, this);
-
-	//test();
+	event2.bind(this, &EventsManager::event2test1);
+	event2.bind(this, &EventsManager::event2test2);
+	event2.bind(this, &EventsManager::event2test1);
+	event2.bind(this, &EventsManager::event2test2);
+	event2("toto", 5);
+	event2("HEY", 2);
+	event2("HOHO", 3);
 }
 
-void Obake::EventsManager::ABAOUABAA()
+void Obake::EventsManager::event1test1(int print)
 {
-	std::cout << "HEY" << std::endl;
+	std::cout << "event1test1: " << print << std::endl;
 }
 
-void Obake::EventsManager::DZAZEA()
+void Obake::EventsManager::event1test2(int print)
 {
-	std::cout << "DAA" << std::endl;
+	std::cout << "event1test2: " << print << std::endl;
+}
+
+void Obake::EventsManager::event2test1(std::string printStr, int param2)
+{
+	std::cout << "event2test1: " << printStr << " | param2: " << param2 << std::endl;
+}
+
+void Obake::EventsManager::event2test2(std::string printStr, int param2)
+{
+	std::cout << "event2test2: " << printStr << " | param2: " << param2 << std::endl;
 }
