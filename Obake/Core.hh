@@ -4,7 +4,7 @@
 #include <thread>
 #include <iostream>
 
-#include "Event.hh"
+#include "EventsManager.hh"
 #include "ASystem.hh"
 
 namespace Obake {
@@ -17,15 +17,12 @@ namespace Obake {
 #endif
         std::vector<ASystem*> _registeredSystems;
         std::vector<std::thread> _threadPool;
-        EventList _frameEvent;
         void executeNext(ASystem* system_);
     public:
-        inline const decltype(_frameEvent)& getEventListRef() {
-            return _frameEvent;
-        }
         explicit Core();
         ~Core();
         bool registerSystem(ASystem*);
         OSReturnType run();
+		EventsManager eventsManager;
     };
 }

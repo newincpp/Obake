@@ -23,6 +23,7 @@ bool Obake::Core::registerSystem(ASystem* sys_) {
     _registeredSystems.push_back(sys_);
     return true;
 }
+
 Obake::Core::OSReturnType Obake::Core::run() {
     bool still = true;
     while (still) {

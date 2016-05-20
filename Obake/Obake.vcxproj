@@ -18,6 +18,19 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ASystem.hh" />
+    <ClInclude Include="Core.hh" />
+    <ClInclude Include="Event.hh" />
+    <ClInclude Include="EventsManager.hh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ASystem.cpp" />
+    <ClCompile Include="Core.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="EventsManager.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{AF1AF999-C493-4B14-B15A-2689B99A2505}</ProjectGuid>
     <RootNamespace>Obake</RootNamespace>
@@ -40,7 +53,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>LLVM-vs2014</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -109,16 +122,6 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="ASystem.hh" />
-    <ClInclude Include="Core.hh" />
-    <ClInclude Include="Event.hh" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="ASystem.cpp" />
-    <ClCompile Include="Core.cpp" />
-    <ClCompile Include="main.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

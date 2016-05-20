@@ -24,7 +24,7 @@ namespace System
 		static VulkanRenderer *_sysInstance;
 
 	public:
-		VulkanRenderer(const Obake::EventList& evRef_);
+		VulkanRenderer();
 		~VulkanRenderer();
 
 		static VulkanRenderer & getInstance()

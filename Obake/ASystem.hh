@@ -9,7 +9,6 @@ namespace Obake {
     protected:
         std::vector<std::function<void(void)>> _executionQueue;
         decltype(_executionQueue)::iterator _task;
-        const EventList& _events;
     public:
         inline bool isStillWorking() const { return (_task != _executionQueue.end()); }
         inline void start() { _task = _executionQueue.begin(); }
@@ -17,6 +16,6 @@ namespace Obake {
         inline const decltype(_executionQueue)& getExecQueue() const {
             return _executionQueue;
         }
-        ASystem(const EventList& eventListRef_);
+        ASystem();
     };
 }

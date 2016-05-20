@@ -44,7 +44,28 @@ namespace Obake {
 			std::placeholders::_4, std::placeholders::_5));
 	}
 
-	class EventBase 
+	template<class CALLBACK_TARGET_CLASS, typename RETURN_TYPE, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5>
+	std::function<RETURN_TYPE(P0, P1, P2, P3, P4, P5)> bindFunction(RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(P0, P1, P2, P3, P4, P5), CALLBACK_TARGET_CLASS* callbackTarget_)
+	{
+		return std::function<RETURN_TYPE(P0, P1, P2, P3, P4, P5)>(std::bind(memberFunction_, callbackTarget_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
+			std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
+	}
+
+	template<class CALLBACK_TARGET_CLASS, typename RETURN_TYPE, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6>
+	std::function<RETURN_TYPE(P0, P1, P2, P3, P4, P5, P6)> bindFunction(RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(P0, P1, P2, P3, P4, P5, P6), CALLBACK_TARGET_CLASS* callbackTarget_)
+	{
+		return std::function<RETURN_TYPE(P0, P1, P2, P3, P4, P5, P6)>(std::bind(memberFunction_, callbackTarget_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
+			std::placeholders::_4, std::placeholders::_5, std::placeholders::_6, std::placeholders::_7));
+	}
+
+	template<class CALLBACK_TARGET_CLASS, typename RETURN_TYPE, typename P0, typename P1, typename P2, typename P3, typename P4, typename P5, typename P6, typename P7>
+	std::function<RETURN_TYPE(P0, P1, P2, P3, P4, P5, P6, P7)> bindFunction(RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(P0, P1, P2, P3, P4), CALLBACK_TARGET_CLASS* callbackTarget_)
+	{
+		return std::function<RETURN_TYPE(P0, P1, P2, P3, P4, P5, P6, P7)>(std::bind(memberFunction_, callbackTarget_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3,
+			std::placeholders::_4, std::placeholders::_5, std::placeholders::_6, std::placeholders::_7, std::placeholders::_8));
+	}
+
+	class EventBase
 	{
 	public:
 		virtual ~EventBase() {};
@@ -56,6 +77,7 @@ namespace Obake {
 	{
 	private:
 		std::map<size_t, std::function<RETURN_TYPE(ARGS...)>> _receivers;
+		typedef typename std::map<size_t, std::function<RETURN_TYPE(ARGS...)>>::iterator receiversIterator;
 
 		template<class CALLBACK_TARGET_CLASS>
 		size_t _generateHash(CALLBACK_TARGET_CLASS* callbackTarget_, RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(ARGS...))
@@ -83,8 +105,8 @@ namespace Obake {
 		void bind(CALLBACK_TARGET_CLASS* callbackTarget_, RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(ARGS...))
 		{
 			size_t generatedHash = _generateHash(callbackTarget_, memberFunction_);
-				if (!_isReceiver(generatedHash))
-					_receivers[generatedHash] = bindFunction<CALLBACK_TARGET_CLASS, RETURN_TYPE, ARGS...>(memberFunction_, callbackTarget_);
+			if (!_isReceiver(generatedHash))
+				_receivers[generatedHash] = bindFunction<CALLBACK_TARGET_CLASS, RETURN_TYPE, ARGS...>(memberFunction_, callbackTarget_);
 		}
 
 		template<class CALLBACK_TARGET_CLASS>
@@ -95,9 +117,10 @@ namespace Obake {
 
 		void operator()(ARGS... params)
 		{
-			for (decltype(_receivers)::value_type receiver : _receivers)
+			receiversIterator it;
+			for (it = _receivers.begin(); it != _receivers.end(); ++it)
 			{
-				receiver.second(params...);
+				it->second(params...);
 			}
 		}
 	};

@@ -1,5 +1,6 @@
 #include "ASystem.hh"
 
-Obake::ASystem::ASystem(const EventList& eventListRef_) : _events(eventListRef_) {
+Obake::ASystem::ASystem()
+{
     _executionQueue.reserve(32);
 }

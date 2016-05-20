@@ -16,9 +16,9 @@ public:
     void printD();
     void printE();
     void throwEvent();
-    DummySystem(const Obake::EventList& evRef_);
+    DummySystem();
 };
-DummySystem::DummySystem(const Obake::EventList& evRef_) : ASystem(evRef_) {
+DummySystem::DummySystem() : ASystem() {
     ASystem::_executionQueue.push_back(std::bind(&DummySystem::printA, this));
     ASystem::_executionQueue.push_back(std::bind(&DummySystem::printB, this));
     ASystem::_executionQueue.push_back(std::bind(&DummySystem::printC, this));
@@ -34,8 +34,10 @@ void DummySystem::throwEvent() { }
 
 int main(int argc, const char * argv[]) {
     Obake::Core c;
-    DummySystem d(c.getEventListRef());
+    DummySystem d;
     c.registerSystem(&d);
     
-   return c.run();
+	int runRet = c.run();
+	system("pause");
+	return runRet;
 }
