@@ -15,14 +15,12 @@ namespace System
 		HINSTANCE _windowInstance;
 
 	public:
-		WindowEvent(const Obake::EventList& evRef_);
+		WindowEvent();
 
 		static WindowEvent & getInstance()
 		{
-			Obake::EventList x;
-
 			if (_sysInstance == nullptr)
-				_sysInstance = new WindowEvent(x);
+				_sysInstance = new WindowEvent();
 			return *_sysInstance;
 		};
 

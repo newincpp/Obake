@@ -5,13 +5,14 @@
 #include <vector>
 
 #ifdef _WIN32
-#include "Windows.h"
+#include <Windows.h>
 #define VK_USE_PLATFORM_WIN32_KHR
 #elif __linux__
 #define VK_USE_PLATFORM_XCB_KHR
 #endif
 
-#include <vulkan\vulkan.h>
+#include "vulkan\vulkan.h"
+//#include <vulkan\vulkan.h>
 
 #include "Core.hh"
 #include "ASystem.hh"
@@ -24,15 +25,13 @@ namespace System
 		static VulkanRenderer *_sysInstance;
 
 	public:
-		explicit VulkanRenderer(Obake::Core* core);
+		explicit VulkanRenderer();
 		~VulkanRenderer();
 
 		static VulkanRenderer & getInstance()
 		{
-			Obake::EventList x;
-
 			if (_sysInstance == nullptr)
-				_sysInstance = new VulkanRenderer(x);
+				_sysInstance = new VulkanRenderer();
 			return *_sysInstance;
 		};
 

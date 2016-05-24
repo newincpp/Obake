@@ -7,8 +7,8 @@ using namespace System;
 
 WindowEvent* WindowEvent::_sysInstance = nullptr;
 
-WindowEvent::WindowEvent(const Obake::EventList& evRef_)
-	: ASystem(evRef_)
+WindowEvent::WindowEvent()
+	: ASystem()
 {}
 
 void WindowEvent::createWindow()

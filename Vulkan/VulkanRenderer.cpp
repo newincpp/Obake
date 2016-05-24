@@ -43,8 +43,7 @@ VulkanDebugCallback(
 }
 // - - -
 
-VulkanRenderer::VulkanRenderer(Obake::Core* core)
-	: _core(core)
+VulkanRenderer::VulkanRenderer()
 {
 	_SetupDebug();
 	_InitInstance();
