@@ -4,10 +4,11 @@
 #include <thread>
 #include <iostream>
 
-#include "EventsManager.hh"
 #include "ASystem.hh"
+#include "EventsManager.hh"
 
 namespace Obake {
+	class ASystem;
     class Core {
     private:
 #if defined( WIN32 )

@@ -6,11 +6,14 @@ TestEventSystem1::~TestEventSystem1()
 {
 }
 
-TestEventSystem1::TestEventSystem1(Obake::Core* core)
+TestEventSystem1::TestEventSystem1()
 {
-	_core = core;
-	//ASystem::_executionQueue.push_back(std::bind(&TestEventSystem1::registerEvent, this, "TestEvent1"));
-	//ASystem::_executionQueue.push_back(std::bind(&TestEventSystem1::executeEvent, this, "TestEvent1"));
+}
+
+void TestEventSystem1::initialize()
+{
+	//ASystem::_executionQueue.push_back(std::bind(&TestEventSystem2::registerEvent, this, "TestEvent2"));
+	//ASystem::_executionQueue.push_back(std::bind(&TestEventSystem2::executeEvent, this, "TestEvent1"));
 	registerEvent("TestEvent1");
 }
 

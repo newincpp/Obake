@@ -1,3 +1,4 @@
+#include "Core.hh"
 #include "ASystem.hh"
 
 Obake::ASystem::ASystem()

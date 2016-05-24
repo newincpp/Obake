@@ -7,12 +7,12 @@ namespace System
 	class TestEventSystem2 : public Obake::ASystem
 	{
 	private:
-		Obake::Core* _core;
 
 	public:
-		~TestEventSystem2();
-		explicit TestEventSystem2(Obake::Core* core);
+		virtual ~TestEventSystem2();
+		explicit TestEventSystem2();
 
+		void initialize() override;
 		void registerEvent(std::string eventName);
 		void executeEvent(std::string eventName);
 		void receiveEvent(std::string receiveEventFrom);

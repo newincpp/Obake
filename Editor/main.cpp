@@ -5,9 +5,14 @@
 int main()
 {
 	Obake::Core c;
-	System::TestEventSystem1 system1(&c);
-	System::TestEventSystem2 system2(&c);
+	System::TestEventSystem1 system1;
+	System::TestEventSystem2 system2;
 	
+	system1.registerCore(&c);
+	system2.registerCore(&c);
+	system1.initialize();
+	system2.initialize();
+
 	//c.registerSystem(&system1);
 	//c.registerSystem(&system2);
 
