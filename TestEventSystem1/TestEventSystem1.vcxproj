@@ -38,7 +38,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>LLVM-vs2014</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -97,6 +97,8 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\Obake;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile />
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -133,18 +135,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Obake\ASystem.hh" />
-    <ClInclude Include="..\Obake\Core.hh" />
-    <ClInclude Include="..\Obake\Event.hh" />
-    <ClInclude Include="..\Obake\EventsManager.hh" />
     <ClInclude Include="TestEventSystem1.hh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Obake\ASystem.cpp" />
-    <ClCompile Include="..\Obake\Core.cpp" />
-    <ClCompile Include="..\Obake\Event.cpp" />
-    <ClCompile Include="..\Obake\EventsManager.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="TestEventSystem1.cpp" />
   </ItemGroup>
   <ItemGroup>

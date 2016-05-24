@@ -98,6 +98,7 @@
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)\TestEventSystem2;$(SolutionDir)\TestEventSystem1;$(SolutionDir)\Obake;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -134,12 +135,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Obake\ASystem.cpp" />
-    <ClCompile Include="..\Obake\Core.cpp" />
-    <ClCompile Include="..\Obake\Event.cpp" />
-    <ClCompile Include="..\Obake\EventsManager.cpp" />
-    <ClCompile Include="..\TestEventSystem1\TestEventSystem1.cpp" />
-    <ClCompile Include="..\TestEventSystem2\TestEventSystem2.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,14 +147,6 @@
     <ProjectReference Include="..\TestEventSystem2\TestEventSystem2.vcxproj">
       <Project>{78d2257a-40e4-4eb3-aa74-a9e0495b97eb}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Obake\ASystem.hh" />
-    <ClInclude Include="..\Obake\Core.hh" />
-    <ClInclude Include="..\Obake\Event.hh" />
-    <ClInclude Include="..\Obake\EventsManager.hh" />
-    <ClInclude Include="..\TestEventSystem1\TestEventSystem1.hh" />
-    <ClInclude Include="..\TestEventSystem2\TestEventSystem2.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

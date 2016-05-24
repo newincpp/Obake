@@ -54,7 +54,8 @@
 cvs
 CVS
 .CVS
-.cvs  
+.cvs
+[Ii]pch
 [Rr]elease
 [Dd]ebug
 [Ii]gnore

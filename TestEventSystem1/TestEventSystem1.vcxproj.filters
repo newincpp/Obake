@@ -13,48 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Fichiers sources\Obake">
-      <UniqueIdentifier>{8bc7ad91-35dc-468d-a195-bf44160e93dd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Fichiers d%27en-tête\Obake">
-      <UniqueIdentifier>{294db0d7-f450-4e80-bb4e-fb38ac2c2ff8}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TestEventSystem1.hh">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="..\Obake\ASystem.hh">
-      <Filter>Fichiers d%27en-tête\Obake</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Obake\Core.hh">
-      <Filter>Fichiers d%27en-tête\Obake</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Obake\Event.hh">
-      <Filter>Fichiers d%27en-tête\Obake</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Obake\EventsManager.hh">
-      <Filter>Fichiers d%27en-tête\Obake</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestEventSystem1.cpp">
       <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Obake\ASystem.cpp">
-      <Filter>Fichiers sources\Obake</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Obake\Core.cpp">
-      <Filter>Fichiers sources\Obake</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Obake\Event.cpp">
-      <Filter>Fichiers sources\Obake</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Obake\EventsManager.cpp">
-      <Filter>Fichiers sources\Obake</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
