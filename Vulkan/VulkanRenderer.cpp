@@ -88,7 +88,7 @@ void VulkanRenderer::_InitInstance()
 		// A developer-supplied version number of the engine
 		applicationInfo.engineVersion = 1,
 		// (MANDATORY) The version of the Vulkan API that is being used
-		applicationInfo.apiVersion = VK_MAKE_VERSION(1, 0, 11)
+		applicationInfo.apiVersion = VK_MAKE_VERSION(1, 0, 13)
 	};
 
 	// Contains info in regards to the Vulkan instance
