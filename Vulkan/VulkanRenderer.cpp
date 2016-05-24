@@ -43,8 +43,8 @@ VulkanDebugCallback(
 }
 // - - -
 
-VulkanRenderer::VulkanRenderer(const Obake::EventList& evRef_)
-	: ASystem(evRef_)
+VulkanRenderer::VulkanRenderer(Obake::Core* core)
+	: _core(core)
 {
 	_SetupDebug();
 	_InitInstance();

@@ -24,7 +24,7 @@ namespace System
 		static VulkanRenderer *_sysInstance;
 
 	public:
-		VulkanRenderer();
+		explicit VulkanRenderer(Obake::Core* core);
 		~VulkanRenderer();
 
 		static VulkanRenderer & getInstance()
