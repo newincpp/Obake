@@ -12,7 +12,7 @@ namespace Obake {
         decltype(_executionQueue)::iterator _task;
 		Core* _core;
     public:
-		virtual inline void initialize() {};
+		void initialize();
 
         inline bool isStillWorking() const { return (_task != _executionQueue.end()); }
 		inline void registerCore(Core* core_) { _core = core_; }
