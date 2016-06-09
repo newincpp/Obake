@@ -4,3 +4,5 @@ SRC	= ../Obake/ASystem.cpp \
 	  ../Obake/Core.cpp
 
 INCLUDE=-I./
+
+LIBS= -ldl
