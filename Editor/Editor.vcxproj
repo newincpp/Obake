@@ -96,7 +96,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Vulkan;$(SolutionDir)\TestEventSystem2;$(SolutionDir)\TestEventSystem1;$(SolutionDir)\Obake;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Vulkan;$(SolutionDir)\Obake;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PrecompiledHeader>Use</PrecompiledHeader>
     </ClCompile>
@@ -140,18 +140,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Obake\Obake.vcxproj">
       <Project>{af1af999-c493-4b14-b15a-2689b99a2505}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\TestEventSystem1\TestEventSystem1.vcxproj">
-      <Project>{c85fee3c-f30f-4330-85ce-389bfec373f2}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\TestEventSystem2\TestEventSystem2.vcxproj">
-      <Project>{78d2257a-40e4-4eb3-aa74-a9e0495b97eb}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Vulkan\Vulkan.vcxproj">
-      <Project>{6c126781-94ca-4952-a3aa-3c7c6a2b3f98}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\WindowEvent\WindowEvent.vcxproj">
-      <Project>{22111056-6c21-4bee-9c8d-ea825809cf8c}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

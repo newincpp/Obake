@@ -21,14 +21,21 @@
   <ItemGroup>
     <ClInclude Include="ASystem.hh" />
     <ClInclude Include="Core.hh" />
+    <ClInclude Include="Definitions.hh" />
     <ClInclude Include="Event.hh" />
     <ClInclude Include="EventsManager.hh" />
+    <ClInclude Include="Plugin.hh" />
+    <ClInclude Include="PluginsManager.hh" />
+    <ClInclude Include="SharedLibrary.hh" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ASystem.cpp" />
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="EventsManager.cpp" />
+    <ClCompile Include="Plugin.cpp" />
+    <ClCompile Include="PluginsManager.cpp" />
+    <ClCompile Include="SharedLibrary.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{AF1AF999-C493-4B14-B15A-2689B99A2505}</ProjectGuid>

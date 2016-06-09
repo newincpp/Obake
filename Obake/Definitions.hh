@@ -69,7 +69,7 @@
 #endif
 
 #ifdef WIN32
-	#define PLUGINS_FOLDER	".\\Plugins\\"
+#define PLUGINS_FOLDER	".\\Plugins\\"
 #else
-	#define PLUGINS_FOLDER	"./Plugins/"
+#define PLUGINS_FOLDER	"./Plugins/"
 #endif
