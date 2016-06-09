@@ -127,7 +127,7 @@ std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const s
 {
 	std::vector<std::string> filesPaths;
 
-#if defined (UNIX) || defined (APPLE)
+#if defined (POSIX)
 
 	dirp = opendir(PLUGINS_FOLDER);
 	while ((dp = readdir(dirp)) != NULL)
