@@ -38,7 +38,7 @@ bool Obake::AvailablePlugin::load()
 		_infos.initializeFunc = tmpInfos->initializeFunc;
 		_plugin = reinterpret_cast<Obake::IPlugin*>(_infos.initializeFunc());
 
-		_plugin->sayHello();
+		//_plugin->sayHello();
 
 		/*	std::cout << "Plugin Info: "
 				<< "\n\tAPI Version: " << _infos.apiVersion

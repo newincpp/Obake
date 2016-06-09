@@ -41,7 +41,6 @@ int main()
 
 	Obake::PluginsManager pluginsManager;
 
-	pluginsManager.displayPluginsInfos();
 	pluginsManager.loadAllAvailablePlugins();
 	pluginsManager.displayPluginsInfos();
 	const std::vector<Obake::AvailablePlugin*>& availablePlugins = pluginsManager.getAllAvailablePlugins();
