@@ -9,7 +9,7 @@ namespace Obake
 
 		std::string _path;
 		bool _isLoaded;
-		PluginInfos* _infos;
+		PluginInfos _infos;
 		Plugin*	_plugin;
 		SharedLibrary _lib;
 
@@ -23,7 +23,7 @@ namespace Obake
 		bool reload();
 		bool isLoaded() const;
 		const std::string& getPath() const;
-		PluginInfos* getInfos() const;
+		const PluginInfos& getInfos() const;
 		Plugin* getPlugin() const;
 	};
 

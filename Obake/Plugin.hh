@@ -25,13 +25,23 @@ namespace Obake
 
 	OBAKE_EXTERN typedef Plugin* (*GetPluginFunc)();
 
-	struct PluginInfos
+	struct ExternPluginInfos
 	{
 		uint16_t apiVersion;
 		const char* fileName;
 		const char* className;
 		const char* pluginName;
 		const char* pluginVersion;
+		GetPluginFunc initializeFunc;
+	};
+
+	struct PluginInfos
+	{
+		uint16_t apiVersion;
+		std::string fileName;
+		std::string className;
+		std::string pluginName;
+		std::string pluginVersion;
 		GetPluginFunc initializeFunc;
 	};
 
@@ -46,7 +56,7 @@ namespace Obake
           static classType singleton;                        \
           return &singleton;                                 \
       }                                                      \
-      OBAKE_PLUGIN_EXPORT Obake::PluginInfos exports =  \
+      OBAKE_PLUGIN_EXPORT Obake::ExternPluginInfos exports =  \
       {                                                      \
           OBAKE_STANDARD_PLUGIN_STUFF,                         \
           #classType,                                        \

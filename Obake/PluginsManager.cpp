@@ -12,7 +12,9 @@ Obake::AvailablePlugin::AvailablePlugin(const std::string& path_)
 	if (load())
 	{
 		_isLoaded = false;
-		//_lib.close();
+		_lib.close();
+		_plugin = nullptr;
+		_infos.initializeFunc = nullptr;
 	}
 }
 
@@ -24,25 +26,25 @@ bool Obake::AvailablePlugin::load()
 	}
 	else
 	{
-		//PluginInfos* tmpInfos;
+		ExternPluginInfos* tmpInfos;
 
-		_lib.sym("exports", reinterpret_cast<void**>(&_infos));
+		_lib.sym("exports", reinterpret_cast<void**>(&tmpInfos));
 
-		/*_infos = new PluginInfos;
+		_infos.apiVersion = tmpInfos->apiVersion;
+		_infos.fileName = std::string(tmpInfos->fileName);
+		_infos.className = std::string(tmpInfos->className);
+		_infos.pluginName = std::string(tmpInfos->pluginName);
+		_infos.pluginVersion = std::string(tmpInfos->pluginVersion);
+		_infos.initializeFunc = tmpInfos->initializeFunc;
+		_plugin = reinterpret_cast<Plugin*>(tmpInfos->initializeFunc());
 
-		_infos->apiVersion = tmpInfos->apiVersion;
-		_infos->fileName = std::string(tmpInfos->fileName).c_str();
-		_infos->className = std::string(tmpInfos->className).c_str();
-		_infos->pluginName = std::string(tmpInfos->pluginName).c_str;
-		_infos->pluginVersion = tmpInfos->pluginVersion;*/
-
-	/*	std::cout << "Plugin Info: "
-			<< "\n\tAPI Version: " << _infos->apiVersion
-			<< "\n\tFile Name: " << _infos->fileName
-			<< "\n\tClass Name: " << _infos->className
-			<< "\n\tPlugin Name: " << _infos->pluginName
-			<< "\n\tPlugin Version: " << _infos->pluginVersion
-			<< std::endl;*/
+		/*	std::cout << "Plugin Info: "
+				<< "\n\tAPI Version: " << _infos.apiVersion
+				<< "\n\tFile Name: " << _infos.fileName
+				<< "\n\tClass Name: " << _infos.className
+				<< "\n\tPlugin Name: " << _infos.pluginName
+				<< "\n\tPlugin Version: " << _infos.pluginVersion
+				<< std::endl;*/
 		_isLoaded = true;
 	}
 	return _isLoaded;
@@ -54,6 +56,8 @@ bool Obake::AvailablePlugin::unload()
 	{
 		_lib.close();
 		_isLoaded = false;
+		_plugin = nullptr;
+		_infos.initializeFunc = nullptr;
 	}
 
 	return !_isLoaded;
@@ -76,7 +80,7 @@ const std::string& Obake::AvailablePlugin::getPath() const
 	return _path;
 }
 
-Obake::PluginInfos* Obake::AvailablePlugin::getInfos() const
+const Obake::PluginInfos& Obake::AvailablePlugin::getInfos() const
 {
 	return _infos;
 }
@@ -106,13 +110,13 @@ Obake::PluginsManager::PluginsManager()
 	{
 		AvailablePlugin* availablePlugin = _availablePlugins[i];
 
-		//std::cout << "Plugin[" << i << "]: Info: "
-		//	<< "\n\tAPI Version: " << availablePlugin->getInfos()->apiVersion
-		//	<< "\n\tFile Name: " << availablePlugin->getInfos()->fileName
-		//	<< "\n\tClass Name: " << availablePlugin->getInfos()->className
-		//	<< "\n\tPlugin Name: " << availablePlugin->getInfos()->pluginName
-		//	<< "\n\tPlugin Version: " << availablePlugin->getInfos()->pluginVersion
-		//	<< std::endl;
+		/*std::cout << "Plugin[" << i << "]: Info: "
+			<< "\n\tAPI Version: " << availablePlugin->getInfos().apiVersion
+			<< "\n\tFile Name: " << availablePlugin->getInfos().fileName
+			<< "\n\tClass Name: " << availablePlugin->getInfos().className
+			<< "\n\tPlugin Name: " << availablePlugin->getInfos().pluginName
+			<< "\n\tPlugin Version: " << availablePlugin->getInfos().pluginVersion
+			<< std::endl;*/
 	}
 
 }
@@ -158,7 +162,7 @@ std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const s
 #endif
 
 	return filesPaths;
-	}
+}
 
 const std::vector<Obake::AvailablePlugin*>& Obake::PluginsManager::getAvailablePlugins() const
 {
@@ -174,20 +178,16 @@ void Obake::PluginsManager::displayPluginsInfos()
 	for (int i = 0; i < _availablePlugins.size(); ++i)
 	{
 		AvailablePlugin* availablePlugin = _availablePlugins[i];
-		PluginInfos* infos = availablePlugin->getInfos();
+		const PluginInfos& infos = availablePlugin->getInfos();
 
-		if (infos != nullptr)
-		{
-			std::cout << "Plugin[" << (i) << "]:" << std::endl
-				<< "\n\tAPI Version: " << infos->apiVersion
-				<< "\n\tFile Name: " << infos->fileName
-				<< "\n\tClass Name: " << infos->className
-				<< "\n\tPlugin Name: " << infos->pluginName
-				<< "\n\tPlugin Version: " << infos->pluginVersion
-				<< "\n\tIs Loaded: " << std::boolalpha << availablePlugin->isLoaded()
-				<< "\n\tPath: " << availablePlugin->getPath()
-				<< std::endl << std::endl;
-		}
+		std::cout << "Plugin[" << (i) << "]:" << std::endl
+			<< "\n\tAPI Version: " << infos.apiVersion
+			<< "\n\tFile Name: " << infos.fileName
+			<< "\n\tClass Name: " << infos.className
+			<< "\n\tPlugin Name: " << infos.pluginName
+			<< "\n\tPlugin Version: " << infos.pluginVersion
+			<< "\n\tIs Loaded: " << std::boolalpha << availablePlugin->isLoaded()
+			<< "\n\tPath: " << availablePlugin->getPath()
+			<< std::endl << std::endl;
 	}
-
 }
