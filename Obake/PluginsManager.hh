@@ -9,8 +9,8 @@ namespace Obake
 
 		std::string _path;
 		bool _isLoaded;
-		PluginInfos* _infos;
-		Plugin*	_plugin;
+		PluginInfos _infos;
+		IPlugin*	_plugin;
 		SharedLibrary _lib;
 
 	public:
@@ -23,15 +23,14 @@ namespace Obake
 		bool reload();
 		bool isLoaded() const;
 		const std::string& getPath() const;
-		PluginInfos* getInfos() const;
-		Plugin* getPlugin() const;
+		PluginInfos& getInfos();
+		IPlugin* getPlugin();
 	};
 
 	class PluginsManager
 	{
 	private:
 		std::vector<AvailablePlugin*> _availablePlugins;
-		std::vector<AvailablePlugin*>::const_iterator  _availablePluginsIt;
 		
 		std::vector<std::string> _getFilesPathsFromFolder(const std::string& folder) const;
 
@@ -39,7 +38,14 @@ namespace Obake
 		~PluginsManager();
 		explicit PluginsManager();
 
-		const std::vector<AvailablePlugin*>& getAvailablePlugins() const;
+		const std::vector<AvailablePlugin*>& getAllAvailablePlugins() const;
 		void displayPluginsInfos();
+		AvailablePlugin* getAvailablePlugin(const std::string& name_) const;
+		AvailablePlugin* getAvailablePlugin(uint16_t id) const;
+		bool loadAvailablePlugin(const std::string& name_) const;
+		bool loadAvailablePlugin(uint16_t id) const;
+		bool unloadAvailablePlugin(const std::string& name_) const;
+		bool unloadAvailablePlugin(uint16_t id) const;
+		void loadAllAvailablePlugins() const;
 	};
 }

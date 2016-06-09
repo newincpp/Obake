@@ -33,7 +33,6 @@
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="Event.cpp" />
     <ClCompile Include="EventsManager.cpp" />
-    <ClCompile Include="Plugin.cpp" />
     <ClCompile Include="PluginsManager.cpp" />
     <ClCompile Include="SharedLibrary.cpp" />
   </ItemGroup>
@@ -109,6 +108,9 @@
       <AdditionalIncludeDirectories>$(SolutionDir)\Obake;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile />
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <UndefinePreprocessorDefinitions>
+      </UndefinePreprocessorDefinitions>
     </ClCompile>
     <ProjectReference>
       <LinkLibraryDependencies>true</LinkLibraryDependencies>

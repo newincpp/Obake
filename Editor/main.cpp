@@ -42,9 +42,21 @@ int main()
 	Obake::PluginsManager pluginsManager;
 
 	pluginsManager.displayPluginsInfos();
+	pluginsManager.loadAllAvailablePlugins();
+	pluginsManager.displayPluginsInfos();
+	const std::vector<Obake::AvailablePlugin*>& availablePlugins = pluginsManager.getAllAvailablePlugins();
 
-//	int runRet = c.run();
+	for (Obake::AvailablePlugin* plugin : availablePlugins)
+	{
+		if (plugin->isLoaded())
+		{
+			c.registerSystem(plugin->getPlugin());
+			plugin->getPlugin()->sayHello();
+		}
+	}
+
+	//int runRet = c.run();
 	system("Pause");
-	/*return runRet;*/
+	//return runRet;
 	return 0;
 }
