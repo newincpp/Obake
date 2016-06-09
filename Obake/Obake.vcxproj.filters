@@ -60,9 +60,6 @@
     <ClCompile Include="EventsManager.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="Plugin.cpp">
-      <Filter>Resource Files\Plugin</Filter>
-    </ClCompile>
     <ClCompile Include="SharedLibrary.cpp">
       <Filter>Resource Files\Base</Filter>
     </ClCompile>

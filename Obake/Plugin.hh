@@ -1,11 +1,16 @@
 #pragma once
+#include <iostream>
 #include "Definitions.hh"
+#ifndef WIN32
+#	include <dlfcn.h>
+#endif
 #include "ASystem.hh"
 
 namespace Obake
 {
-	class Plugin;
+	class IPlugin;
 #define OBAKE_PLUGIN_API_VERSION 1
+	//#define BUILDING_OBAKE_SHARED
 
 #ifdef WIN32
 #	define OBAKE_PLUGIN_EXPORT __declspec(dllexport)
@@ -14,16 +19,20 @@ namespace Obake
 #endif
 
 #ifdef WIN32
-#	ifndef OBAKE_SHARED_LIBRARY
-#		define OBAKE_EXTERN __declspec(dllexport)
-#	else
-#		define OBAKE_EXTERN __declspec(dllimport)
-#	endif
-#else
-#	define OBAKE_EXTERN
+	/* Windows - set up dll import/export decorators. */
+# if defined(BUILDING_OBAKE_SHARED)
+	/* Building shared library. */
+#   define OBAKE_EXTERN __declspec(dllexport)
+# elif defined(USING_OBAKE_SHARED)
+	/* Using shared library. */
+#   define OBAKE_EXTERN __declspec(dllimport)
+# else
+	/* Building static library. */
+#   define OBAKE_EXTERN /* nothing */
+# endif
 #endif
 
-	OBAKE_EXTERN typedef Plugin* (*GetPluginFunc)();
+	OBAKE_EXTERN typedef IPlugin* (*CreatePluginFunc)();
 
 	struct ExternPluginInfos
 	{
@@ -32,7 +41,7 @@ namespace Obake
 		const char* className;
 		const char* pluginName;
 		const char* pluginVersion;
-		GetPluginFunc initializeFunc;
+		CreatePluginFunc initializeFunc;
 	};
 
 	struct PluginInfos
@@ -42,7 +51,8 @@ namespace Obake
 		std::string className;
 		std::string pluginName;
 		std::string pluginVersion;
-		GetPluginFunc initializeFunc;
+		CreatePluginFunc initializeFunc;
+		ExternPluginInfos* externInfos;
 	};
 
 #define OBAKE_STANDARD_PLUGIN_STUFF \
@@ -51,10 +61,9 @@ namespace Obake
 
 #define OBAKE_PLUGIN(classType, pluginName, pluginVersion)     \
   extern "C" {                                               \
-     OBAKE_PLUGIN_EXPORT Obake::Plugin* getPlugin()     \
+     OBAKE_PLUGIN_EXPORT Obake::IPlugin* createPlugin()     \
       {                                                      \
-          static classType singleton;                        \
-          return &singleton;                                 \
+         return new classType;                               \
       }                                                      \
       OBAKE_PLUGIN_EXPORT Obake::ExternPluginInfos exports =  \
       {                                                      \
@@ -62,17 +71,20 @@ namespace Obake
           #classType,                                        \
           pluginName,                                        \
           pluginVersion,                                     \
-          getPlugin,                                         \
+          createPlugin,                                         \
       };                                                     \
   }
 
-	class Plugin : public ASystem
+	class IPlugin : public ASystem
 	{
-	private: 
+	private:
 
 	public:
-		virtual ~Plugin();
-		Plugin();
+		virtual ~IPlugin() {};
+		IPlugin() {};
+
+		// TODO Remove test
+		virtual void sayHello() = 0;
 	};
 
 }

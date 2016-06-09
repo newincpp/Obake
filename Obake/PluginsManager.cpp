@@ -36,7 +36,9 @@ bool Obake::AvailablePlugin::load()
 		_infos.pluginName = std::string(tmpInfos->pluginName);
 		_infos.pluginVersion = std::string(tmpInfos->pluginVersion);
 		_infos.initializeFunc = tmpInfos->initializeFunc;
-		_plugin = reinterpret_cast<Plugin*>(tmpInfos->initializeFunc());
+		_plugin = reinterpret_cast<Obake::IPlugin*>(_infos.initializeFunc());
+
+		_plugin->sayHello();
 
 		/*	std::cout << "Plugin Info: "
 				<< "\n\tAPI Version: " << _infos.apiVersion
@@ -56,6 +58,7 @@ bool Obake::AvailablePlugin::unload()
 	{
 		_lib.close();
 		_isLoaded = false;
+		delete _plugin;
 		_plugin = nullptr;
 		_infos.initializeFunc = nullptr;
 	}
@@ -80,12 +83,12 @@ const std::string& Obake::AvailablePlugin::getPath() const
 	return _path;
 }
 
-const Obake::PluginInfos& Obake::AvailablePlugin::getInfos() const
+Obake::PluginInfos& Obake::AvailablePlugin::getInfos()
 {
 	return _infos;
 }
 
-Obake::Plugin* Obake::AvailablePlugin::getPlugin() const
+Obake::IPlugin* Obake::AvailablePlugin::getPlugin()
 {
 	return _plugin;
 }
@@ -100,24 +103,23 @@ Obake::PluginsManager::PluginsManager()
 
 	/*std::cout << "NbFilesFound: " << pluginsPaths.size() << std::endl;*/
 
-	for (int i = 0; i < pluginsPaths.size(); ++i)
+	for (const std::string& pluginPath : pluginsPaths)
 	{
 		/*	std::cout << "Path[" << i << "]: " << pluginsPaths[i] << std::endl;*/
-		_availablePlugins.push_back(new AvailablePlugin(pluginsPaths[i]));
+		_availablePlugins.push_back(new AvailablePlugin(pluginPath));
 	}
 
-	for (int i = 0; i < _availablePlugins.size(); ++i)
-	{
-		AvailablePlugin* availablePlugin = _availablePlugins[i];
+	//for (decltype(_availablePlugins)::value_type availablePlugin : _availablePlugins)
+	//{
 
-		/*std::cout << "Plugin[" << i << "]: Info: "
-			<< "\n\tAPI Version: " << availablePlugin->getInfos().apiVersion
-			<< "\n\tFile Name: " << availablePlugin->getInfos().fileName
-			<< "\n\tClass Name: " << availablePlugin->getInfos().className
-			<< "\n\tPlugin Name: " << availablePlugin->getInfos().pluginName
-			<< "\n\tPlugin Version: " << availablePlugin->getInfos().pluginVersion
-			<< std::endl;*/
-	}
+	//	/*std::cout << "Plugin[" << i << "]: Info: "
+	//		<< "\n\tAPI Version: " << availablePlugin->getInfos().apiVersion
+	//		<< "\n\tFile Name: " << availablePlugin->getInfos().fileName
+	//		<< "\n\tClass Name: " << availablePlugin->getInfos().className
+	//		<< "\n\tPlugin Name: " << availablePlugin->getInfos().pluginName
+	//		<< "\n\tPlugin Version: " << availablePlugin->getInfos().pluginVersion
+	//		<< std::endl;*/
+	//}
 
 }
 
@@ -164,7 +166,7 @@ std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const s
 	return filesPaths;
 }
 
-const std::vector<Obake::AvailablePlugin*>& Obake::PluginsManager::getAvailablePlugins() const
+const std::vector<Obake::AvailablePlugin*>& Obake::PluginsManager::getAllAvailablePlugins() const
 {
 	return _availablePlugins;
 }
@@ -189,5 +191,58 @@ void Obake::PluginsManager::displayPluginsInfos()
 			<< "\n\tIs Loaded: " << std::boolalpha << availablePlugin->isLoaded()
 			<< "\n\tPath: " << availablePlugin->getPath()
 			<< std::endl << std::endl;
+	}
+}
+
+Obake::AvailablePlugin* Obake::PluginsManager::getAvailablePlugin(const std::string& name_) const
+{
+	for (decltype(_availablePlugins)::value_type plugin : _availablePlugins)
+	{
+		if (plugin->getInfos().pluginName == name_)
+			return plugin;
+	}
+	return nullptr;
+}
+
+Obake::AvailablePlugin* Obake::PluginsManager::getAvailablePlugin(uint16_t id) const
+{
+	return (id < _availablePlugins.size()) ? _availablePlugins[id] : nullptr;
+}
+
+bool Obake::PluginsManager::loadAvailablePlugin(const std::string& name_) const
+{
+	for (decltype(_availablePlugins)::value_type plugin : _availablePlugins)
+	{
+		if (plugin->getInfos().pluginName == name_)
+			return plugin->load();
+	}
+	return false;
+}
+
+bool Obake::PluginsManager::loadAvailablePlugin(uint16_t id) const
+{
+	return (id < _availablePlugins.size()) ? _availablePlugins[id]->load() : false;
+}
+
+bool Obake::PluginsManager::unloadAvailablePlugin(const std::string& name_) const
+{
+	for (decltype(_availablePlugins)::value_type plugin : _availablePlugins)
+	{
+		if (plugin->getInfos().pluginName == name_)
+			return plugin->unload();
+	}
+	return false;
+}
+
+bool Obake::PluginsManager::unloadAvailablePlugin(uint16_t id) const
+{
+	return (id < _availablePlugins.size()) ? _availablePlugins[id]->unload() : false;
+}
+
+void Obake::PluginsManager::loadAllAvailablePlugins() const
+{
+	for (decltype(_availablePlugins)::value_type plugin : _availablePlugins)
+	{
+		plugin->load();
 	}
 }
