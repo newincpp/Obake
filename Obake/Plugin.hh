@@ -1,9 +1,9 @@
 #pragma once
 #include <iostream>
 #include "Definitions.hh"
-#ifndef WIN32
+//#ifdef POSIX
 #	include <dlfcn.h>
-#endif
+//#endif
 #include "ASystem.hh"
 
 namespace Obake
