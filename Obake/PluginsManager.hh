@@ -32,7 +32,8 @@ namespace Obake
 	private:
 		std::vector<AvailablePlugin*> _availablePlugins;
 		
-		std::vector<std::string> _getFilesPathsFromFolder(const std::string& folder) const;
+		std::vector<std::string> _getFilesPathsFromFolder(const std::string& folder_) const;
+		bool _isAvailablePluginExists(AvailablePlugin* testPlugin_) const;
 
 	public:
 		~PluginsManager();
@@ -41,11 +42,11 @@ namespace Obake
 		const std::vector<AvailablePlugin*>& getAllAvailablePlugins() const;
 		void displayPluginsInfos();
 		AvailablePlugin* getAvailablePlugin(const std::string& name_) const;
-		AvailablePlugin* getAvailablePlugin(uint16_t id) const;
+		AvailablePlugin* getAvailablePlugin(uint16_t id_) const;
 		bool loadAvailablePlugin(const std::string& name_) const;
-		bool loadAvailablePlugin(uint16_t id) const;
+		bool loadAvailablePlugin(uint16_t id_) const;
 		bool unloadAvailablePlugin(const std::string& name_) const;
-		bool unloadAvailablePlugin(uint16_t id) const;
+		bool unloadAvailablePlugin(uint16_t id_) const;
 		void loadAllAvailablePlugins() const;
 	};
 }
