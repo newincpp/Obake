@@ -32,7 +32,7 @@ bool Obake::SharedLibrary::sym(const char* name_, void** ptr_)
 #if defined (WIN32)
 	void* initializer = (void*)GetProcAddress(_lib.lib, name_);
 #elif defined (POSIX)
-	void* initializer = dlsym(_lib, name_);
+	void* initializer = dlsym(_lib.lib, name_);
 #endif
 
 	*ptr_ = initializer;
