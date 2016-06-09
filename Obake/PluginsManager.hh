@@ -22,7 +22,8 @@ namespace Obake
 		bool unload();
 		bool reload();
 		bool isLoaded() const;
-		const PluginInfos* getInfos() const;
+		const std::string& getPath() const;
+		PluginInfos* getInfos() const;
 		Plugin* getPlugin() const;
 	};
 
@@ -30,6 +31,7 @@ namespace Obake
 	{
 	private:
 		std::vector<AvailablePlugin*> _availablePlugins;
+		std::vector<AvailablePlugin*>::const_iterator  _availablePluginsIt;
 		
 		std::vector<std::string> _getFilesPathsFromFolder(const std::string& folder) const;
 
@@ -38,5 +40,6 @@ namespace Obake
 		explicit PluginsManager();
 
 		const std::vector<AvailablePlugin*>& getAvailablePlugins() const;
+		void displayPluginsInfos();
 	};
 }

@@ -16,7 +16,7 @@ namespace Obake
 		HMODULE lib;
 		char* errmsg;
 	} lib_t;
-#elif UNIX || APPLE
+#elif defined (UNIX) || defined (APPLE)
 	typedef struct
 	{
 		void* lib;
