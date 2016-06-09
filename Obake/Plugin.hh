@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Definitions.hh"
-#ifndef WIN32
+#ifdef POSIX
 #	include <dlfcn.h>
 #endif
 #include "ASystem.hh"
