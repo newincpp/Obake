@@ -82,13 +82,15 @@ namespace Obake {
 		template<class CALLBACK_TARGET_CLASS>
 		size_t _generateHash(CALLBACK_TARGET_CLASS* callbackTarget_, RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(ARGS...))
 		{
-			char buff1[20];
-			char buff2[20];
-			sprintf_s(buff1, "%p", memberFunction_);
-			sprintf_s(buff2, "%p", callbackTarget_);
+			//char buff1[20];
+			//char buff2[20];
+			//sprintf_s(buff1, "%p", memberFunction_);
+			//sprintf_s(buff2, "%p", callbackTarget_);
 
-			size_t h1 = std::hash<std::string>()(buff1);
-			size_t h2 = std::hash<std::string>()(buff2);
+			//size_t h1 = std::hash<std::string>()(buff1);
+			//size_t h2 = std::hash<std::string>()(buff2);
+			size_t h1 = (size_t)memberFunction_;
+			size_t h2 = (size_t)callbackTarget_;
 			return h1 ^ (h2 << 1);
 		}
 
