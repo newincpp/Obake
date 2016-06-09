@@ -7,6 +7,6 @@ public:
 	virtual ~TestPlugin();
 	TestPlugin();
 
-	OBAKE_EXTERN virtual void sayHello();
+	virtual void sayHello();
 };
 

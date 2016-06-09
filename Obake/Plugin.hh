@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include "Definitions.hh"
 #if defined(LINUX) || defined (APPLE)
 #	include <dlfcn.h>
