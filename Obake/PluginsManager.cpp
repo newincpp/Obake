@@ -12,7 +12,7 @@ Obake::AvailablePlugin::AvailablePlugin(const std::string& path_)
 	if (load())
 	{
 		_isLoaded = false;
-		_lib.close();
+		//_lib.close();
 	}
 }
 
@@ -24,14 +24,25 @@ bool Obake::AvailablePlugin::load()
 	}
 	else
 	{
+		//PluginInfos* tmpInfos;
+
 		_lib.sym("exports", reinterpret_cast<void**>(&_infos));
-		std::cout << "Plugin Info: "
+
+		/*_infos = new PluginInfos;
+
+		_infos->apiVersion = tmpInfos->apiVersion;
+		_infos->fileName = std::string(tmpInfos->fileName).c_str();
+		_infos->className = std::string(tmpInfos->className).c_str();
+		_infos->pluginName = std::string(tmpInfos->pluginName).c_str;
+		_infos->pluginVersion = tmpInfos->pluginVersion;*/
+
+	/*	std::cout << "Plugin Info: "
 			<< "\n\tAPI Version: " << _infos->apiVersion
-			<< "\n\tFile Name: " <<  _infos->fileName
+			<< "\n\tFile Name: " << _infos->fileName
 			<< "\n\tClass Name: " << _infos->className
 			<< "\n\tPlugin Name: " << _infos->pluginName
 			<< "\n\tPlugin Version: " << _infos->pluginVersion
-			<< std::endl;
+			<< std::endl;*/
 		_isLoaded = true;
 	}
 	return _isLoaded;
@@ -60,7 +71,12 @@ bool Obake::AvailablePlugin::isLoaded() const
 	return _isLoaded;
 }
 
-const Obake::PluginInfos* Obake::AvailablePlugin::getInfos() const
+const std::string& Obake::AvailablePlugin::getPath() const
+{
+	return _path;
+}
+
+Obake::PluginInfos* Obake::AvailablePlugin::getInfos() const
 {
 	return _infos;
 }
@@ -78,11 +94,11 @@ Obake::PluginsManager::PluginsManager()
 {
 	std::vector<std::string> pluginsPaths = _getFilesPathsFromFolder(PLUGINS_FOLDER);
 
-	std::cout << "NbFilesFound: " << pluginsPaths.size() << std::endl;
+	/*std::cout << "NbFilesFound: " << pluginsPaths.size() << std::endl;*/
 
 	for (int i = 0; i < pluginsPaths.size(); ++i)
 	{
-		std::cout << "Path[" << i << "]: " << pluginsPaths[i] << std::endl;
+		/*	std::cout << "Path[" << i << "]: " << pluginsPaths[i] << std::endl;*/
 		_availablePlugins.push_back(new AvailablePlugin(pluginsPaths[i]));
 	}
 
@@ -90,13 +106,13 @@ Obake::PluginsManager::PluginsManager()
 	{
 		AvailablePlugin* availablePlugin = _availablePlugins[i];
 
-		/*std::cout << "Plugin[" << i << "]: Info: "
-			<< "\n\tAPI Version: " << availablePlugin->getInfos().apiVersion
-			<< "\n\tFile Name: " << availablePlugin->getInfos().fileName
-			<< "\n\tClass Name: " << availablePlugin->getInfos().className
-			<< "\n\tPlugin Name: " << availablePlugin->getInfos().pluginName
-			<< "\n\tPlugin Version: " << availablePlugin->getInfos().pluginVersion
-			<< std::endl;*/
+		//std::cout << "Plugin[" << i << "]: Info: "
+		//	<< "\n\tAPI Version: " << availablePlugin->getInfos()->apiVersion
+		//	<< "\n\tFile Name: " << availablePlugin->getInfos()->fileName
+		//	<< "\n\tClass Name: " << availablePlugin->getInfos()->className
+		//	<< "\n\tPlugin Name: " << availablePlugin->getInfos()->pluginName
+		//	<< "\n\tPlugin Version: " << availablePlugin->getInfos()->pluginVersion
+		//	<< std::endl;
 	}
 
 }
@@ -123,7 +139,7 @@ std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const s
 
 	if (INVALID_HANDLE_VALUE == hFind)
 	{
-		std::cout << PLUGINS_FOLDER << " invalid directory" << std::endl;
+		//std::cout << PLUGINS_FOLDER << " invalid directory" << std::endl;
 		return filesPaths;
 	}
 
@@ -131,7 +147,7 @@ std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const s
 	{
 		if (findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
 		{
-			std::cout << "File: " << findFileData.cFileName << " is a directory";
+			//std::cout << "File: " << findFileData.cFileName << " is a directory";
 		}
 		else
 		{
@@ -142,9 +158,36 @@ std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const s
 #endif
 
 	return filesPaths;
-}
+	}
 
 const std::vector<Obake::AvailablePlugin*>& Obake::PluginsManager::getAvailablePlugins() const
 {
 	return _availablePlugins;
+}
+
+void Obake::PluginsManager::displayPluginsInfos()
+{
+	std::cout << std::endl << "Available Plugins: " << _availablePlugins.size()
+		<< std::endl
+		<< "------------------------------" << std::endl;
+
+	for (int i = 0; i < _availablePlugins.size(); ++i)
+	{
+		AvailablePlugin* availablePlugin = _availablePlugins[i];
+		PluginInfos* infos = availablePlugin->getInfos();
+
+		if (infos != nullptr)
+		{
+			std::cout << "Plugin[" << (i) << "]:" << std::endl
+				<< "\n\tAPI Version: " << infos->apiVersion
+				<< "\n\tFile Name: " << infos->fileName
+				<< "\n\tClass Name: " << infos->className
+				<< "\n\tPlugin Name: " << infos->pluginName
+				<< "\n\tPlugin Version: " << infos->pluginVersion
+				<< "\n\tIs Loaded: " << std::boolalpha << availablePlugin->isLoaded()
+				<< "\n\tPath: " << availablePlugin->getPath()
+				<< std::endl << std::endl;
+		}
+	}
+
 }

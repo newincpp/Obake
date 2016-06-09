@@ -41,7 +41,10 @@ int main()
 
 	Obake::PluginsManager pluginsManager;
 
-	int runRet = c.run();
+	pluginsManager.displayPluginsInfos();
+
+//	int runRet = c.run();
 	system("Pause");
-	return runRet;
+	/*return runRet;*/
+	return 0;
 }

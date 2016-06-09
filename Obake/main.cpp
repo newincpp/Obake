@@ -37,8 +37,8 @@ int main(int, const char*[]) {
     Obake::Core c;
     DummySystem d;
 
-    Obake::Event<&DummySystem, decltype(&DummySystem::printA)> e;
-    e.bind(&DummySystem::printA, &d);
+    //Obake::Event<&DummySystem, decltype(&DummySystem::printA)> e;
+    //e.bind(&DummySystem::printA, &d);
     c.registerSystem(&d);
     
 	int runRet = c.run();
