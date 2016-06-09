@@ -106,7 +106,16 @@ Obake::PluginsManager::PluginsManager()
 	for (const std::string& pluginPath : pluginsPaths)
 	{
 		/*	std::cout << "Path[" << i << "]: " << pluginsPaths[i] << std::endl;*/
-		_availablePlugins.push_back(new AvailablePlugin(pluginPath));
+		AvailablePlugin* newPlugin = new AvailablePlugin(pluginPath);
+
+		if (_isAvailablePluginExists(newPlugin))
+		{
+			delete newPlugin;
+		}
+		else
+		{
+			_availablePlugins.push_back(newPlugin);
+		}
 	}
 
 	//for (decltype(_availablePlugins)::value_type availablePlugin : _availablePlugins)
@@ -164,6 +173,19 @@ std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const s
 #endif
 
 	return filesPaths;
+}
+
+bool Obake::PluginsManager::_isAvailablePluginExists(AvailablePlugin* testPlugin_) const
+{
+	for (decltype(_availablePlugins)::value_type currentPlugin : _availablePlugins)
+	{
+		PluginInfos& infos = currentPlugin->getInfos();
+		PluginInfos& testInfos = testPlugin_->getInfos();
+
+		if ((infos.pluginName + infos.pluginVersion) == (testInfos.pluginName + testInfos.pluginVersion))
+			return true;
+	}
+	return false;
 }
 
 const std::vector<Obake::AvailablePlugin*>& Obake::PluginsManager::getAllAvailablePlugins() const
