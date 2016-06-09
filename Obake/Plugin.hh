@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Definitions.hh"
-#ifdef POSIX
+#ifdef defined(LINUX) || defined (APPLE)
 #	include <dlfcn.h>
 #endif
 #include "ASystem.hh"

@@ -13,7 +13,7 @@ bool Obake::SharedLibrary::open(const std::string& path_)
 #if defined (WIN32)
 	HMODULE library = LoadLibraryA(path_.c_str());
 
-#elif defined (POSIX)
+#elif defined(LINUX) || defined (APPLE)
 
 	void* library = dlopen(path_.c_str(), RTLD_LAZY);
 
@@ -31,7 +31,7 @@ bool Obake::SharedLibrary::sym(const char* name_, void** ptr_)
 {
 #if defined (WIN32)
 	void* initializer = (void*)GetProcAddress(_lib.lib, name_);
-#elif defined (POSIX)
+#elif defined(LINUX) || defined (APPLE)
 	void* initializer = dlsym(_lib.lib, name_);
 #endif
 
@@ -49,7 +49,7 @@ void Obake::SharedLibrary::close()
 {
 #if defined (WIN32)
 	FreeLibrary(_lib.lib);
-#elif defined (POSIX)
+#elif defined(LINUX) || defined (APPLE)
 	dlclose(_lib.lib);
 #endif
 }
@@ -58,7 +58,7 @@ void Obake::SharedLibrary::close()
 //{
 //#ifdef WIN32
 //	std::string err(uv_dlerror(&_lib));
-//#elif defined (POSIX)
+//#elif defined(LINUX) || defined (APPLE)
 //
 //#endif
 //
