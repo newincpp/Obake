@@ -12,7 +12,7 @@ namespace System
 		virtual ~TestEventSystem1();
 		explicit TestEventSystem1();
 
-		void initialize() override;
+		void initialize();
 		void registerEvent(std::string eventName);
 		void executeEvent(std::string eventName);
 		void receiveEvent(std::string receiveEventFrom);
