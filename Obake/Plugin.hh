@@ -30,6 +30,8 @@ namespace Obake
 	/* Building static library. */
 #   define OBAKE_EXTERN /* nothing */
 # endif
+#else
+#   define OBAKE_EXTERN /* nothing */
 #endif
 
 	OBAKE_EXTERN typedef IPlugin* (*CreatePluginFunc)();
