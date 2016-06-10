@@ -8,6 +8,18 @@
     <Filter Include="Fichiers d%27en-tête">
       <UniqueIdentifier>{5dabe143-544d-457b-b397-da0864c1eece}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\Plugin">
+      <UniqueIdentifier>{e508e49a-7ac0-4d44-8d09-2a6529236e90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Plugin">
+      <UniqueIdentifier>{fcb38c97-267e-48df-8b25-6e027bd2a640}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Base">
+      <UniqueIdentifier>{cf279863-58fc-48cc-ab09-3c7197717f79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Base">
+      <UniqueIdentifier>{4207c15a-d246-4a66-87a7-799d863024d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ASystem.hh">
@@ -22,6 +34,18 @@
     <ClInclude Include="EventsManager.hh">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Plugin.hh">
+      <Filter>Fichiers d%27en-tête\Plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedLibrary.hh">
+      <Filter>Fichiers d%27en-tête\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Definitions.hh">
+      <Filter>Fichiers d%27en-tête\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginsManager.hh">
+      <Filter>Fichiers d%27en-tête\Plugin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ASystem.cpp">
@@ -35,6 +59,12 @@
     </ClCompile>
     <ClCompile Include="EventsManager.cpp">
       <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedLibrary.cpp">
+      <Filter>Resource Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginsManager.cpp">
+      <Filter>Resource Files\Base</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

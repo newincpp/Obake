@@ -24,7 +24,7 @@ bool Obake::Core::registerSystem(ASystem* sys_) {
     return true;
 }
 
-Obake::Core::OSReturnType Obake::Core::run() {
+int Obake::Core::run() {
     bool still = true;
     while (still) {
         still = false;

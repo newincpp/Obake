@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Editor", "Editor\Editor.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestEventSystem2", "TestEventSystem2\TestEventSystem2.vcxproj", "{78D2257A-40E4-4EB3-AA74-A9E0495B97EB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestPlugin", "TestPlugin\TestPlugin.vcxproj", "{FB013030-CCAD-48AB-8BAD-EC404045556D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -79,6 +81,14 @@ Global
 		{78D2257A-40E4-4EB3-AA74-A9E0495B97EB}.Release|x64.Build.0 = Release|x64
 		{78D2257A-40E4-4EB3-AA74-A9E0495B97EB}.Release|x86.ActiveCfg = Release|Win32
 		{78D2257A-40E4-4EB3-AA74-A9E0495B97EB}.Release|x86.Build.0 = Release|Win32
+		{FB013030-CCAD-48AB-8BAD-EC404045556D}.Debug|x64.ActiveCfg = Debug|x64
+		{FB013030-CCAD-48AB-8BAD-EC404045556D}.Debug|x64.Build.0 = Debug|x64
+		{FB013030-CCAD-48AB-8BAD-EC404045556D}.Debug|x86.ActiveCfg = Debug|Win32
+		{FB013030-CCAD-48AB-8BAD-EC404045556D}.Debug|x86.Build.0 = Debug|Win32
+		{FB013030-CCAD-48AB-8BAD-EC404045556D}.Release|x64.ActiveCfg = Release|x64
+		{FB013030-CCAD-48AB-8BAD-EC404045556D}.Release|x64.Build.0 = Release|x64
+		{FB013030-CCAD-48AB-8BAD-EC404045556D}.Release|x86.ActiveCfg = Release|Win32
+		{FB013030-CCAD-48AB-8BAD-EC404045556D}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
