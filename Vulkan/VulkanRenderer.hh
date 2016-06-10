@@ -6,12 +6,12 @@
 #include "Platform.h"
 #include "Shared.h"
 
-#include "Core.hh"
-#include "ASystem.hh"
+//#include "Core.hh"
+#include "Plugin.hh"
 
 namespace System
 {
-	class VulkanRenderer : public Obake::ASystem
+	class VulkanRenderer : public Obake::IPlugin
 	{
 	private:
 		static VulkanRenderer *_sysInstance;
@@ -27,6 +27,8 @@ namespace System
 				_sysInstance = new VulkanRenderer();
 			return *_sysInstance;
 		};
+
+		void sayHello();
 
 //	private:
 		void _InitInstance();

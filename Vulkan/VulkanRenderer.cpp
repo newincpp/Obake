@@ -1,12 +1,14 @@
 #include <cstdlib>
 #include <sstream>
+#include <iostream>
 
 #include "VulkanRenderer.hh"
 
 using namespace System;
 
+OBAKE_PLUGIN(VulkanRenderer, "VulkanRenderer Plugin", "0.1.0")
+
 VulkanRenderer::VulkanRenderer()
-	: ASystem()
 {
 	//	_SetupDebug();
 	//	_InitInstance();
@@ -28,6 +30,11 @@ void VulkanRenderer::initialize()
 	_InitInstance();
 	_InitDebug();
 	_InitDevice();
+}
+
+void VulkanRenderer::sayHello()
+{
+	std::cout << "HELLO FROM VULKAN RENDERER" << std::endl;
 }
 
 void VulkanRenderer::_InitInstance()
