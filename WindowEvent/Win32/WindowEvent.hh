@@ -14,8 +14,13 @@ namespace System
 		HWND _hwnd;
 		HINSTANCE _windowInstance;
 
+		MSG _msg;
+
 	public:
-		WindowEvent();
+		explicit WindowEvent();
+		~WindowEvent();
+
+		void initialize();
 
 		static WindowEvent & getInstance()
 		{
@@ -27,6 +32,7 @@ namespace System
 		void createWindow();
 		void destroyWindow();
 
+		bool messageLoop();
 		void handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	private:

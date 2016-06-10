@@ -1,62 +1,33 @@
 #include <cstdlib>
-#include <assert.h>
+#include <sstream>
 
 #include "VulkanRenderer.hh"
 
 using namespace System;
 
-// CALLBACKS
-VKAPI_ATTR VkBool32 VKAPI_CALL
-VulkanDebugCallback(
-	VkDebugReportFlagsEXT msgFlags,
-	VkDebugReportObjectTypeEXT objType,
-	uint64_t srcObj,
-	size_t location,
-	int32_t msgCode,
-	const char * layerPrefix,
-	const char * msg,
-	void * userDate)
-{
-	std::ostringstream stream;
-
-	stream << "VKDBG: ";
-	if (msgFlags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT)
-		stream << "INFO: ";
-	if (msgFlags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
-		stream << "WARNING: ";
-	if (msgFlags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
-		stream << "PERFORMANCE: ";
-	if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
-		stream << "ERROR: ";
-	if (msgFlags & VK_DEBUG_REPORT_DEBUG_BIT_EXT)
-		stream << "DEBUG: ";
-	stream << "@[" << layerPrefix << "]: ";
-	stream << msg << std::endl;
-
-	std::cout << stream.str();
-
-#ifdef _WIN32
-	if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
-		MessageBox(NULL, stream.str().c_str(), "Vulkan Error!", 0);
-#endif
-	return false;
-}
-// - - -
-
 VulkanRenderer::VulkanRenderer()
+	: ASystem()
 {
-	_SetupDebug();
-	_InitInstance();
-	_InitDebug();
-	_InitDevice();
+	//	_SetupDebug();
+	//	_InitInstance();
+	//	_InitDebug();
+	//	_InitDevice();
 }
-
 
 VulkanRenderer::~VulkanRenderer()
 {
 	_DeInitDevice();
 	_DeInitDebug();
 	_DeInitInstance();
+}
+
+
+void VulkanRenderer::initialize()
+{
+	_SetupDebug();
+	_InitInstance();
+	_InitDebug();
+	_InitDevice();
 }
 
 void VulkanRenderer::_InitInstance()
@@ -112,16 +83,8 @@ void VulkanRenderer::_InitInstance()
 		instanceCreateInfo.ppEnabledExtensionNames = _instanceExtensions.data()
 	};
 
-	VkResult err = VkResult::VK_SUCCESS;
 	//Creates the Vulkan Instance
-	if ((err = vkCreateInstance(&instanceCreateInfo, nullptr, &_instance)) != VK_SUCCESS)
-	{
-		assert(0 && "## Vulkan ERROR: Create instance FAILED.");
-	}
-	else
-	{
-		std::cout << "## Vulkan: Create instance SUCCESS" << std::endl;
-	}
+	ErrorCheck(vkCreateInstance(&instanceCreateInfo, nullptr, &_instance));
 }
 
 void VulkanRenderer::_DeInitInstance()
@@ -242,21 +205,56 @@ void VulkanRenderer::_InitDevice()
 	};
 
 	// Creates a Vulkan Device
-	if (vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device) != VK_SUCCESS)
-	{
-		assert(0 && "## Vulkan ERROR: Create device FAILED.");
-	}
-	else
-	{
-		std::cout << "## Vulkan: Create device SUCCESS" << std::endl;
-	}
+	ErrorCheck(vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device));
+
+	vkGetDeviceQueue(_device, _graphicsFamilyIndex, 0, &_queue);
 }
 
 void VulkanRenderer::_DeInitDevice()
 {
 	vkDestroyDevice(_device, nullptr);
-	_device = nullptr;
+	_device = VK_NULL_HANDLE;
 }
+
+#if BUILD_ENABLE_VULKAN_DEBUG
+
+// CALLBACKS
+VKAPI_ATTR VkBool32 VKAPI_CALL
+VulkanDebugCallback(
+	VkDebugReportFlagsEXT msgFlags,
+	VkDebugReportObjectTypeEXT objType,
+	uint64_t srcObj,
+	size_t location,
+	int32_t msgCode,
+	const char * layerPrefix,
+	const char * msg,
+	void * userDate)
+{
+	std::ostringstream stream;
+
+	stream << "VKDBG: ";
+	if (msgFlags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT)
+		stream << "INFO: ";
+	if (msgFlags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
+		stream << "WARNING: ";
+	if (msgFlags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
+		stream << "PERFORMANCE: ";
+	if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
+		stream << "ERROR: ";
+	if (msgFlags & VK_DEBUG_REPORT_DEBUG_BIT_EXT)
+		stream << "DEBUG: ";
+	stream << "@[" << layerPrefix << "]: ";
+	stream << msg << std::endl;
+
+	std::cout << stream.str();
+
+#ifdef _WIN32
+	if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
+		MessageBox(NULL, stream.str().c_str(), "Vulkan Error!", 0);
+#endif
+	return false;
+}
+// - - -
 
 void VulkanRenderer::_SetupDebug()
 {
@@ -295,5 +293,13 @@ void VulkanRenderer::_InitDebug()
 void VulkanRenderer::_DeInitDebug()
 {
 	fvkDestroyDebugReportCallbackEXT(_instance, _debugReport, nullptr);
-	_debugReport = NULL;
+	_debugReport = VK_NULL_HANDLE;
 }
+
+#else
+
+void VulkanRenderer::_SetupDebug(){};
+void VulkanRenderer::_InitDebug() {};
+void VulkanRenderer::_DeInitDebug() {};
+
+#endif // BUILD_ENABLE_VULKAN_DEBUG

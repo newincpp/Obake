@@ -11,6 +11,14 @@ WindowEvent::WindowEvent()
 	: ASystem()
 {}
 
+WindowEvent::~WindowEvent()
+{}
+
+void WindowEvent::initialize()
+{
+	createWindow();
+}
+
 void WindowEvent::createWindow()
 {
 	// Current Instance
@@ -90,39 +98,37 @@ void WindowEvent::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	case WM_QUIT:
 		std::cout << "Quiting Window" << std::endl;
 		break;
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_ESCAPE:
+			PostQuitMessage(0);
+			break;
+		}
+		break;
 	default:
 		return;
 	}
 }
 
-///////////////////////////////////////////////////////////////
-
-int main()
+bool WindowEvent::messageLoop()
 {
-	Obake::Core c;
-	System::WindowEvent winEvent = System::WindowEvent::getInstance();
-
-	winEvent.createWindow();
-	// Run the message loop.
-
-	MSG msg = {};
 	bool isExiting = false;
-	while (isExiting == false)
+
+	while (PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE))
 	{
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (_msg.message == WM_CLOSE)
 		{
-			if (msg.message == WM_CLOSE)
-			{
-				std::cout << "QUITING" << std::endl;
-				isExiting = true;
-			}
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			std::cout << "QUITING" << std::endl;
+			isExiting = true;
 		}
+		TranslateMessage(&_msg);
+		DispatchMessage(&_msg);
 	}
-	system("Pause");
-	return 0;
+	return isExiting;
 }
+
+///////////////////////////////////////////////////////////////
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {

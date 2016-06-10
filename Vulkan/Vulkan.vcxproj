@@ -19,9 +19,13 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BUILD_OPTIONS.h" />
+    <ClInclude Include="Platform.h" />
+    <ClInclude Include="Shared.h" />
     <ClInclude Include="VulkanRenderer.hh" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Shared.cpp" />
     <ClCompile Include="VulkanRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
