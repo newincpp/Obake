@@ -78,12 +78,17 @@ namespace Obake {
 	private:
 		std::map<size_t, std::function<RETURN_TYPE(ARGS...)>> _receivers;
 		typedef typename std::map<size_t, std::function<RETURN_TYPE(ARGS...)>>::iterator receiversIterator;
-
+		template <typename T> union _Trans_
+		{
+			T fptr;
+			void* ptr;
+			size_t hex;
+		};
 		template<class CALLBACK_TARGET_CLASS>
 		size_t _generateHash(CALLBACK_TARGET_CLASS* callbackTarget_, RETURN_TYPE(CALLBACK_TARGET_CLASS::*memberFunction_)(ARGS...))
 		{
-			_Trans_<decltype(callbackTarget_)> x;
-			_Trans_<decltype(memberfunction)> y;
+			_Trans_<CALLBACK_TARGET_CLASS*> x;
+			_Trans_<RETURN_TYPE(CALLBACK_TARGET_CLASS::*)(ARGS...)> y;
 			x.fptr = callbackTarget_;
 			y.fptr = memberFunction_;
 			return x.hex ^ (y.hex << 1);
