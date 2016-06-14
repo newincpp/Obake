@@ -6,7 +6,7 @@
 
 int main()
 {
-	Obake::Core c;
+	Obake::Core core;
 	//System::TestEventSystem1 system1;
 	//System::TestEventSystem2 system2;
 	//System::VulkanRenderer vulkan;
@@ -18,27 +18,6 @@ int main()
 	//system2.initialize();
 	//vulkan.initialize();
 
-	//c.registerSystem(&system1);
-	//c.registerSystem(&system2);
-
-	//Obake::SharedLibrary testLib;
-
-	//if (!testLib.open(".\\Plugins\\TestPlugin.dll"))
-	//	std::cout << "Failed to open dll" << std::endl;
-	//else
-	//{
-	//	Obake::PluginInfos* infos;
-
-	//	testLib.sym("exports", reinterpret_cast<void**>(&infos));
-	//	std::cout << "Plugin Info: "
-	//		<< "\n\tAPI Version: " << infos->apiVersion
-	//		<< "\n\tFile Name: " << infos->fileName
-	//		<< "\n\tClass Name: " << infos->className
-	//		<< "\n\tPlugin Name: " << infos->pluginName
-	//		<< "\n\tPlugin Version: " << infos->pluginVersion
-	//		<< std::endl;
-	//}
-
 	Obake::PluginsManager pluginsManager;
 
 	pluginsManager.loadAllAvailablePlugins();
@@ -49,8 +28,9 @@ int main()
 	{
 		if (plugin->isLoaded())
 		{
-			c.registerSystem(plugin->getPlugin());
-			plugin->getPlugin()->sayHello();
+			plugin->getPlugin()->registerCore(&core);
+			plugin->getPlugin()->initialize();
+			core.registerSystem(reinterpret_cast<Obake::ASystem*>(plugin->getPlugin()));
 		}
 	}
 
@@ -269,8 +249,17 @@ int main()
 	}
 	*/
 
-	//int runRet = c.run();
+	//int runRet = core.run();
 	system("Pause");
 	//return runRet;
+
+	for (Obake::AvailablePlugin* plugin : availablePlugins)
+	{
+		if (plugin->isLoaded())
+		{
+			plugin->getPlugin()->unload();
+		}
+	}
+
 	return 0;
 }
