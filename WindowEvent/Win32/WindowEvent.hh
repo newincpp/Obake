@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 
+#include "Core.hh"
 #include "Plugin.hh"
 
 namespace System
@@ -19,8 +20,6 @@ namespace System
 		explicit WindowEvent();
 		~WindowEvent();
 
-		void initialize();
-
 		static WindowEvent & getInstance()
 		{
 			if (_sysInstance == nullptr)
@@ -28,7 +27,11 @@ namespace System
 			return *_sysInstance;
 		};
 
-		void sayHello() { };
+		void registerCore(Obake::Core* core_);
+		void initialize();
+		void unload();
+
+		void windowEventEvent();
 
 		void createWindow();
 		void destroyWindow();

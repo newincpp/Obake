@@ -6,7 +6,7 @@
 #include "Platform.h"
 #include "Shared.h"
 
-//#include "Core.hh"
+#include "Core.hh"
 #include "Plugin.hh"
 
 namespace System
@@ -19,7 +19,6 @@ namespace System
 	public:
 		explicit VulkanRenderer();
 		~VulkanRenderer();
-		void initialize();
 
 		static VulkanRenderer & getInstance()
 		{
@@ -28,7 +27,11 @@ namespace System
 			return *_sysInstance;
 		};
 
-		void sayHello();
+		void registerCore(Obake::Core* core_);
+		void initialize();
+		void unload();
+
+		void vulkanEvent();
 
 //	private:
 		void _InitInstance();

@@ -11,7 +11,15 @@ TestPlugin::TestPlugin()
 {
 }
 
-void TestPlugin::sayHello()
+void TestPlugin::initialize()
 {
-	std::cout << "HELLO FROM TEST PLUGIN" << std::endl;
+}
+
+void TestPlugin::registerCore(Obake::Core* core_)
+{
+	ASystem::registerCore(core_);
+}
+
+void TestPlugin::unload()
+{
 }

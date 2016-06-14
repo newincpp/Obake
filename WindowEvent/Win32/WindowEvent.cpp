@@ -10,14 +10,41 @@ OBAKE_PLUGIN(WindowEvent, "WindowEvent Plugin", "0.1.0")
 WindowEvent* WindowEvent::_sysInstance = nullptr;
 
 WindowEvent::WindowEvent()
-{}
+{
+	//_beginLoop = _executionQueue;
+}
 
 WindowEvent::~WindowEvent()
 {}
 
 void WindowEvent::initialize()
 {
-	createWindow();
+
+	// Create & bind an event
+	_core->eventsManager.bindEvent("Window Event", this, &WindowEvent::windowEventEvent);
+	// Call vulkan event
+	_core->eventsManager.executeEvent<void>("Vulkan Event");
+
+	//OBAKE_ADD(&WindowEvent::createWindow)
+	//OBAKE_LOOP
+	//{
+	//	OBAKE_ADD(&WindowEvent::messageLoop)
+	//}
+}
+
+void WindowEvent::windowEventEvent()
+{
+	std::cout << "WINDOW EVENT" << std::endl;
+}
+
+void WindowEvent::registerCore(Obake::Core* core_)
+{
+	ASystem::registerCore(core_);
+}
+
+void WindowEvent::unload()
+{
+
 }
 
 void WindowEvent::createWindow()
@@ -115,7 +142,7 @@ void WindowEvent::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 bool WindowEvent::messageLoop()
 {
 	bool isExiting = false;
-
+	 
 	while (PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE))
 	{
 		if (_msg.message == WM_CLOSE)

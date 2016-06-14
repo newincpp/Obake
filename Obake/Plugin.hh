@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include "Definitions.hh"
 #if defined(LINUX) || defined (APPLE)
 #	include <dlfcn.h>
@@ -72,7 +73,7 @@ namespace Obake
           #classType,                                        \
           pluginName,                                        \
           pluginVersion,                                     \
-          createPlugin,                                         \
+          createPlugin,                                      \
       };                                                     \
   }
 
@@ -82,10 +83,12 @@ namespace Obake
 
 	public:
 		virtual ~IPlugin() {};
-		IPlugin() {};
+		IPlugin() : ASystem() { };
 
 		// TODO Remove test
-		virtual void sayHello() = 0;
+		virtual void registerCore(Core* core_) = 0;
+		virtual void initialize() = 0;
+		virtual void unload() = 0;
 	};
 
 }

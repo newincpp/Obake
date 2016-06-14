@@ -12,7 +12,7 @@ namespace Obake {
 	class ASystem;
     class Core {
     private:
-
+		bool _threadingDisabled;
         std::vector<ASystem*> _registeredSystems;
         std::vector<std::thread> _threadPool;
 		std::vector<SharedLibrary> _libs;

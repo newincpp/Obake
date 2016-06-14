@@ -26,15 +26,30 @@ VulkanRenderer::~VulkanRenderer()
 
 void VulkanRenderer::initialize()
 {
-	_SetupDebug();
+	/*_SetupDebug();
 	_InitInstance();
 	_InitDebug();
-	_InitDevice();
+	_InitDevice();*/
+
+	// Create & bind an event
+	_core->eventsManager.bindEvent("Vulkan Event", this, &VulkanRenderer::vulkanEvent);
+	// Call window event
+	_core->eventsManager.executeEvent<void>("Window Event");
 }
 
-void VulkanRenderer::sayHello()
+void VulkanRenderer::vulkanEvent()
 {
-	std::cout << "HELLO FROM VULKAN RENDERER" << std::endl;
+	std::cout << "VULKAN EVENT" << std::endl;
+}
+
+void VulkanRenderer::registerCore(Obake::Core* core_)
+{
+	ASystem::registerCore(core_);
+}
+
+void VulkanRenderer::unload()
+{
+
 }
 
 void VulkanRenderer::_InitInstance()
