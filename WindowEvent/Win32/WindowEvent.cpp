@@ -5,10 +5,11 @@
 
 using namespace System;
 
+OBAKE_PLUGIN(WindowEvent, "WindowEvent Plugin", "0.1.0")
+
 WindowEvent* WindowEvent::_sysInstance = nullptr;
 
 WindowEvent::WindowEvent()
-	: ASystem()
 {}
 
 WindowEvent::~WindowEvent()

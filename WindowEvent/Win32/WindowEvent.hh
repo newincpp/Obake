@@ -2,15 +2,14 @@
 
 #include <Windows.h>
 
-#include "ASystem.hh"
+#include "Plugin.hh"
 
 namespace System
 {
-	class WindowEvent : public Obake::ASystem
+	class WindowEvent : public Obake::IPlugin
 	{
 	private:
 		static WindowEvent *_sysInstance;
-
 		HWND _hwnd;
 		HINSTANCE _windowInstance;
 
@@ -28,6 +27,8 @@ namespace System
 				_sysInstance = new WindowEvent();
 			return *_sysInstance;
 		};
+
+		void sayHello() { };
 
 		void createWindow();
 		void destroyWindow();

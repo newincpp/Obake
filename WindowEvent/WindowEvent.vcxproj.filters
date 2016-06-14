@@ -18,14 +18,14 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Win32\WindowEvent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Obake\ASystem.cpp">
       <Filter>Source Files\Obake</Filter>
     </ClCompile>
     <ClCompile Include="..\Obake\Core.cpp">
       <Filter>Source Files\Obake</Filter>
+    </ClCompile>
+    <ClCompile Include="Win32\WindowEvent.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

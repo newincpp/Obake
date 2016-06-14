@@ -78,7 +78,7 @@ int main()
 	}
 
 	// Tells the GPU when other process in the GPU are completed
-	VkSemaphore semaphore;
+	VkSemaphore semaphore; 
 	{
 	VkSemaphoreCreateInfo semaphoreCreateInfo =
 	{

@@ -2,8 +2,8 @@
 
 #ifdef _WIN32
 
+#define VK_USE_PKATFORM_WIN32_KHR 1
 #include <Windows.h>
-#define VK_USE_PLATFORM_WIN32_KHR
 
 #elif __linux__
 #define VK_USE_PLATFORM_XCB_KHR
