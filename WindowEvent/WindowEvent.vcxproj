@@ -135,6 +135,11 @@
     <ClCompile Include="..\Obake\Core.cpp" />
     <ClCompile Include="Win32\WindowEvent.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Obake\Obake.vcxproj">
+      <Project>{af1af999-c493-4b14-b15a-2689b99a2505}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
