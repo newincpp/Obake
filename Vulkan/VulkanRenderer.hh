@@ -32,6 +32,7 @@ namespace System
 		void unload();
 
 		void vulkanEvent();
+		void sendWinHandleEvent(HWND winHandle_);
 
 //	private:
 		void _InitInstance();

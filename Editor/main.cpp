@@ -30,7 +30,7 @@ int main()
 		{
 			plugin->getPlugin()->registerCore(&core);
 			plugin->getPlugin()->initialize();
-			core.registerSystem(reinterpret_cast<Obake::ASystem*>(plugin->getPlugin()));
+			core.registerSystem(plugin->getPlugin());
 		}
 	}
 
@@ -249,7 +249,7 @@ int main()
 	}
 	*/
 
-	//int runRet = core.run();
+	int runRet = core.run();
 	system("Pause");
 	//return runRet;
 

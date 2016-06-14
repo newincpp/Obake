@@ -2,13 +2,13 @@
 
 void Obake::Core::executeNext(ASystem* system_) {
 
-	//decltype(system_->getTask()) && task(system_->getTask());
+	decltype(system_->getTask()) && task(system_->getTask());
 	if (_threadingDisabled)
 	{
-		//task();
+		task();
 		return ;
 	}
-	/*if (_threadPool.size() < std::thread::hardware_concurrency()) {
+	if (_threadPool.size() < std::thread::hardware_concurrency()) {
 		_threadPool.emplace_back(task);
 	}
 	else {
@@ -22,16 +22,13 @@ void Obake::Core::executeNext(ASystem* system_) {
 				}
 			}
 		}
-	}*/
+	}
 }
 
 bool Obake::Core::registerSystem(ASystem* sys_) 
 {
-	std::cout << "REGISTER 1" << std::endl;
 	sys_->start();
-	std::cout << "REGISTER 2" << std::endl;
 	_registeredSystems.push_back(sys_);
-	std::cout << "REGISTER 3" << std::endl;
 	return true;
 }
 
@@ -43,8 +40,8 @@ int Obake::Core::run() {
 		{
 			if (system != nullptr)
 			{
-		/*		executeNext(system);
-				still |= system->isStillWorking();*/
+				//executeNext(system);
+				still |= system->isStillWorking();
 			}
 		}
 	}

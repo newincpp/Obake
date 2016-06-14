@@ -26,13 +26,14 @@ VulkanRenderer::~VulkanRenderer()
 
 void VulkanRenderer::initialize()
 {
-	/*_SetupDebug();
+	_SetupDebug();
 	_InitInstance();
 	_InitDebug();
-	_InitDevice();*/
+	_InitDevice();
 
 	// Create & bind an event
 	_core->eventsManager.bindEvent("Vulkan Event", this, &VulkanRenderer::vulkanEvent);
+	_core->eventsManager.bindEvent("SendWinHandle", this, &VulkanRenderer::sendWinHandleEvent);
 	// Call window event
 	_core->eventsManager.executeEvent<void>("Window Event");
 }
@@ -40,6 +41,11 @@ void VulkanRenderer::initialize()
 void VulkanRenderer::vulkanEvent()
 {
 	std::cout << "VULKAN EVENT" << std::endl;
+}
+
+void VulkanRenderer::sendWinHandleEvent(HWND winHandle_)
+{
+	std::cout << "GET WIN HANDLE" << std::endl;
 }
 
 void VulkanRenderer::registerCore(Obake::Core* core_)

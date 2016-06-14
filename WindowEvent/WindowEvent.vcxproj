@@ -131,8 +131,6 @@
     <ClInclude Include="Win32\WindowEvent.hh" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Obake\ASystem.cpp" />
-    <ClCompile Include="..\Obake\Core.cpp" />
     <ClCompile Include="Win32\WindowEvent.cpp" />
   </ItemGroup>
   <ItemGroup>

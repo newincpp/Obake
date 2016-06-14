@@ -36,7 +36,7 @@ bool Obake::AvailablePlugin::load()
 		_infos.pluginName = std::string(tmpInfos->pluginName);
 		_infos.pluginVersion = std::string(tmpInfos->pluginVersion);
 		_infos.initializeFunc = tmpInfos->initializeFunc;
-		_plugin = reinterpret_cast<Obake::IPlugin*>(_infos.initializeFunc());
+		_plugin = static_cast<Obake::IPlugin*>(_infos.initializeFunc());
 
 		//_plugin->sayHello();
 

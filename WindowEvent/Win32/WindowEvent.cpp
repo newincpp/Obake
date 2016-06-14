@@ -11,7 +11,6 @@ WindowEvent* WindowEvent::_sysInstance = nullptr;
 
 WindowEvent::WindowEvent()
 {
-	//_beginLoop = _executionQueue;
 }
 
 WindowEvent::~WindowEvent()
@@ -24,12 +23,13 @@ void WindowEvent::initialize()
 	_core->eventsManager.bindEvent("Window Event", this, &WindowEvent::windowEventEvent);
 	// Call vulkan event
 	_core->eventsManager.executeEvent<void>("Vulkan Event");
+	_core->eventsManager.executeEvent<void, HWND>("SendWinHandle", _hwnd);
 
-	//OBAKE_ADD(&WindowEvent::createWindow)
-	//OBAKE_LOOP
-	//{
-	//	OBAKE_ADD(&WindowEvent::messageLoop)
-	//}
+	OBAKE_ADD(&WindowEvent::createWindow)
+	OBAKE_LOOP
+	{
+		OBAKE_ADD(&WindowEvent::messageLoop)
+	}
 }
 
 void WindowEvent::windowEventEvent()

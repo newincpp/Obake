@@ -1,18 +1,11 @@
+#include <iostream>
 #include "Core.hh"
 #include "ASystem.hh"
-#include <iostream>
 
 Obake::ASystem::ASystem()
-	: _beginLoop(_executionQueue.end())
+	: _beginLoop(_executionQueue.end()), _core(nullptr)
 {
-    //_executionQueue.reserve(32);
-	//_executionQueue.push_back(std::bind(&Obake::ASystem::empty, this));
-	std::cout << "CONSTRUCT SYSTEM" << std::endl;
-}
-
-void Obake::ASystem::empty()
-{
-
+    _executionQueue.reserve(32);
 }
 
 void Obake::ASystem::executeAtBegin()
