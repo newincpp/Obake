@@ -2,15 +2,17 @@
 
 void Obake::Core::executeNext(ASystem* system_) {
 
-	decltype(system_->getTask()) && task(system_->getTask());
+	std::function<void(void)> task = []() {};
+	system_->fillTask(task);
+
 	if (_threadingDisabled)
 	{
 		task();
-		return ;
+		return;
 	}
 	if (_threadPool.size() < std::thread::hardware_concurrency()) {
 		_threadPool.emplace_back(task);
-	}
+	} 
 	else {
 		bool taskAssigned = false;
 		while (!taskAssigned) {
@@ -25,7 +27,7 @@ void Obake::Core::executeNext(ASystem* system_) {
 	}
 }
 
-bool Obake::Core::registerSystem(ASystem* sys_) 
+bool Obake::Core::registerSystem(ASystem* sys_)
 {
 	sys_->start();
 	_registeredSystems.push_back(sys_);
@@ -40,7 +42,7 @@ int Obake::Core::run() {
 		{
 			if (system != nullptr)
 			{
-				//executeNext(system);
+				executeNext(system);
 				still |= system->isStillWorking();
 			}
 		}

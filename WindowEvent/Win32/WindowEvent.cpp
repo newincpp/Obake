@@ -22,10 +22,11 @@ void WindowEvent::initialize()
 	// Create & bind an event
 	_core->eventsManager.bindEvent("Window Event", this, &WindowEvent::windowEventEvent);
 	// Call vulkan event
-	_core->eventsManager.executeEvent<void>("Vulkan Event");
-	_core->eventsManager.executeEvent<void, HWND>("SendWinHandle", _hwnd);
+	//_core->eventsManager.executeEvent<void>("Vulkan Event");
+	//_core->eventsManager.executeEvent<void, HWND>("SendWinHandle", _hwnd);
 
 	OBAKE_ADD(&WindowEvent::createWindow)
+	OBAKE_ADD(&WindowEvent::windowEventEvent)
 	OBAKE_LOOP
 	{
 		OBAKE_ADD(&WindowEvent::messageLoop)
@@ -49,6 +50,7 @@ void WindowEvent::unload()
 
 void WindowEvent::createWindow()
 {
+	std::cout << "CREATE WINDOW" << std::endl;
 	// Current Instance
 	_windowInstance = GetModuleHandle(NULL);
 
@@ -139,10 +141,11 @@ void WindowEvent::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	}
 }
 
-bool WindowEvent::messageLoop()
+void WindowEvent::messageLoop()
 {
+	std::cout << "MESSAGE LOOP" << std::endl;
 	bool isExiting = false;
-	 
+
 	while (PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE))
 	{
 		if (_msg.message == WM_CLOSE)
@@ -153,7 +156,7 @@ bool WindowEvent::messageLoop()
 		TranslateMessage(&_msg);
 		DispatchMessage(&_msg);
 	}
-	return isExiting;
+	//return isExiting;
 }
 
 ///////////////////////////////////////////////////////////////

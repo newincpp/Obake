@@ -10,12 +10,16 @@ Obake::ASystem::ASystem()
 
 void Obake::ASystem::executeAtBegin()
 {
+	std::cout << "Execute at begin" << std::endl;
 	_beginLoop = --_executionQueue.end();
 }
 
-void Obake::ASystem::executeAtEnd()
+bool Obake::ASystem::executeAtEnd()
 {
+	std::cout << "Execute at end" << std::endl;
 	_executionQueue.push_back(std::bind(&Obake::ASystem::jump, this));
+
+	return false;
 }
 
 void Obake::ASystem::jump()
