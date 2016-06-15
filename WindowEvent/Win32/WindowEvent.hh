@@ -31,6 +31,7 @@ namespace System
 		void initialize();
 		void unload();
 
+		void sendWinHandle();
 		void windowEventEvent();
 
 		void createWindow();

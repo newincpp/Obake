@@ -23,6 +23,7 @@ VulkanRenderer::~VulkanRenderer()
 	_DeInitInstance();
 }
 
+// Event System
 
 void VulkanRenderer::initialize()
 {
@@ -38,16 +39,6 @@ void VulkanRenderer::initialize()
 	_core->eventsManager.executeEvent<void>("Window Event");
 }
 
-void VulkanRenderer::vulkanEvent()
-{
-	std::cout << "VULKAN EVENT" << std::endl;
-}
-
-void VulkanRenderer::sendWinHandleEvent(HWND winHandle_)
-{
-	std::cout << "GET WIN HANDLE" << std::endl;
-}
-
 void VulkanRenderer::registerCore(Obake::Core* core_)
 {
 	ASystem::registerCore(core_);
@@ -58,19 +49,22 @@ void VulkanRenderer::unload()
 
 }
 
+void VulkanRenderer::vulkanEvent()
+{
+	std::cout << "VULKAN EVENT" << std::endl;
+}
+
+void VulkanRenderer::sendWinHandleEvent(HWND winHandle_)
+{
+	std::cout << "### GET WIN HANDLE ###" << std::endl;
+	_pWinInstance = winHandle_;
+	std::cout << "### winHandle : " << _pWinInstance << "###" << std::endl;
+}
+
+// - - !Event System
+
 void VulkanRenderer::_InitInstance()
 {
-
-	// Filling the _instanceExtension array with the name of the extensions we wish to activate:
-	{
-#if defined(_WIN32)
-		// DEPRECATED
-		//_instanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-#elif defined(__linux__)
-		_instanceExtensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
-#endif
-	}
-
 	// Contains info in regards to the application
 	VkApplicationInfo applicationInfo =
 	{
@@ -310,6 +304,7 @@ void VulkanRenderer::_InitDebug()
 {
 	fvkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(_instance, "vkCreateDebugReportCallbackEXT");
 	fvkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(_instance, "vkDestroyDebugReportCallbackEXT");
+
 	if (fvkCreateDebugReportCallbackEXT == nullptr || fvkDestroyDebugReportCallbackEXT == nullptr)
 	{
 		assert(0 && "##Vulkan ERROR: Can't fetch debug function pointers.");
@@ -330,4 +325,4 @@ void VulkanRenderer::_SetupDebug(){};
 void VulkanRenderer::_InitDebug() {};
 void VulkanRenderer::_DeInitDebug() {};
 
-#endif // BUILD_ENABLE_VULKAN_DEBUG
+#endif // !BUILD_ENABLE_VULKAN_DEBUG

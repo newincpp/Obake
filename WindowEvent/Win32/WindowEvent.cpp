@@ -16,21 +16,30 @@ WindowEvent::WindowEvent()
 WindowEvent::~WindowEvent()
 {}
 
+// Event System
+
 void WindowEvent::initialize()
 {
+	//	createWindow();
 
 	// Create & bind an event
 	_core->eventsManager.bindEvent("Window Event", this, &WindowEvent::windowEventEvent);
 	// Call vulkan event
 	//_core->eventsManager.executeEvent<void>("Vulkan Event");
-	//_core->eventsManager.executeEvent<void, HWND>("SendWinHandle", _hwnd);
 
 	OBAKE_ADD(&WindowEvent::createWindow)
+	OBAKE_ADD(&WindowEvent::sendWinHandle)
 	OBAKE_ADD(&WindowEvent::windowEventEvent)
 	OBAKE_LOOP
 	{
 		OBAKE_ADD(&WindowEvent::messageLoop)
 	}
+}
+
+
+void WindowEvent::sendWinHandle()
+{
+	_core->eventsManager.executeEvent<void, HWND>("SendWinHandle", _hwnd);
 }
 
 void WindowEvent::windowEventEvent()
@@ -47,6 +56,9 @@ void WindowEvent::unload()
 {
 
 }
+
+// - - !Event System
+
 
 void WindowEvent::createWindow()
 {
@@ -120,6 +132,9 @@ void WindowEvent::destroyWindow()
 
 void WindowEvent::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	// Le code en commentaire est le code d'Adrien
+//	wchar_t msg[32];
+
 	switch (uMsg)
 	{
 	case WM_CLOSE:
@@ -136,6 +151,35 @@ void WindowEvent::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 			break;
 		}
 		break;
+		//case WM_SYSKEYDOWN:
+		//	swprintf_s(msg, L"WM_SYSKEYDOWN: 0x%x\n", wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_SYSCHAR:
+		//	swprintf_s(msg, L"WM_SYSCHAR: %c\n", (wchar_t)wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_SYSKEYUP:
+		//	swprintf_s(msg, L"WM_SYSKEYUP: 0x%x\n", wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_KEYDOWN:
+		//	swprintf_s(msg, L"WM_KEYDOWN: 0x%x\n", wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_KEYUP:
+		//	swprintf_s(msg, L"WM_KEYUP: 0x%x\n", wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_CHAR:
+		//	swprintf_s(msg, L"WM_CHAR: %c\n", (wchar_t)wParam);
+		//	OutputDebugString(msg);
+		//	break;
 	default:
 		return;
 	}
@@ -164,43 +208,5 @@ void WindowEvent::messageLoop()
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	WindowEvent::getInstance().handleMessages(hWnd, uMsg, wParam, lParam);
-
-	wchar_t msg[32];
-	//switch (uMsg)
-	//{
-	//case WM_SYSKEYDOWN:
-	//	swprintf_s(msg, L"WM_SYSKEYDOWN: 0x%x\n", wParam);
-	//	OutputDebugString(msg);
-	//	break;
-
-	//case WM_SYSCHAR:
-	//	swprintf_s(msg, L"WM_SYSCHAR: %c\n", (wchar_t)wParam);
-	//	OutputDebugString(msg);
-	//	break;
-
-	//case WM_SYSKEYUP:
-	//	swprintf_s(msg, L"WM_SYSKEYUP: 0x%x\n", wParam);
-	//	OutputDebugString(msg);
-	//	break;
-
-	//case WM_KEYDOWN:
-	//	swprintf_s(msg, L"WM_KEYDOWN: 0x%x\n", wParam);
-	//	OutputDebugString(msg);
-	//	break;
-
-	//case WM_KEYUP:
-	//	swprintf_s(msg, L"WM_KEYUP: 0x%x\n", wParam);
-	//	OutputDebugString(msg);
-	//	break;
-
-	//case WM_CHAR:
-	//	swprintf_s(msg, L"WM_CHAR: %c\n", (wchar_t)wParam);
-	//	OutputDebugString(msg);
-	//	break;
-
-	//	/* Handle other messages (not shown) */
-
-	//}
-
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);;
 }

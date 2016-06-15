@@ -75,5 +75,10 @@ namespace System
 		// It's here because it is used in 2 functions unlike the others that are just
 		// declared locally
 		VkDebugReportCallbackCreateInfoEXT _debugCallbackCreateInfo{};
+
+		// WINDOW RELATED VARIABLES
+
+		HWND _pWinInstance = nullptr;
+		VkSurfaceKHR _surface;
 	};
 }

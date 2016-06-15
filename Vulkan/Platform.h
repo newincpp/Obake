@@ -6,7 +6,9 @@
 #include <Windows.h>
 
 #elif __linux__
-#define VK_USE_PLATFORM_XCB_KHR
+
+#define VK_USE_PLATFORM_XCB_KHR 1
+#include <xcb/xcb.h>
 
 #endif
 
