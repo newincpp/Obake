@@ -19,7 +19,8 @@ namespace Obake {
 
 		void jump();
 
-#define OBAKE_ADD(func) _executionQueue.push_back(std::bind(func, this));  /*std::cout << "OBAKE_ADD" << std::endl;*/ if (_pushNextAsBeginLoop) { _beginLoop = --_executionQueue.end(); _pushNextAsBeginLoop = false;}
+#define OBAKE_ADD(func) _executionQueue.push_back(std::bind(func, this));  \
+		if (_pushNextAsBeginLoop) { _beginLoop = --_executionQueue.end(); _pushNextAsBeginLoop = false;}
 #define OBAKE_LOOP for (executeAtBegin(); _loopCount < 1; executeAtEnd())
 
 		void _fillTask(decltype(_executionQueue)::value_type& task_)
