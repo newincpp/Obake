@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <vector>
+#include <iostream>
 
 namespace Obake {
 	class Core;
@@ -9,15 +10,17 @@ namespace Obake {
 	class ASystem {
 	protected:
 		void executeAtBegin();
-		bool executeAtEnd();
+		void executeAtEnd();
 		std::vector<std::function<void(void)>> _executionQueue;
 		decltype(_executionQueue)::iterator _beginLoop;
 		decltype(_executionQueue)::iterator _task;
+		bool _pushNextAsBeginLoop;
+		uint16_t _loopCount;
 
 		void jump();
 
-#define OBAKE_ADD(func) _executionQueue.push_back(std::bind(func, this));
-#define OBAKE_LOOP for (executeAtBegin(); executeAtEnd(); )
+#define OBAKE_ADD(func) _executionQueue.push_back(std::bind(func, this));  /*std::cout << "OBAKE_ADD" << std::endl;*/ if (_pushNextAsBeginLoop) { _beginLoop = --_executionQueue.end(); _pushNextAsBeginLoop = false;}
+#define OBAKE_LOOP for (executeAtBegin(); _loopCount < 1; executeAtEnd())
 
 		void _fillTask(decltype(_executionQueue)::value_type& task_)
 		{

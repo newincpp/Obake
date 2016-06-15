@@ -1,25 +1,26 @@
-#include <iostream>
 #include "Core.hh"
 #include "ASystem.hh"
 
 Obake::ASystem::ASystem()
-	: _beginLoop(_executionQueue.end()), _core(nullptr)
+	: _beginLoop(_executionQueue.end()), _core(nullptr),
+	_pushNextAsBeginLoop(false)
 {
     _executionQueue.reserve(32);
 }
 
 void Obake::ASystem::executeAtBegin()
 {
-	std::cout << "Execute at begin" << std::endl;
+	//std::cout << "Execute at begin" << std::endl;
 	_beginLoop = --_executionQueue.end();
+	_pushNextAsBeginLoop = true;
+	_loopCount = 0;
 }
 
-bool Obake::ASystem::executeAtEnd()
+void Obake::ASystem::executeAtEnd()
 {
-	std::cout << "Execute at end" << std::endl;
+	//std::cout << "Execute at end" << std::endl;
 	_executionQueue.push_back(std::bind(&Obake::ASystem::jump, this));
-
-	return false;
+	++_loopCount;
 }
 
 void Obake::ASystem::jump()

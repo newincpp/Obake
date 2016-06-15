@@ -35,7 +35,7 @@ void WindowEvent::initialize()
 
 void WindowEvent::windowEventEvent()
 {
-	std::cout << "WINDOW EVENT" << std::endl;
+	//std::cout << "WINDOW EVENT" << std::endl;
 }
 
 void WindowEvent::registerCore(Obake::Core* core_)
@@ -143,7 +143,7 @@ void WindowEvent::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 
 void WindowEvent::messageLoop()
 {
-	std::cout << "MESSAGE LOOP" << std::endl;
+	//std::cout << "MESSAGE LOOP" << std::endl;
 	bool isExiting = false;
 
 	while (PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE))
