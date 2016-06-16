@@ -8,6 +8,12 @@ Obake::ASystem::ASystem()
     _executionQueue.reserve(32);
 }
 
+void Obake::ASystem::registerCore(Core* core_)
+{
+	_core = core_;
+	_core->eventsManager.bindEvent("SHUTDOWN ALL", this, &ASystem::shutdown);
+}
+
 void Obake::ASystem::executeAtBegin()
 {
 	//std::cout << "Execute at begin" << std::endl;

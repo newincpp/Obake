@@ -35,16 +35,35 @@ bool Obake::Core::registerSystem(ASystem* sys_)
 
 int Obake::Core::run() {
 	bool still = true;
+	bool currentSystemStill = false;
 	while (still) {
 		still = false;
-		for (decltype(_registeredSystems)::value_type system : _registeredSystems)
+	/*	for (decltype(_registeredSystems)::value_type system : _registeredSystems)
 		{
 			if (system != nullptr)
 			{
 				executeNext(system);
 				still |= system->isStillWorking();
 			}
+		}*/
+
+		for (decltype(_registeredSystems)::iterator systemIt = _registeredSystems.begin()
+			; systemIt != _registeredSystems.end(); ++systemIt)
+		{
+			if ((*systemIt) != nullptr)
+			{
+				executeNext(*systemIt);
+				currentSystemStill = (*systemIt)->isStillWorking();
+				still |= currentSystemStill;
+				/*if (!currentSystemStill)
+				{
+					(*systemIt)->unload();
+					_registeredSystems.erase(systemIt);
+					systemIt = _registeredSystems.begin();
+				}*/
+			}
 		}
+		//std::cout << "Still: " << std::boolalpha << still << " | RegisteredSystems Size: " << _registeredSystems.size() << std::endl;
 	}
 	return 0;
 }

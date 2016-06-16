@@ -7,16 +7,6 @@
 int main()
 {
 	Obake::Core core;
-	//System::TestEventSystem1 system1;
-	//System::TestEventSystem2 system2;
-	//System::VulkanRenderer vulkan;
-
-	//system1.registerCore(&c);
-	//system2.registerCore(&c);
-	//vulkan.registerCore(&c);
-	//system1.initialize();
-	//system2.initialize();
-	//vulkan.initialize();
 
 	Obake::PluginsManager pluginsManager;
 
@@ -34,6 +24,18 @@ int main()
 		}
 	}
 
+	int runRet = core.run();
+	//return runRet;
+
+	for (Obake::AvailablePlugin* plugin : availablePlugins)
+	{
+		if (plugin->isLoaded())
+		{
+			plugin->getPlugin()->unload();
+		}
+	}
+
+	system("Pause");
 
 	// Vulkan tests
 	/*
@@ -248,18 +250,6 @@ int main()
 	}
 	}
 	*/
-
-	int runRet = core.run();
-	system("Pause");
-	//return runRet;
-
-	for (Obake::AvailablePlugin* plugin : availablePlugins)
-	{
-		if (plugin->isLoaded())
-		{
-			plugin->getPlugin()->unload();
-		}
-	}
 
 	return 0;
 }
