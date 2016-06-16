@@ -32,7 +32,7 @@ namespace System
 		void initialize();
 		void unload();
 
-		void createSurface();
+		void sendWindowHandle();
 		void windowEventEvent();
 
 		void createWindow();

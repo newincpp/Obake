@@ -23,12 +23,11 @@ void WindowEvent::initialize()
 	// Create & bind an event
 	_core->eventsManager.bindEvent("Window Event", this, &WindowEvent::windowEventEvent);
 	_core->eventsManager.bindEvent("Create Window", this, &WindowEvent::createWindow);
-	_core->eventsManager.bindEvent("Create Surface", this, &WindowEvent::createSurface);
+	_core->eventsManager.bindEvent("Get Windows Handle", this, &WindowEvent::sendWindowHandle);
 	// Call vulkan event
 	//_core->eventsManager.executeEvent<void>("Vulkan Event");
 
-	OBAKE_ADD(&WindowEvent::createWindow);
-	OBAKE_ADD(&WindowEvent::createSurface);
+	OBAKE_ADD(&WindowEvent::messageLoop);
 	OBAKE_LOOP
 	{
 		OBAKE_ADD(&WindowEvent::messageLoop);
@@ -36,7 +35,7 @@ void WindowEvent::initialize()
 }
 
 
-void WindowEvent::createSurface()
+void WindowEvent::sendWindowHandle()
 {
 	_core->eventsManager.executeEvent<void, HWND, HINSTANCE>("SendWinHandle", _hwnd, _windowInstance);
 }
@@ -61,7 +60,7 @@ void WindowEvent::unload()
 
 void WindowEvent::createWindow()
 {
-	std::cout << "CREATE WINDOW" << std::endl;
+	std::cout << "### CREATE WINDOW" << std::endl;
 	// Current Instance
 	_windowInstance = GetModuleHandle(NULL);
 

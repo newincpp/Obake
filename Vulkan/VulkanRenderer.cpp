@@ -30,13 +30,6 @@ VulkanRenderer::~VulkanRenderer()
 
 void VulkanRenderer::initialize()
 {
-	_InitExtension();
-	_SetupDebug();
-	_InitInstance();
-	_InitDebug();
-	_InitDevice();
-	_InitSurface();
-	_InitSwapchain();
 
 	// Create & bind an event
 	_core->eventsManager.bindEvent("Vulkan Event", this, &VulkanRenderer::vulkanEvent);
@@ -47,8 +40,8 @@ void VulkanRenderer::initialize()
 
 	OBAKE_ADD(&VulkanRenderer::_InitExtension);
 	OBAKE_ADD(&VulkanRenderer::_SetupDebug);
-	OBAKE_ADD(&VulkanRenderer::_InitDebug);
 	OBAKE_ADD(&VulkanRenderer::_InitInstance);
+	OBAKE_ADD(&VulkanRenderer::_InitDebug);
 	OBAKE_ADD(&VulkanRenderer::_InitDevice);
 	OBAKE_ADD(&VulkanRenderer::createSurface);
 }
@@ -78,7 +71,7 @@ void VulkanRenderer::sendWinHandleEvent(HWND winHandle_, HINSTANCE winInstance_)
 void VulkanRenderer::createSurface()
 {
 	_core->eventsManager.executeEvent<void>("Create Window");
-	_core->eventsManager.executeEvent<void>("Create Surface");
+	_core->eventsManager.executeEvent<void>("Get Windows Handle");
 	_InitSurface();
 	_InitSwapchain();
 }
@@ -288,7 +281,7 @@ void VulkanRenderer::_InitSurface()
 				createInfo.hinstance = _hInstance,
 				createInfo.hwnd = _hwnd
 			};
-			vkCreateWin32SurfaceKHR(_instance, &createInfo, NULL, &_surface);
+			ErrorCheck(vkCreateWin32SurfaceKHR(_instance, &createInfo, NULL, &_surface));
 		}
 
 		{
@@ -329,6 +322,10 @@ void VulkanRenderer::_InitSurface()
 			}
 		}
 	}
+	else
+	{
+		assert(0 && "Win Handle is NULL");
+	}
 }
 
 void VulkanRenderer::_DeInitSurface()
@@ -351,7 +348,6 @@ void VulkanRenderer::_InitSwapchain()
 				presentMode = m;
 		}
 	}
-	VkExtent2D dimensions{ _surfaceX, _surfaceY };
 
 	VkSwapchainCreateInfoKHR swapchainCreateInfo
 	{
@@ -363,7 +359,7 @@ void VulkanRenderer::_InitSwapchain()
 		swapchainCreateInfo.minImageCount = 2,
 		swapchainCreateInfo.imageFormat = _surfaceFormat.format,
 		swapchainCreateInfo.imageColorSpace = _surfaceFormat.colorSpace,
-		swapchainCreateInfo.imageExtent = dimensions,
+		swapchainCreateInfo.imageExtent = { _surfaceX, _surfaceY },
 		swapchainCreateInfo.imageArrayLayers = 1,
 		swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
 		swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
