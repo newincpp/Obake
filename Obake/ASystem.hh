@@ -37,15 +37,16 @@ namespace Obake {
 		{
 			_task = _executionQueue.begin();
 		}
-		inline void _registerCore(Core* core_) { _core = core_; }
 
 	public:
 		Core* _core;
 
 		inline bool isStillWorking() const { return (_task != _executionQueue.end()); }
-		inline void registerCore(Core* core_) { _core = core_; }
+		void registerCore(Core* core_);
 		inline void start() { _start(); }
 		void fillTask(decltype(_executionQueue)::value_type& task_) { _fillTask(task_); }
+		inline void shutdown() { _beginLoop = _executionQueue.end(); }
+		void unload() {}
 		inline const decltype(_executionQueue)& getExecQueue() const { return _executionQueue; }
 		virtual ~ASystem() {};
 		explicit ASystem();
