@@ -32,18 +32,29 @@ namespace System
 		void unload();
 
 		void vulkanEvent();
-		void sendWinHandleEvent(HWND winHandle_);
+		void sendWinHandleEvent(HWND winHandle_, HINSTANCE winInstance_);
+		void createSurface();
 
-//	private:
+	private:
 		void _InitInstance();
 		void _DeInitInstance();
 
 		void _InitDevice();
 		void _DeInitDevice();
 
+		void _InitExtension();
+		void _DeInitExtension();
+
 		void _SetupDebug();
 		void _InitDebug();
 		void _DeInitDebug();
+
+		void _InitSurface();
+		void _DeInitSurface();
+
+		void _InitSwapchain();
+		void _DeInitSwapchain();
+
 
 		// Instance Initialisation
 		VkInstance					_instance = VK_NULL_HANDLE;
@@ -78,7 +89,15 @@ namespace System
 
 		// WINDOW RELATED VARIABLES
 
-		HWND _pWinInstance = nullptr;
-		VkSurfaceKHR _surface;
+		HWND _hwnd = nullptr;
+		HINSTANCE _hInstance = nullptr;
+		VkSurfaceKHR _surface = VK_NULL_HANDLE;
+		VkSurfaceCapabilitiesKHR _surfaceCapabilities = {};
+		VkSurfaceFormatKHR _surfaceFormat = {};
+
+		uint32_t _surfaceX = 512;
+		uint32_t _surfaceY = 512;
+
+		VkSwapchainKHR _swapchain = VK_NULL_HANDLE;
 	};
 }

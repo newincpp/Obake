@@ -9,6 +9,7 @@ namespace System
 {
 	class WindowEvent : public Obake::IPlugin
 	{
+
 	private:
 		static WindowEvent *_sysInstance;
 		HWND _hwnd;
@@ -31,7 +32,7 @@ namespace System
 		void initialize();
 		void unload();
 
-		void sendWinHandle();
+		void createSurface();
 		void windowEventEvent();
 
 		void createWindow();

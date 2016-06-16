@@ -20,26 +20,25 @@ WindowEvent::~WindowEvent()
 
 void WindowEvent::initialize()
 {
-	//	createWindow();
-
 	// Create & bind an event
 	_core->eventsManager.bindEvent("Window Event", this, &WindowEvent::windowEventEvent);
+	_core->eventsManager.bindEvent("Create Window", this, &WindowEvent::createWindow);
+	_core->eventsManager.bindEvent("Create Surface", this, &WindowEvent::createSurface);
 	// Call vulkan event
 	//_core->eventsManager.executeEvent<void>("Vulkan Event");
 
-	OBAKE_ADD(&WindowEvent::createWindow)
-	OBAKE_ADD(&WindowEvent::sendWinHandle)
-	OBAKE_ADD(&WindowEvent::windowEventEvent)
+	OBAKE_ADD(&WindowEvent::createWindow);
+	OBAKE_ADD(&WindowEvent::createSurface);
 	OBAKE_LOOP
 	{
-		OBAKE_ADD(&WindowEvent::messageLoop)
+		OBAKE_ADD(&WindowEvent::messageLoop);
 	}
 }
 
 
-void WindowEvent::sendWinHandle()
+void WindowEvent::createSurface()
 {
-	_core->eventsManager.executeEvent<void, HWND>("SendWinHandle", _hwnd);
+	_core->eventsManager.executeEvent<void, HWND, HINSTANCE>("SendWinHandle", _hwnd, _windowInstance);
 }
 
 void WindowEvent::windowEventEvent()
