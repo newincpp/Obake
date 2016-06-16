@@ -1,7 +1,6 @@
 #include "Core.hh"
 
 void Obake::Core::executeNext(ASystem* system_) {
-
 	std::function<void(void)> task = []() {};
 	system_->fillTask(task);
 
@@ -12,7 +11,7 @@ void Obake::Core::executeNext(ASystem* system_) {
 	}
 	if (_threadPool.size() < std::thread::hardware_concurrency()) {
 		_threadPool.emplace_back(task);
-	} 
+	}
 	else {
 		bool taskAssigned = false;
 		while (!taskAssigned) {
