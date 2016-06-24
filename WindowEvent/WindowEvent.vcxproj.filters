@@ -13,19 +13,10 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Source Files\Obake">
-      <UniqueIdentifier>{d88f0d4a-d3e9-4089-ae4a-0cfcf492e64a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Win32\WindowEvent.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Obake\ASystem.cpp">
-      <Filter>Source Files\Obake</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Obake\Core.cpp">
-      <Filter>Source Files\Obake</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

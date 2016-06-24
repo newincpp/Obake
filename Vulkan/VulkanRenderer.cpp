@@ -1,77 +1,84 @@
 #include <cstdlib>
-#include <assert.h>
+#include <sstream>
+#include <iostream>
 
 #include "VulkanRenderer.hh"
 
 using namespace System;
 
-// CALLBACKS
-VKAPI_ATTR VkBool32 VKAPI_CALL
-VulkanDebugCallback(
-	VkDebugReportFlagsEXT msgFlags,
-	VkDebugReportObjectTypeEXT objType,
-	uint64_t srcObj,
-	size_t location,
-	int32_t msgCode,
-	const char * layerPrefix,
-	const char * msg,
-	void * userDate)
-{
-	std::ostringstream stream;
-
-	stream << "VKDBG: ";
-	if (msgFlags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT)
-		stream << "INFO: ";
-	if (msgFlags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
-		stream << "WARNING: ";
-	if (msgFlags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
-		stream << "PERFORMANCE: ";
-	if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
-		stream << "ERROR: ";
-	if (msgFlags & VK_DEBUG_REPORT_DEBUG_BIT_EXT)
-		stream << "DEBUG: ";
-	stream << "@[" << layerPrefix << "]: ";
-	stream << msg << std::endl;
-
-	std::cout << stream.str();
-
-#ifdef _WIN32
-	if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
-		MessageBox(NULL, stream.str().c_str(), "Vulkan Error!", 0);
-#endif
-	return false;
-}
-// - - -
+OBAKE_PLUGIN(VulkanRenderer, "VulkanRenderer Plugin", "0.1.0")
 
 VulkanRenderer::VulkanRenderer()
 {
-	_SetupDebug();
-	_InitInstance();
-	_InitDebug();
-	_InitDevice();
+	//	_SetupDebug();
+	//	_InitInstance();
+	//	_InitDebug();
+	//	_InitDevice();
 }
-
 
 VulkanRenderer::~VulkanRenderer()
 {
+	_DeInitSwapchain();
+	_DeInitSurface();
 	_DeInitDevice();
 	_DeInitDebug();
 	_DeInitInstance();
+	_DeInitExtension();
 }
+
+// Event System
+
+void VulkanRenderer::initialize()
+{
+
+	// Create & bind an event
+	_core->eventsManager.bindEvent("Vulkan Event", this, &VulkanRenderer::vulkanEvent);
+	_core->eventsManager.bindEvent("SendWinHandle", this, &VulkanRenderer::sendWinHandleEvent);
+	_core->eventsManager.bindEvent("CreateSurface", this, &VulkanRenderer::createSurface);
+	// Call window event
+	_core->eventsManager.executeEvent<void>("Window Event");
+
+	OBAKE_ADD(&VulkanRenderer::_InitExtension);
+	OBAKE_ADD(&VulkanRenderer::_SetupDebug);
+	OBAKE_ADD(&VulkanRenderer::_InitInstance);
+	OBAKE_ADD(&VulkanRenderer::_InitDebug);
+	OBAKE_ADD(&VulkanRenderer::_InitDevice);
+	OBAKE_ADD(&VulkanRenderer::createSurface);
+}
+
+void VulkanRenderer::registerCore(Obake::Core* core_)
+{
+	ASystem::registerCore(core_);
+}
+
+void VulkanRenderer::unload()
+{
+
+}
+
+void VulkanRenderer::vulkanEvent()
+{
+	std::cout << "VULKAN EVENT" << std::endl;
+}
+
+void VulkanRenderer::sendWinHandleEvent(HWND winHandle_, HINSTANCE winInstance_)
+{
+	_hwnd = winHandle_;
+	_hInstance = winInstance_;
+	std::cout << "### GET WIN HANDLE ### winHandle : " << _hwnd << " winInstance : " << _hInstance << "###" << std::endl;
+}
+
+void VulkanRenderer::createSurface()
+{
+	_core->eventsManager.executeEvent<void>("Create Window");
+	_core->eventsManager.executeEvent<void>("Get Windows Handle");
+	_InitSurface();
+	_InitSwapchain();
+}
+// - - !Event System
 
 void VulkanRenderer::_InitInstance()
 {
-
-	// Filling the _instanceExtension array with the name of the extensions we wish to activate:
-	{
-#if defined(_WIN32)
-		// DEPRECATED
-		//_instanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-#elif defined(__linux__)
-		_instanceExtensions.push_back(VK_KHR_XCB_SURFACE_EXTENSION_NAME);
-#endif
-	}
-
 	// Contains info in regards to the application
 	VkApplicationInfo applicationInfo =
 	{
@@ -112,16 +119,8 @@ void VulkanRenderer::_InitInstance()
 		instanceCreateInfo.ppEnabledExtensionNames = _instanceExtensions.data()
 	};
 
-	VkResult err = VkResult::VK_SUCCESS;
 	//Creates the Vulkan Instance
-	if ((err = vkCreateInstance(&instanceCreateInfo, nullptr, &_instance)) != VK_SUCCESS)
-	{
-		assert(0 && "## Vulkan ERROR: Create instance FAILED.");
-	}
-	else
-	{
-		std::cout << "## Vulkan: Create instance SUCCESS" << std::endl;
-	}
+	ErrorCheck(vkCreateInstance(&instanceCreateInfo, nullptr, &_instance));
 }
 
 void VulkanRenderer::_DeInitInstance()
@@ -242,21 +241,187 @@ void VulkanRenderer::_InitDevice()
 	};
 
 	// Creates a Vulkan Device
-	if (vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device) != VK_SUCCESS)
-	{
-		assert(0 && "## Vulkan ERROR: Create device FAILED.");
-	}
-	else
-	{
-		std::cout << "## Vulkan: Create device SUCCESS" << std::endl;
-	}
+	ErrorCheck(vkCreateDevice(_gpu, &deviceCreateInfo, nullptr, &_device));
+
+	vkGetDeviceQueue(_device, _graphicsFamilyIndex, 0, &_queue);
 }
 
 void VulkanRenderer::_DeInitDevice()
 {
 	vkDestroyDevice(_device, nullptr);
-	_device = nullptr;
+	_device = VK_NULL_HANDLE;
 }
+
+void VulkanRenderer::_InitExtension()
+{
+	// Filling the _instanceExtension array with the name of the extensions we wish to activate:
+	{
+		_instanceExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
+		_instanceExtensions.push_back(PLATFORM_SURFACE_EXTENSION_NAME);
+
+		_deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+	}
+}
+
+void VulkanRenderer::_DeInitExtension()
+{
+
+}
+
+void VulkanRenderer::_InitSurface()
+{
+	if (_hInstance != nullptr && _hwnd != nullptr)
+	{
+		{
+			VkWin32SurfaceCreateInfoKHR createInfo
+			{
+				createInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
+				createInfo.pNext = nullptr,
+				createInfo.flags = 0,
+				createInfo.hinstance = _hInstance,
+				createInfo.hwnd = _hwnd
+			};
+			ErrorCheck(vkCreateWin32SurfaceKHR(_instance, &createInfo, NULL, &_surface));
+		}
+
+		{
+			VkBool32 WSI_supported = false;
+
+			vkGetPhysicalDeviceSurfaceSupportKHR(_gpu, _graphicsFamilyIndex, _surface, &WSI_supported);
+			if (!WSI_supported)
+			{
+				assert(0 && "WSI not supported");
+			}
+
+			vkGetPhysicalDeviceSurfaceCapabilitiesKHR(_gpu, _surface, &_surfaceCapabilities);
+			if (_surfaceCapabilities.currentExtent.width < UINT32_MAX ||
+				_surfaceCapabilities.currentExtent.height < UINT32_MAX)
+			{
+				_surfaceX = _surfaceCapabilities.currentExtent.width;
+				_surfaceY = _surfaceCapabilities.currentExtent.height;
+			}
+
+			{
+				uint32_t formatCount = 0;
+				vkGetPhysicalDeviceSurfaceFormatsKHR(_gpu, _surface, &formatCount, nullptr);
+				if (formatCount == 0)
+				{
+					assert(0 && "Surface formats mising.");
+				}
+				std::vector<VkSurfaceFormatKHR> formats(formatCount);
+				vkGetPhysicalDeviceSurfaceFormatsKHR(_gpu, _surface, &formatCount, formats.data());
+				if (formats[0].format == VK_FORMAT_UNDEFINED)
+				{
+					_surfaceFormat.format = VK_FORMAT_B8G8R8A8_UNORM;
+					_surfaceFormat.colorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
+				}
+				else
+				{
+					_surfaceFormat = formats[0];
+				}
+			}
+		}
+	}
+	else
+	{
+		assert(0 && "Win Handle is NULL");
+	}
+}
+
+void VulkanRenderer::_DeInitSurface()
+{
+	vkDestroySurfaceKHR(_instance, _surface, nullptr);
+}
+
+void VulkanRenderer::_InitSwapchain()
+{
+	VkPresentModeKHR presentMode = VK_PRESENT_MODE_FIFO_KHR;
+	{
+		uint32_t presentModeCount = 0;
+
+		ErrorCheck(vkGetPhysicalDeviceSurfacePresentModesKHR(_gpu, _surface, &presentModeCount, nullptr));
+		std::vector<VkPresentModeKHR> presentModeList(presentModeCount);
+		ErrorCheck(vkGetPhysicalDeviceSurfacePresentModesKHR(_gpu, _surface, &presentModeCount, presentModeList.data()));
+		for (auto m : presentModeList)
+		{
+			if (m == VK_PRESENT_MODE_MAILBOX_KHR)
+				presentMode = m;
+		}
+	}
+
+	VkSwapchainCreateInfoKHR swapchainCreateInfo
+	{
+		swapchainCreateInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
+		swapchainCreateInfo.pNext = nullptr,
+		swapchainCreateInfo.flags = 0,
+		swapchainCreateInfo.surface = _surface,
+		// Min amount of images stored (buffering)
+		swapchainCreateInfo.minImageCount = 2,
+		swapchainCreateInfo.imageFormat = _surfaceFormat.format,
+		swapchainCreateInfo.imageColorSpace = _surfaceFormat.colorSpace,
+		swapchainCreateInfo.imageExtent = { _surfaceX, _surfaceY },
+		swapchainCreateInfo.imageArrayLayers = 1,
+		swapchainCreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
+		swapchainCreateInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		swapchainCreateInfo.queueFamilyIndexCount = 0,
+		swapchainCreateInfo.pQueueFamilyIndices = nullptr,
+		swapchainCreateInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
+		swapchainCreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
+		swapchainCreateInfo.presentMode = presentMode,
+		swapchainCreateInfo.clipped = VK_TRUE,
+		swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE
+	};
+
+	ErrorCheck(vkCreateSwapchainKHR(_device, &swapchainCreateInfo, nullptr, &_swapchain));
+
+	ErrorCheck(vkGetSwapchainImagesKHR(_device, _swapchain, &swapchainCreateInfo.minImageCount, nullptr));
+	
+}
+
+void VulkanRenderer::_DeInitSwapchain()
+{
+	vkDestroySwapchainKHR(_device, _swapchain,nullptr);
+}
+
+#if BUILD_ENABLE_VULKAN_DEBUG
+
+// CALLBACKS
+VKAPI_ATTR VkBool32 VKAPI_CALL
+VulkanDebugCallback(
+	VkDebugReportFlagsEXT msgFlags,
+	VkDebugReportObjectTypeEXT objType,
+	uint64_t srcObj,
+	size_t location,
+	int32_t msgCode,
+	const char * layerPrefix,
+	const char * msg,
+	void * userDate)
+{
+	std::ostringstream stream;
+
+	stream << "VKDBG: ";
+	if (msgFlags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT)
+		stream << "INFO: ";
+	if (msgFlags & VK_DEBUG_REPORT_WARNING_BIT_EXT)
+		stream << "WARNING: ";
+	if (msgFlags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT)
+		stream << "PERFORMANCE: ";
+	if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
+		stream << "ERROR: ";
+	if (msgFlags & VK_DEBUG_REPORT_DEBUG_BIT_EXT)
+		stream << "DEBUG: ";
+	stream << "@[" << layerPrefix << "]: ";
+	stream << msg << std::endl;
+
+	std::cout << stream.str();
+
+#ifdef _WIN32
+	if (msgFlags & VK_DEBUG_REPORT_ERROR_BIT_EXT)
+		MessageBox(NULL, stream.str().c_str(), "Vulkan Error!", 0);
+#endif
+	return false;
+}
+// - - -
 
 void VulkanRenderer::_SetupDebug()
 {
@@ -278,12 +443,14 @@ void VulkanRenderer::_SetupDebug()
 
 	// Since device layers are deprecated for now we'll just leave this commented out
 	//	_deviceLayers.push_back("VK_LAYER_LUNARG_standard_validation");
+
 }
 
 void VulkanRenderer::_InitDebug()
 {
 	fvkCreateDebugReportCallbackEXT = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(_instance, "vkCreateDebugReportCallbackEXT");
 	fvkDestroyDebugReportCallbackEXT = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(_instance, "vkDestroyDebugReportCallbackEXT");
+
 	if (fvkCreateDebugReportCallbackEXT == nullptr || fvkDestroyDebugReportCallbackEXT == nullptr)
 	{
 		assert(0 && "##Vulkan ERROR: Can't fetch debug function pointers.");
@@ -295,5 +462,13 @@ void VulkanRenderer::_InitDebug()
 void VulkanRenderer::_DeInitDebug()
 {
 	fvkDestroyDebugReportCallbackEXT(_instance, _debugReport, nullptr);
-	_debugReport = NULL;
+	_debugReport = VK_NULL_HANDLE;
 }
+
+#else
+
+void VulkanRenderer::_SetupDebug() {};
+void VulkanRenderer::_InitDebug() {};
+void VulkanRenderer::_DeInitDebug() {};
+
+#endif // !BUILD_ENABLE_VULKAN_DEBUG

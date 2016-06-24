@@ -2,20 +2,24 @@
 
 #include <Windows.h>
 
-#include "ASystem.hh"
+#include "Core.hh"
+#include "Plugin.hh"
 
 namespace System
 {
-	class WindowEvent : public Obake::ASystem
+	class WindowEvent : public Obake::IPlugin
 	{
+
 	private:
 		static WindowEvent *_sysInstance;
-
 		HWND _hwnd;
 		HINSTANCE _windowInstance;
 
+		MSG _msg;
+
 	public:
-		WindowEvent();
+		explicit WindowEvent();
+		~WindowEvent();
 
 		static WindowEvent & getInstance()
 		{
@@ -24,9 +28,17 @@ namespace System
 			return *_sysInstance;
 		};
 
+		void registerCore(Obake::Core* core_);
+		void initialize();
+		void unload();
+
+		void sendWindowHandle();
+		void windowEventEvent();
+
 		void createWindow();
 		void destroyWindow();
 
+		void messageLoop();
 		void handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	private:

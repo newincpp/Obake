@@ -5,14 +5,62 @@
 
 using namespace System;
 
+OBAKE_PLUGIN(WindowEvent, "WindowEvent Plugin", "0.1.0")
+
 WindowEvent* WindowEvent::_sysInstance = nullptr;
 
 WindowEvent::WindowEvent()
-	: ASystem()
+{
+}
+
+WindowEvent::~WindowEvent()
 {}
+
+// Event System
+
+void WindowEvent::initialize()
+{
+	// Create & bind an event
+	_core->eventsManager.bindEvent("Window Event", this, &WindowEvent::windowEventEvent);
+	_core->eventsManager.bindEvent("Create Window", this, &WindowEvent::createWindow);
+	_core->eventsManager.bindEvent("Get Windows Handle", this, &WindowEvent::sendWindowHandle);
+	// Call vulkan event
+	//_core->eventsManager.executeEvent<void>("Vulkan Event");
+
+	OBAKE_ADD(&WindowEvent::messageLoop);
+	OBAKE_LOOP
+	{
+		OBAKE_ADD(&WindowEvent::messageLoop);
+	}
+}
+
+
+void WindowEvent::sendWindowHandle()
+{
+	_core->eventsManager.executeEvent<void, HWND, HINSTANCE>("SendWinHandle", _hwnd, _windowInstance);
+}
+
+void WindowEvent::windowEventEvent()
+{
+	//std::cout << "WINDOW EVENT" << std::endl;
+}
+
+void WindowEvent::registerCore(Obake::Core* core_)
+{
+	ASystem::registerCore(core_);
+}
+
+void WindowEvent::unload()
+{
+
+}
+
+// - - !Event System
+
 
 void WindowEvent::createWindow()
 {
+	std::cout << "### CREATE WINDOW" << std::endl;
 	// Current Instance
 	_windowInstance = GetModuleHandle(NULL);
 
@@ -82,6 +130,9 @@ void WindowEvent::destroyWindow()
 
 void WindowEvent::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	// Le code en commentaire est le code d'Adrien
+//	wchar_t msg[32];
+
 	switch (uMsg)
 	{
 	case WM_CLOSE:
@@ -90,80 +141,70 @@ void WindowEvent::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	case WM_QUIT:
 		std::cout << "Quiting Window" << std::endl;
 		break;
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_ESCAPE:
+			PostQuitMessage(0);
+			break;
+		}
+		break;
+		//case WM_SYSKEYDOWN:
+		//	swprintf_s(msg, L"WM_SYSKEYDOWN: 0x%x\n", wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_SYSCHAR:
+		//	swprintf_s(msg, L"WM_SYSCHAR: %c\n", (wchar_t)wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_SYSKEYUP:
+		//	swprintf_s(msg, L"WM_SYSKEYUP: 0x%x\n", wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_KEYDOWN:
+		//	swprintf_s(msg, L"WM_KEYDOWN: 0x%x\n", wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_KEYUP:
+		//	swprintf_s(msg, L"WM_KEYUP: 0x%x\n", wParam);
+		//	OutputDebugString(msg);
+		//	break;
+
+		//case WM_CHAR:
+		//	swprintf_s(msg, L"WM_CHAR: %c\n", (wchar_t)wParam);
+		//	OutputDebugString(msg);
+		//	break;
 	default:
 		return;
 	}
 }
 
-///////////////////////////////////////////////////////////////
-
-int main()
+void WindowEvent::messageLoop()
 {
-	Obake::Core c;
-	System::WindowEvent winEvent = System::WindowEvent::getInstance();
-
-	winEvent.createWindow();
-	// Run the message loop.
-
-	MSG msg = {};
+	//std::cout << "MESSAGE LOOP" << std::endl;
 	bool isExiting = false;
-	while (isExiting == false)
+
+	while (PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE))
 	{
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		if (_msg.message == WM_CLOSE)
 		{
-			if (msg.message == WM_CLOSE)
-			{
-				std::cout << "QUITING" << std::endl;
-				isExiting = true;
-			}
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			std::cout << "QUITING" << std::endl;
+			isExiting = true;
 		}
+		TranslateMessage(&_msg);
+		DispatchMessage(&_msg);
 	}
-	system("Pause");
-	return 0;
+	//return isExiting;
 }
+
+///////////////////////////////////////////////////////////////
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	WindowEvent::getInstance().handleMessages(hWnd, uMsg, wParam, lParam);
-
-	wchar_t msg[32];
-	switch (uMsg)
-	{
-	case WM_SYSKEYDOWN:
-		swprintf_s(msg, L"WM_SYSKEYDOWN: 0x%x\n", wParam);
-		OutputDebugString(msg);
-		break;
-
-	case WM_SYSCHAR:
-		swprintf_s(msg, L"WM_SYSCHAR: %c\n", (wchar_t)wParam);
-		OutputDebugString(msg);
-		break;
-
-	case WM_SYSKEYUP:
-		swprintf_s(msg, L"WM_SYSKEYUP: 0x%x\n", wParam);
-		OutputDebugString(msg);
-		break;
-
-	case WM_KEYDOWN:
-		swprintf_s(msg, L"WM_KEYDOWN: 0x%x\n", wParam);
-		OutputDebugString(msg);
-		break;
-
-	case WM_KEYUP:
-		swprintf_s(msg, L"WM_KEYUP: 0x%x\n", wParam);
-		OutputDebugString(msg);
-		break;
-
-	case WM_CHAR:
-		swprintf_s(msg, L"WM_CHAR: %c\n", (wchar_t)wParam);
-		OutputDebugString(msg);
-		break;
-
-		/* Handle other messages (not shown) */
-
-	}
-
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);;
 }

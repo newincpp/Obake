@@ -38,8 +38,7 @@ namespace Obake
 		{
 			return static_cast<Event<RETURN_TYPE, ARGS...>*>(_events[eventName_]);
 		}
-
-
-		void event1test1(int test);
+		
+		void reset();
 	};
 }

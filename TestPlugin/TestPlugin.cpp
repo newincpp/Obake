@@ -1,4 +1,4 @@
-//#include <iostream>
+#include <iostream>
 #include "TestPlugin.hh"
 
 OBAKE_PLUGIN(TestPlugin, "Test Plugin", "0.1.0")
@@ -11,7 +11,15 @@ TestPlugin::TestPlugin()
 {
 }
 
-void TestPlugin::sayHello()
+void TestPlugin::initialize()
 {
-	std::cout << "HELLO FROM TEST PLUGIN" << std::endl;
+}
+
+void TestPlugin::registerCore(Obake::Core* core_)
+{
+	ASystem::registerCore(core_);
+}
+
+void TestPlugin::unload()
+{
 }

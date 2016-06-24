@@ -18,9 +18,21 @@
     <ClInclude Include="VulkanRenderer.hh">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Shared.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BUILD_OPTIONS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Platform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="VulkanRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Shared.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

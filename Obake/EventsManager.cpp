@@ -2,10 +2,7 @@
 
 Obake::EventsManager::~EventsManager()
 {
-	for (decltype(_events)::value_type event : _events)
-	{
-		delete event.second;
-	}
+	reset();
 }
 
 Obake::EventsManager::EventsManager()
@@ -24,7 +21,10 @@ Obake::EventsManager::EventsManager()
 	executeEvent<void, int>("TOTO", 4242);*/
 }
 
-void Obake::EventsManager::event1test1(int test)
+void Obake::EventsManager::reset()
 {
-	std::cout << "Execute event 'event1test1' with one int parameter: " << test << std::endl;
+	for (decltype(_events)::value_type event : _events)
+	{
+		delete event.second;
+	}
 }

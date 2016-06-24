@@ -7,6 +7,8 @@ public:
 	virtual ~TestPlugin();
 	TestPlugin();
 
-	OBAKE_EXTERN virtual void sayHello();
+	void registerCore(Obake::Core* core_);
+	void initialize();
+	void unload();
 };
 

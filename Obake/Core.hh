@@ -4,6 +4,11 @@
 #include <thread>
 #include <iostream>
 
+#define GLM_FORCE_SSE2
+#define GLM_SWIZZLE
+// #define GLM_FORCE_AVX
+
+#include "glm/glm.hpp"
 #include "ASystem.hh"
 #include "EventsManager.hh"
 #include "SharedLibrary.hh"
@@ -12,7 +17,7 @@ namespace Obake {
 	class ASystem;
     class Core {
     private:
-
+		bool _threadingDisabled;
         std::vector<ASystem*> _registeredSystems;
         std::vector<std::thread> _threadPool;
 		std::vector<SharedLibrary> _libs;

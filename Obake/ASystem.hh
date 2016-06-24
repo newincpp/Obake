@@ -2,39 +2,54 @@
 
 #include <functional>
 #include <vector>
+#include <iostream>
 
 namespace Obake {
     class Core;
+	class ASystem {
+	protected:
+		void executeAtBegin();
+		void executeAtEnd();
+		std::vector<std::function<void(void)>> _executionQueue;
+		decltype(_executionQueue)::iterator _beginLoop;
+		decltype(_executionQueue)::iterator _task;
+		bool _pushNextAsBeginLoop;
+		uint16_t _loopCount;
 
-    class ASystem {
-    protected:
-        std::vector<std::function<void(void)>> _executionQueue;
-        std::vector<std::function<void(void)>> _executionQueueRo;
-        decltype(_executionQueue)::iterator _task;
-        decltype(_executionQueueRo)::const_iterator _taskRo;
-	Core* _core;
-    public:
-	void initialize();
+		void jump();
 
-        inline bool isStillWorking() const { return (_task != _executionQueue.end()); }
-	inline void registerCore(Core* core_) { _core = core_; }
-        inline void start() { _task = _executionQueue.begin(); _taskRo = _executionQueueRo.begin(); }
-	inline decltype(_executionQueue)::value_type& getTask() {
-		decltype(_executionQueue)::value_type&& t = std::move(*_task); 
-		if (_task != _executionQueue.end()) {_task++;} 
-		return t;
-	}
-        inline const decltype(_executionQueueRo)::value_type& getTaskRo() {
-		const decltype(_executionQueueRo)::value_type&& t = std::move(*_taskRo);
-		if (_taskRo != _executionQueueRo.end()) {_taskRo++;} 
-		return t; 
-	}
-        inline decltype(_executionQueue)& getExecQueue() {
-            return _executionQueue;
-        }
-        inline decltype(_executionQueueRo)& getExecQueueRo() {
-            return _executionQueueRo;
-        }
-        ASystem();
-    };
+#define OBAKE_ADD(func) _executionQueue.push_back(std::bind(func, this));  \
+		if (_pushNextAsBeginLoop) \
+		{  if (_executionQueue.size() > 0) { _beginLoop = --_executionQueue.end(); } \
+		else { _beginLoop = _executionQueue.end(); } _pushNextAsBeginLoop = false;}
+#define OBAKE_LOOP for (executeAtBegin(); _loopCount < 1; executeAtEnd())
+
+		void _fillTask(decltype(_executionQueue)::value_type& task_)
+		{
+			if (_task != _executionQueue.end())
+			{
+				task_ = *_task;
+				//task_ = std::move(*_task);
+				++_task;
+			}
+		}
+
+		inline void _start()
+		{
+			_task = _executionQueue.begin();
+		}
+
+	public:
+		Core* _core;
+
+		inline bool isStillWorking() const { return (_task != _executionQueue.end()); }
+		void registerCore(Core* core_);
+		inline void start() { _start(); }
+		void fillTask(decltype(_executionQueue)::value_type& task_) { _fillTask(task_); }
+		inline void shutdown() { _beginLoop = _executionQueue.end(); }
+		void unload() {}
+		inline const decltype(_executionQueue)& getExecQueue() const { return _executionQueue; }
+		virtual ~ASystem() {};
+		explicit ASystem();
+	};
 }
