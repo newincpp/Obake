@@ -2,8 +2,8 @@
 #include "ASystem.hh"
 
 Obake::ASystem::ASystem()
-	: _beginLoop(_executionQueue.end()), _core(nullptr),
-	_pushNextAsBeginLoop(false)
+	: _beginLoop(_executionQueue.end()), _pushNextAsBeginLoop(false),
+	_core(nullptr)
 {
     _executionQueue.reserve(32);
 }

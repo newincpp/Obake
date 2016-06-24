@@ -20,11 +20,11 @@ public:
     DummySystem();
 };
 DummySystem::DummySystem() : ASystem() {
-    ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printA, this));
-    ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printB, this));
-    ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printC, this));
-    ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printD, this));
-    ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printE, this));
+    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printA, this));
+    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printB, this));
+    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printC, this));
+    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printD, this));
+    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printE, this));
 }
 void DummySystem::printA() { std::cout << "A" << std::endl; }
 void DummySystem::printB() { std::cout << "B" << std::endl; }
