@@ -41,7 +41,8 @@ type PluginJSON struct {
 type BuilderJSON struct {
 	Os            string   `json:"OS"`
 	Toolchain     string   `json:"toolchain"`
-	Binary        string   `json:"binary"`
+	OutBinary     string   `json:"outBinary"`
+	Binaries      []string `json:"binaries"`
 	StaticLibs    []string `json:"staticLibs"`
 	Plugins       []string `json:"plugins"`
 	PluginsFolder string   `json:"pluginsFolder"`

@@ -27,7 +27,6 @@ func buildAndGetObjectFiles(sourceFilesPath []string, sourceFiles []string, head
 			}
 		}
 
-		//		linkPaths, linkNames, linkIncludes := getStaticLibsLinks(staticLibs, allLibs, folderInfos.name)
 		_, _, linkIncludes := getStaticLibsLinks(staticLibs, allLibs, folderInfos.name)
 
 		args = append(args, linkIncludes...)
@@ -52,34 +51,37 @@ func handleBinary(binary BinaryType, allLibs []StaticLibType) bool {
 
 func handleStatic(staticLib StaticLibType, allLibs []StaticLibType) bool {
 
-	objectFilesPath := buildAndGetObjectFiles(staticLib.sources, staticLib.sourceFileNames, staticLib.headerFolders,
-		staticLib.externIncludes, staticLib.sourceExtension, staticLib.outFolder,
-		staticLib.folderInfos, staticLib.staticLibs, allLibs)
+	if staticLib.isBuilt == false {
 
-	staticLibExtension := getStaticLibOSExtension()
+		objectFilesPath := buildAndGetObjectFiles(staticLib.sources, staticLib.sourceFileNames, staticLib.headerFolders,
+			staticLib.externIncludes, staticLib.sourceExtension, staticLib.outFolder,
+			staticLib.folderInfos, staticLib.staticLibs, allLibs)
 
-	args := []string{"rcs", staticLib.outFolder + "/" + staticLib.name + staticLibExtension}
+		staticLibExtension := getStaticLibOSExtension()
 
-	args = append(args, objectFilesPath...)
+		args := []string{"rcs", staticLib.outFolder + "/" + staticLib.name + staticLibExtension}
 
-	linkPaths, linkNames, linkIncludes := getStaticLibsLinks(staticLib.staticLibs, allLibs, staticLib.name)
+		args = append(args, objectFilesPath...)
 
-	args = append(args, linkIncludes...)
-	args = append(args, linkPaths...)
-	args = append(args, linkNames...)
+		linkPaths, linkNames, linkIncludes := getStaticLibsLinks(staticLib.staticLibs, allLibs, staticLib.name)
 
-	fmt.Printf("Handle Static args: %v\n", args)
+		args = append(args, linkIncludes...)
+		args = append(args, linkPaths...)
+		args = append(args, linkNames...)
 
-	out, err := exec.Command("ar", args...).Output()
+		fmt.Printf("Handle Static args: %v\n", args)
 
-	if err != nil {
-		fmt.Printf("StaticLib: %s | Error: %s\n", staticLib.name, err)
-		return false
-	} else {
-		fmt.Printf("Out: %s\n", out)
+		out, err := exec.Command("ar", args...).Output()
+
+		if err != nil {
+			fmt.Printf("StaticLib: %s | Error: %s\n", staticLib.name, err)
+			return false
+		} else {
+			fmt.Printf("Out: %s\n", out)
+		}
+
+		staticLib.isBuilt = true
 	}
-
-	staticLib.isBuilt = true
 	return true
 }
 
@@ -142,53 +144,51 @@ func handleFiles(rootOBSFile []byte, subFiles []ObakeBuildFolder) {
 	json.Unmarshal(rootOBSFile, &obakeRootFileObj)
 	fmt.Printf("RootOBSFile: %v\n", obakeRootFileObj)
 
-	if obakeRootFileObj.Builder.Binary != "" {
-		osType = getOsType(obakeRootFileObj.Builder.Os)
-		compilerFlags = obakeRootFileObj.Builder.CompilerFlags
+	osType = getOsType(obakeRootFileObj.Builder.Os)
+	compilerFlags = obakeRootFileObj.Builder.CompilerFlags
 
-		if isValidToolchain(obakeRootFileObj.Builder.Toolchain) {
-			toolchain = obakeRootFileObj.Builder.Toolchain
-		} else {
-			toolchain = DEFAULT_TOOLCHAIN
+	if isValidToolchain(obakeRootFileObj.Builder.Toolchain) {
+		toolchain = obakeRootFileObj.Builder.Toolchain
+	} else {
+		toolchain = DEFAULT_TOOLCHAIN
+	}
+	fmt.Printf("OsType: %s, | Toolchain:%s\n", obakeRootFileObj.Builder.Os, toolchain)
+	fmt.Printf("SubFilesNB: %d\n", len(subFiles))
+
+	if osType != UNKNOWN {
+		for _, buildFolder := range subFiles {
+
+			fmt.Printf("ReadFile: %s\n", "./"+buildFolder.name+"/"+OBAKE_BS_FILENAME)
+			buildFolder.obakeBuildFile, _ = ioutil.ReadFile("./" + buildFolder.name + "/" + OBAKE_BS_FILENAME)
+			obakeCurrentFile := getBuildFileJSONObj(buildFolder)
+
+			if obakeCurrentFile.Binary.Name != "" {
+				buildFolder.buildType = BINARY
+				binaries = append(binaries, makeBinaryType(buildFolder, obakeRootFileObj.Builder.OutBinary))
+			} else if obakeCurrentFile.Plugin.Name != "" {
+				buildFolder.buildType = PLUGIN
+				plugins = append(plugins, makePluginType(buildFolder))
+			} else if obakeCurrentFile.StaticLib.Name != "" {
+				buildFolder.buildType = STATIC_LIB
+				staticLibs = append(staticLibs, makeStaticLibType(buildFolder))
+			}
 		}
-		fmt.Printf("OsType: %s, | Toolchain:%s\n", obakeRootFileObj.Builder.Os, toolchain)
-		fmt.Printf("SubFilesNB: %d\n", len(subFiles))
 
-		if osType != UNKNOWN {
-			for _, buildFolder := range subFiles {
-
-				fmt.Printf("ReadFile: %s\n", "./"+buildFolder.name+"/"+OBAKE_BS_FILENAME)
-				buildFolder.obakeBuildFile, _ = ioutil.ReadFile("./" + buildFolder.name + "/" + OBAKE_BS_FILENAME)
-				obakeCurrentFile := getBuildFileJSONObj(buildFolder)
-
-				if obakeCurrentFile.Binary.Name != "" {
-					buildFolder.buildType = BINARY
-					binaries = append(binaries, makeBinaryType(buildFolder))
-				} else if obakeCurrentFile.Plugin.Name != "" {
-					buildFolder.buildType = PLUGIN
-					plugins = append(plugins, makePluginType(buildFolder))
-				} else if obakeCurrentFile.StaticLib.Name != "" {
-					buildFolder.buildType = STATIC_LIB
-					staticLibs = append(staticLibs, makeStaticLibType(buildFolder))
-				}
+		for _, staticType := range staticLibs {
+			if handleStatic(staticType, staticLibs) == false {
 			}
-
-			for _, staticType := range staticLibs {
-				if handleStatic(staticType, staticLibs) == false {
-				}
-			}
-			for _, pluginType := range plugins {
-				if handlePlugin(pluginType, staticLibs) == false {
-				}
-			}
-			for _, binaryType := range binaries {
-				if handleBinary(binaryType, staticLibs) == false {
-				}
-			}
-
-			Builder = handleBuilder(obakeRootFileObj.Builder, binaries, staticLibs, plugins)
-			build(Builder)
 		}
+		for _, pluginType := range plugins {
+			if handlePlugin(pluginType, staticLibs) == false {
+			}
+		}
+		for _, binaryType := range binaries {
+			if handleBinary(binaryType, staticLibs) == false {
+			}
+		}
+
+		Builder = handleBuilder(obakeRootFileObj.Builder, binaries, staticLibs, plugins)
+		build(Builder)
 	}
 }
 

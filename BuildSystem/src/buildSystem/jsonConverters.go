@@ -7,37 +7,38 @@ import (
 type BinaryType struct {
 	folderInfos     ObakeBuildFolder
 	name            string
+	sourceExtension string
 	staticLibs      []string
 	plugins         []string
 	sources         []string
-	sourceExtension string
 	sourceFileNames []string
 	headerFolders   []string
 	externIncludes  []string
 	outFolder       string
+	isOutBinary     bool
 }
 
 type StaticLibType struct {
 	folderInfos     ObakeBuildFolder
 	name            string
+	sourceExtension string
 	staticLibs      []string
 	plugins         []string
 	sources         []string
-	sourceExtension string
 	sourceFileNames []string
 	headerFolders   []string
 	externIncludes  []string
-	isBuilt         bool
 	outFolder       string
+	isBuilt         bool
 }
 
 type PluginType struct {
 	folderInfos     ObakeBuildFolder
 	name            string
+	sourceExtension string
 	staticLibs      []string
 	plugins         []string
 	sources         []string
-	sourceExtension string
 	sourceFileNames []string
 	headerFolders   []string
 	externIncludes  []string
@@ -46,7 +47,8 @@ type PluginType struct {
 
 type BuilderType struct {
 	os            ObakeOSType
-	binary        BinaryType
+	outBinary     BinaryType
+	binaries      []BinaryType
 	staticLibs    []StaticLibType
 	plugins       []PluginType
 	pluginsFolder string
@@ -100,12 +102,13 @@ func makePluginType(folderInfos ObakeBuildFolder) PluginType {
 	return plugin
 }
 
-func makeBinaryType(folderInfos ObakeBuildFolder) BinaryType {
+func makeBinaryType(folderInfos ObakeBuildFolder, outBinary string) BinaryType {
 	var binary BinaryType
 	jsonObj := getBuildFileJSONObj(folderInfos)
 
 	binary.folderInfos = folderInfos
 	binary.name = jsonObj.Binary.Name
+	binary.isOutBinary = outBinary == binary.name
 	binary.outFolder = binary.folderInfos.path + "/" + jsonObj.Binary.OutFolder
 	binary.staticLibs = jsonObj.Binary.StaticLibs
 	binary.headerFolders = jsonObj.Binary.HeadersFolders

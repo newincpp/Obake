@@ -1,9 +1,5 @@
 package main
 
-var compilerFlags []string
-var osType ObakeOSType
-var toolchain string
-
 type ObakeToolchainType int64
 type ObakeOSType int64
 type ObakeBuildType int64
@@ -39,3 +35,8 @@ const (
 	OSX_DYNAMIC_EXT = ".dylib"
 	OSX_BINARY_EXT  = ""
 )
+
+var compilerFlags []string
+var osType ObakeOSType
+var toolchain string
+var builder BuilderType
