@@ -20,11 +20,13 @@ public:
     DummySystem();
 };
 DummySystem::DummySystem() : ASystem() {
-    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printA, this));
-    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printB, this));
-    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printC, this));
-    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printD, this));
-    //ASystem::getExecQueueRo().push_back(std::bind(&DummySystem::printE, this));
+	//auto x = std::bind(&std::remove_pointer<decltype(this)>::type::printA, this);
+	OBAKE_ADD(printA);
+	OBAKE_ADD(printB);
+	OBAKE_ADD(printC);
+	OBAKE_ADD(printD);
+	OBAKE_ADD(printE);
+	OBAKE_ADD(printE);
 }
 void DummySystem::printA() { std::cout << "A" << std::endl; }
 void DummySystem::printB() { std::cout << "B" << std::endl; }
@@ -40,8 +42,8 @@ int main(int, const char*[]) {
     //Obake::Event<&DummySystem, decltype(&DummySystem::printA)> e;
     //e.bind(&DummySystem::printA, &d);
     c.registerSystem(&d);
-    
-	int runRet = c.run();
-	system("pause");
-	return runRet;
+
+    int runRet = c.run();
+    //system("pause");
+    return runRet;
 }
