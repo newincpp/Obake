@@ -86,7 +86,6 @@ namespace Obake
 		IPlugin() : ASystem() { };
 
 		// TODO Remove test
-		virtual void registerCore(Core* core_) = 0;
 		virtual void initialize() = 0;
 		virtual void unload() = 0;
 	};
