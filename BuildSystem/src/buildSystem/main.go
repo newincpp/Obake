@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
 )
 
 func buildAndGetObjectFiles(sourceFilesPath []string, sourceFiles []string, headersFolders []string,
-	externIncludes []string, extension string, outFolder string, folderInfos ObakeBuildFolder,
-	staticLibs []string, allLibs []StaticLibType) (objectFilesPath []string) {
+	externIncludes []string, externLibs []string, extension string, outFolder string, folderInfos ObakeBuildFolder,
+	staticLibs []string, allLibs []*StaticLibType) (objectFilesPath []string) {
 	for i, srcFilePath := range sourceFilesPath {
 		oFilePath := outFolder + "/" + strings.Replace(sourceFiles[i], extension, ".o", -1)
 		objectFilesPath = append(objectFilesPath, oFilePath)
@@ -27,34 +28,96 @@ func buildAndGetObjectFiles(sourceFilesPath []string, sourceFiles []string, head
 			}
 		}
 
-		_, _, linkIncludes := getStaticLibsLinks(staticLibs, allLibs, folderInfos.name)
+		_, linkNames, linkIncludes := getStaticLibsLinks(staticLibs, allLibs, folderInfos.name)
 
 		args = append(args, linkIncludes...)
+		args = append(args, linkNames...)
 
-		if externIncludes != nil {
-			for _, externInclude := range externIncludes {
-				args = append(args, "-I"+"./"+externInclude+"/")
-			}
-		}
+		args = append(args, getExternIncludesArgs(externIncludes)...)
+		args = append(args, getExternLibsArgs(externLibs)...)
 
 		fmt.Printf("Obj files: %s %v\n", toolchain, args)
-		exec.Command(toolchain, args...).Run()
+		cmd := exec.Command(toolchain, args...)
+		_, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Printf("ObjFile: %s | Error: %s\n", srcFilePath, fmt.Sprint(err))
+		}
+		/*
+			fmt.Printf("Obj files: %s %v\n", toolchain, args)
+			_, err := exec.Command(toolchain, args...).Output()
+			if err != nil {
+				fmt.Printf("ObjFile: %s | Error: %s\n", srcFilePath, err)
+			}
+		*/
 	}
 
 	return
 }
 
-func handleBinary(binary BinaryType, allLibs []StaticLibType) bool {
+func buildDependencies(staticLibs []string, allLibs []*StaticLibType) bool {
 
+	for _, dependencyLib := range staticLibs {
+		dependencyFound, dependency := getStaticLibByName(dependencyLib, allLibs)
+
+		if dependencyFound && dependency.isBuilt == false {
+			if handleStatic(dependency, allLibs) == false {
+				return false
+			}
+		}
+	}
 	return true
 }
 
-func handleStatic(staticLib StaticLibType, allLibs []StaticLibType) bool {
+func handleBinary(binary *BinaryType, allLibs []*StaticLibType) bool {
+
+	linkPaths, linkNames, linkIncludes := getStaticLibsLinks(binary.staticLibs, allLibs, binary.name)
+
+	if buildDependencies(binary.staticLibs, allLibs) == false {
+		return false
+	}
+
+	objectFilesPath := buildAndGetObjectFiles(binary.sources, binary.sourceFileNames, binary.headerFolders,
+		binary.externIncludes, binary.externLibs, binary.sourceExtension, binary.outFolder, binary.folderInfos,
+		binary.staticLibs, allLibs)
+
+	binaryExtension := getBinaryOSExtension()
+
+	args := []string{"-o", binary.outFolder + "/" + binary.name + binaryExtension}
+
+	args = append(args, compilerFlags...)
+	args = append(args, objectFilesPath...)
+
+	args = append(args, linkIncludes...)
+	args = append(args, linkPaths...)
+	args = append(args, linkNames...)
+
+	//args = append(args, getExternIncludesArgs(binary.externIncludes)...)
+	args = append(args, getExternLibsArgs(binary.externLibs)...)
+
+	fmt.Printf("Handle Binary args: %v\n", args)
+
+	cmd := exec.Command(toolchain, args...)
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Printf("Binary: %s | Error: %s\n", binary.name, fmt.Sprint(err))
+		return false
+	}
+	fmt.Printf("Out: %s\n\n", out)
+	return true
+}
+
+func handleStatic(staticLib *StaticLibType, allLibs []*StaticLibType) bool {
 
 	if staticLib.isBuilt == false {
 
+		linkPaths, linkNames, linkIncludes := getStaticLibsLinks(staticLib.staticLibs, allLibs, staticLib.name)
+
+		if buildDependencies(staticLib.staticLibs, allLibs) == false {
+			return false
+		}
+
 		objectFilesPath := buildAndGetObjectFiles(staticLib.sources, staticLib.sourceFileNames, staticLib.headerFolders,
-			staticLib.externIncludes, staticLib.sourceExtension, staticLib.outFolder,
+			staticLib.externIncludes, staticLib.externLibs, staticLib.sourceExtension, staticLib.outFolder,
 			staticLib.folderInfos, staticLib.staticLibs, allLibs)
 
 		staticLibExtension := getStaticLibOSExtension()
@@ -63,82 +126,126 @@ func handleStatic(staticLib StaticLibType, allLibs []StaticLibType) bool {
 
 		args = append(args, objectFilesPath...)
 
-		linkPaths, linkNames, linkIncludes := getStaticLibsLinks(staticLib.staticLibs, allLibs, staticLib.name)
-
 		args = append(args, linkIncludes...)
 		args = append(args, linkPaths...)
 		args = append(args, linkNames...)
 
+		//	args = append(args, getExternIncludesArgs(staticLib.externIncludes)...)
+		args = append(args, getExternLibsArgs(staticLib.externLibs)...)
+
 		fmt.Printf("Handle Static args: %v\n", args)
 
-		out, err := exec.Command("ar", args...).Output()
+		//	executeCommandWithPrintErr("ar", args)
+
+		cmd := exec.Command("ar", args...)
+		out, err := cmd.CombinedOutput()
+		if err != nil {
+			fmt.Printf("StaticLib: %s | Error: %s\n", staticLib.name, fmt.Sprint(err))
+			return false
+		}
+		fmt.Printf("Out: %s\n\n", out)
+
+		/*out, err := exec.Command("ar", args...).Output()
 
 		if err != nil {
-			fmt.Printf("StaticLib: %s | Error: %s\n", staticLib.name, err)
+			fmt.Printf("StaticLib: %s | Error: %s\n\n", staticLib.name, err)
 			return false
 		} else {
-			fmt.Printf("Out: %s\n", out)
+			fmt.Printf("Out: %s\n\n", out)
 		}
-
+		*/
 		staticLib.isBuilt = true
 	}
 	return true
 }
 
-func handlePlugin(plugin PluginType, allLibs []StaticLibType) bool {
+func handlePlugin(plugin *PluginType, allLibs []*StaticLibType) bool {
 
+	linkPaths, linkNames, linkIncludes := getStaticLibsLinks(plugin.staticLibs, allLibs, "")
+
+	if buildDependencies(plugin.staticLibs, allLibs) == false {
+		return false
+	}
 	objectFilesPath := buildAndGetObjectFiles(plugin.sources, plugin.sourceFileNames, plugin.headerFolders,
-		plugin.externIncludes, plugin.sourceExtension, plugin.outFolder, plugin.folderInfos,
+		plugin.externIncludes, plugin.externLibs, plugin.sourceExtension, plugin.outFolder, plugin.folderInfos,
 		plugin.staticLibs, allLibs)
 
-	pluginLibExtension := LINUX_DYNAMIC_EXT
-	if osType == WINDOWS {
-		pluginLibExtension = WINDOWS_DYNAMIC_EXT
-	} else if osType == OSX {
-		pluginLibExtension = OSX_DYNAMIC_EXT
-	}
+	pluginLibExtension := getSharedLibOsExtension()
 
 	args := []string{"-shared", "-o", plugin.outFolder + "/" + plugin.name + pluginLibExtension}
 
 	args = append(args, compilerFlags...)
 	args = append(args, objectFilesPath...)
 
-	linkPaths, linkNames, linkIncludes := getStaticLibsLinks(plugin.staticLibs, allLibs, "")
-
 	args = append(args, linkIncludes...)
 	args = append(args, linkPaths...)
 	args = append(args, linkNames...)
 
-	fmt.Printf("Handle plugin args: %v\n", args)
+	//	args = append(args, getExternIncludesArgs(plugin.externIncludes)...)
+	args = append(args, getExternLibsArgs(plugin.externLibs)...)
 
-	out, err := exec.Command(toolchain, args...).Output()
+	fmt.Printf("Handle Plugin args: %v\n", args)
 
-	if err != nil {
-		fmt.Printf("PluginLib: %s | Error: %s\n", plugin.name, err)
+	executeCommandWithPrintErr(toolchain, args)
+	/*
+		out, err := exec.Command(toolchain, args...).Output()
+
+		if err != nil {
+			fmt.Printf("PluginLib: %s | Error: %s\n\n", plugin.name, err)
+			return false
+		}
+		fmt.Printf("Out: %s\n\n", out)
+	*/
+	return true
+}
+
+func handleBuilder(builder BuilderJSON, binaries []*BinaryType,
+	staticLibs []*StaticLibType, plugins []*PluginType) bool {
+	outBinaryFound := false
+	var outBinary *BinaryType
+
+	for _, binary := range binaries {
+		if binary.isOutBinary == true {
+			outBinary = binary
+			outBinaryFound = true
+			break
+		}
+	}
+
+	if outBinaryFound == false {
 		return false
-	} else {
-		fmt.Printf("Out: %s\n", out)
+	}
+
+	binaryExtension := getBinaryOSExtension()
+	staticExtension := getStaticLibOSExtension()
+	pluginExtension := getSharedLibOsExtension()
+
+	success, _ := exists(builder.OutFolder)
+	if !success {
+		os.MkdirAll(builder.OutFolder, os.ModePerm)
+	}
+	success, _ = exists(builder.OutFolder + "Plugins")
+	if !success {
+		os.MkdirAll(builder.OutFolder+"/Plugins", os.ModePerm)
+	}
+
+	copy(outBinary.outFolder+"/"+outBinary.name+binaryExtension, builder.OutFolder+"/"+outBinary.name+binaryExtension)
+
+	for _, plugin := range plugins {
+		copy(plugin.outFolder+"/"+plugin.name+pluginExtension, builder.OutFolder+"/Plugins/"+plugin.name+pluginExtension)
+	}
+
+	for _, lib := range staticLibs {
+		copy(lib.outFolder+"/"+lib.name+staticExtension, builder.OutFolder+lib.name+staticExtension)
 	}
 
 	return true
 }
 
-func handleBuilder(BuilderJSON BuilderJSON, binaries []BinaryType,
-	staticLibs []StaticLibType, plugins []PluginType) BuilderType {
-	var Builder BuilderType
-
-	return Builder
-}
-
-func build(Builder BuilderType) {
-
-}
-
 func handleFiles(rootOBSFile []byte, subFiles []ObakeBuildFolder) {
-	var binaries []BinaryType
-	var staticLibs []StaticLibType
-	var plugins []PluginType
-	var Builder BuilderType
+	var binaries []*BinaryType
+	var staticLibs []*StaticLibType
+	var plugins []*PluginType
 	var obakeRootFileObj ObjectJSON
 
 	json.Unmarshal(rootOBSFile, &obakeRootFileObj)
@@ -174,21 +281,23 @@ func handleFiles(rootOBSFile []byte, subFiles []ObakeBuildFolder) {
 			}
 		}
 
-		for _, staticType := range staticLibs {
+		for i, staticType := range staticLibs {
 			if handleStatic(staticType, staticLibs) == false {
+				staticLibs = append(staticLibs[:i], staticLibs[:i+1]...)
 			}
 		}
-		for _, pluginType := range plugins {
+		for i, pluginType := range plugins {
 			if handlePlugin(pluginType, staticLibs) == false {
+				plugins = append(plugins[:i], plugins[:i+1]...)
 			}
 		}
-		for _, binaryType := range binaries {
+		for i, binaryType := range binaries {
 			if handleBinary(binaryType, staticLibs) == false {
+				binaries = append(binaries[:i], binaries[:i+1]...)
 			}
 		}
 
-		Builder = handleBuilder(obakeRootFileObj.Builder, binaries, staticLibs, plugins)
-		build(Builder)
+		handleBuilder(obakeRootFileObj.Builder, binaries, staticLibs, plugins)
 	}
 }
 

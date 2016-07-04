@@ -1,0 +1,10 @@
+{
+  "StaticLib":
+   {
+     "name": "Obake",
+     "srcFolders": ["."],
+     "srcExtension": ".cpp",
+     "headersFolders": ["glm"],
+     "outFolder": "Bin"
+   }
+}

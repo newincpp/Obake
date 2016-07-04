@@ -14,6 +14,7 @@ type BinaryType struct {
 	sourceFileNames []string
 	headerFolders   []string
 	externIncludes  []string
+	externLibs      []string
 	outFolder       string
 	isOutBinary     bool
 }
@@ -28,6 +29,7 @@ type StaticLibType struct {
 	sourceFileNames []string
 	headerFolders   []string
 	externIncludes  []string
+	externLibs      []string
 	outFolder       string
 	isBuilt         bool
 }
@@ -42,6 +44,7 @@ type PluginType struct {
 	sourceFileNames []string
 	headerFolders   []string
 	externIncludes  []string
+	externLibs      []string
 	outFolder       string
 }
 
@@ -55,8 +58,8 @@ type BuilderType struct {
 	outFolder     string
 }
 
-func makeStaticLibType(folderInfos ObakeBuildFolder) StaticLibType {
-	var staticLib StaticLibType
+func makeStaticLibType(folderInfos ObakeBuildFolder) *StaticLibType {
+	staticLib := new(StaticLibType)
 	jsonObj := getBuildFileJSONObj(folderInfos)
 
 	staticLib.folderInfos = folderInfos
@@ -65,6 +68,8 @@ func makeStaticLibType(folderInfos ObakeBuildFolder) StaticLibType {
 	staticLib.staticLibs = jsonObj.StaticLib.StaticLibs
 	staticLib.headerFolders = jsonObj.StaticLib.HeadersFolders
 	staticLib.sourceExtension = jsonObj.StaticLib.SrcExtension
+	staticLib.externIncludes = jsonObj.StaticLib.ExternIncludes
+	staticLib.externLibs = jsonObj.StaticLib.ExternLibs
 	staticLib.isBuilt = false
 
 	success, _ := exists(staticLib.outFolder)
@@ -74,13 +79,11 @@ func makeStaticLibType(folderInfos ObakeBuildFolder) StaticLibType {
 
 	staticLib.sources, staticLib.sourceFileNames = getSourceFiles(jsonObj.StaticLib.SrcFolders, jsonObj.StaticLib.SrcExtension, folderInfos)
 
-	staticLib.externIncludes = jsonObj.StaticLib.ExternIncludes
-
 	return staticLib
 }
 
-func makePluginType(folderInfos ObakeBuildFolder) PluginType {
-	var plugin PluginType
+func makePluginType(folderInfos ObakeBuildFolder) *PluginType {
+	plugin := new(PluginType)
 	jsonObj := getBuildFileJSONObj(folderInfos)
 
 	plugin.folderInfos = folderInfos
@@ -89,6 +92,8 @@ func makePluginType(folderInfos ObakeBuildFolder) PluginType {
 	plugin.staticLibs = jsonObj.Plugin.StaticLibs
 	plugin.headerFolders = jsonObj.Plugin.HeadersFolders
 	plugin.sourceExtension = jsonObj.Plugin.SrcExtension
+	plugin.externIncludes = jsonObj.Plugin.ExternIncludes
+	plugin.externLibs = jsonObj.Plugin.ExternLibs
 
 	success, _ := exists(plugin.outFolder)
 	if !success {
@@ -97,13 +102,11 @@ func makePluginType(folderInfos ObakeBuildFolder) PluginType {
 
 	plugin.sources, plugin.sourceFileNames = getSourceFiles(jsonObj.Plugin.SrcFolders, jsonObj.Plugin.SrcExtension, folderInfos)
 
-	plugin.externIncludes = jsonObj.Plugin.ExternIncludes
-
 	return plugin
 }
 
-func makeBinaryType(folderInfos ObakeBuildFolder, outBinary string) BinaryType {
-	var binary BinaryType
+func makeBinaryType(folderInfos ObakeBuildFolder, outBinary string) *BinaryType {
+	binary := new(BinaryType)
 	jsonObj := getBuildFileJSONObj(folderInfos)
 
 	binary.folderInfos = folderInfos
@@ -113,6 +116,8 @@ func makeBinaryType(folderInfos ObakeBuildFolder, outBinary string) BinaryType {
 	binary.staticLibs = jsonObj.Binary.StaticLibs
 	binary.headerFolders = jsonObj.Binary.HeadersFolders
 	binary.sourceExtension = jsonObj.Binary.SrcExtension
+	binary.externIncludes = jsonObj.Binary.ExternIncludes
+	binary.externLibs = jsonObj.Binary.ExternLibs
 
 	success, _ := exists(binary.outFolder)
 	if !success {
@@ -120,8 +125,6 @@ func makeBinaryType(folderInfos ObakeBuildFolder, outBinary string) BinaryType {
 	}
 
 	binary.sources, binary.sourceFileNames = getSourceFiles(jsonObj.Binary.SrcFolders, jsonObj.Binary.SrcExtension, folderInfos)
-
-	binary.externIncludes = jsonObj.Binary.ExternIncludes
 
 	return binary
 }

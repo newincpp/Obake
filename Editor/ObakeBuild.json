@@ -1,0 +1,13 @@
+{
+  "Binary":
+   {
+     "name": "Editor",
+     "srcFolders": ["."],
+     "staticLibs": ["Obake"],
+     "srcExtension": ".cpp",
+     "headersFolders": [".", "vulkan"],
+     "externIncludes": [],
+     "externLibs": [],
+     "outFolder": "Bin"
+   }
+}
