@@ -15,7 +15,7 @@ bool Obake::SharedLibrary::open(const std::string& path_)
 
 #elif defined(LINUX) || defined (APPLE)
 
-	void* library = dlopen(path_, RTLD_LAZY);
+	void* library = dlopen(path_.c_str(), RTLD_LAZY);
 
 #endif
 

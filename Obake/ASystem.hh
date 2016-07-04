@@ -3,10 +3,10 @@
 #include <functional>
 #include <vector>
 #include <iostream>
+#include <typeTraitsUtility.hh>
 
 namespace Obake {
-	class Core;
-
+    class Core;
 	class ASystem {
 	protected:
 		void executeAtBegin();
@@ -19,8 +19,10 @@ namespace Obake {
 
 		void jump();
 
-#define OBAKE_ADD(func) _executionQueue.push_back(std::bind(func, this));  \
-		if (_pushNextAsBeginLoop) { _beginLoop = --_executionQueue.end(); _pushNextAsBeginLoop = false;}
+#define OBAKE_ADD(func) _executionQueue.push_back(std::bind(&Obake::__remove_reference__<decltype(*this)>::type::func, this));  \
+		if (_pushNextAsBeginLoop) \
+		{  if (_executionQueue.size() > 0) { _beginLoop = --_executionQueue.end(); } \
+		else { _beginLoop = _executionQueue.end(); } _pushNextAsBeginLoop = false;}
 #define OBAKE_LOOP for (executeAtBegin(); _loopCount < 1; executeAtEnd())
 
 		void _fillTask(decltype(_executionQueue)::value_type& task_)

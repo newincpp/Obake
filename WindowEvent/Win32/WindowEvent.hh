@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Windows.h>
-
 #include "Core.hh"
 #include "Plugin.hh"
 

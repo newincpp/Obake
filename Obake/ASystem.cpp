@@ -2,8 +2,8 @@
 #include "ASystem.hh"
 
 Obake::ASystem::ASystem()
-	: _beginLoop(_executionQueue.end()), _core(nullptr),
-	_pushNextAsBeginLoop(false)
+	: _beginLoop(_executionQueue.end()), _pushNextAsBeginLoop(false),
+	_core(nullptr)
 {
     _executionQueue.reserve(32);
 }
@@ -17,7 +17,14 @@ void Obake::ASystem::registerCore(Core* core_)
 void Obake::ASystem::executeAtBegin()
 {
 	//std::cout << "Execute at begin" << std::endl;
-	_beginLoop = --_executionQueue.end();
+	if (_executionQueue.size() > 0)
+	{
+		_beginLoop = --_executionQueue.end();
+	}
+	else
+	{
+		_beginLoop = _executionQueue.end();
+	}
 	_pushNextAsBeginLoop = true;
 	_loopCount = 0;
 }

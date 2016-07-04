@@ -6,6 +6,7 @@
 
 #include "Core.hh"
 #include "ASystem.hh"
+#include "Event.hh"
 
 
 class DummySystem : public Obake::ASystem {
@@ -19,11 +20,13 @@ public:
     DummySystem();
 };
 DummySystem::DummySystem() : ASystem() {
-    ASystem::_executionQueue.push_back(std::bind(&DummySystem::printA, this));
-    ASystem::_executionQueue.push_back(std::bind(&DummySystem::printB, this));
-    ASystem::_executionQueue.push_back(std::bind(&DummySystem::printC, this));
-    ASystem::_executionQueue.push_back(std::bind(&DummySystem::printD, this));
-    ASystem::_executionQueue.push_back(std::bind(&DummySystem::printE, this));
+	//auto x = std::bind(&std::remove_pointer<decltype(this)>::type::printA, this);
+	OBAKE_ADD(printA);
+	OBAKE_ADD(printB);
+	OBAKE_ADD(printC);
+	OBAKE_ADD(printD);
+	OBAKE_ADD(printE);
+	OBAKE_ADD(printE);
 }
 void DummySystem::printA() { std::cout << "A" << std::endl; }
 void DummySystem::printB() { std::cout << "B" << std::endl; }
@@ -32,12 +35,15 @@ void DummySystem::printD() { std::cout << "D" << std::endl; }
 void DummySystem::printE() { std::cout << "E" << std::endl; }
 void DummySystem::throwEvent() { }
 
-int main(int argc, const char * argv[]) {
+int main(int, const char*[]) {
     Obake::Core c;
     DummySystem d;
+
+    //Obake::Event<&DummySystem, decltype(&DummySystem::printA)> e;
+    //e.bind(&DummySystem::printA, &d);
     c.registerSystem(&d);
-    
-	int runRet = c.run();
-	system("pause");
-	return runRet;
+
+    int runRet = c.run();
+    //system("pause");
+    return runRet;
 }
