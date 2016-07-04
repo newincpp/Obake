@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -16,6 +17,22 @@ type ObakeBuildFolder struct {
 	obakeBuildFile []byte
 }
 
+func checkErr(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func copy(src string, dst string) {
+	fmt.Printf("Copy: %s to: %s\n", src, dst)
+	// Read all content of src to data
+	data, err := ioutil.ReadFile(src)
+	checkErr(err)
+	// Write data to dst
+	err = ioutil.WriteFile(dst, data, 0644)
+	checkErr(err)
+}
+
 func contains(s []string, e string) bool {
 	for _, a := range s {
 		if a == e {
@@ -23,6 +40,46 @@ func contains(s []string, e string) bool {
 		}
 	}
 	return false
+}
+
+func getExternIncludesArgs(externIncludes []string) (args []string) {
+	if externIncludes != nil {
+		for _, externInclude := range externIncludes {
+			args = append(args, "-I"+externInclude)
+		}
+	}
+
+	return
+}
+
+func executeCommandWithPrintErr(command string, args []string) {
+	cmd := exec.Command(command, args...)
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		fmt.Println("Err:" + fmt.Sprint(err) + ": " + string(output))
+		return
+	} else {
+		fmt.Println("Out:" + string(output))
+	}
+}
+
+func getExternLibsArgs(externLibs []string) (args []string) {
+	if externLibs != nil {
+		for _, externLib := range externLibs {
+			args = append(args, "-l"+externLib)
+		}
+	}
+
+	return
+}
+
+func getStaticLibByName(staticLibName string, allLibs []*StaticLibType) (bool, *StaticLibType) {
+	for _, staticLib := range allLibs {
+		if staticLib.name == staticLibName {
+			return true, staticLib
+		}
+	}
+	return false, nil
 }
 
 func getSourceFiles(srcFolders []string, extension string, folderInfos ObakeBuildFolder) (sourceFiles []string, sourceFilesPath []string) {
@@ -35,15 +92,15 @@ func getSourceFiles(srcFolders []string, extension string, folderInfos ObakeBuil
 			sourceFilesInFolder = getAllFilesFromDir(folderInfos.path+"/"+srcFolder, extension)
 		}
 		sourceFiles = append(sourceFiles, sourceFilesInFolder...)
-		fmt.Printf("SourceFiles: %v\n", sourceFiles)
+		//		fmt.Printf("SourceFiles: %v\n", sourceFiles)
 
 		if srcFolder == "." {
 			sourceFilesPath = append(sourceFilesPath, sourceFilesInFolder...)
 		} else {
 			sourceFilesPath = append(sourceFilesPath, joinAtBegin(srcFolder+"/", sourceFilesInFolder)...)
 		}
-		fmt.Printf("SourceFilesPath: %v\n", sourceFilesPath)
-		fmt.Printf("SourceFiles: %v\n", sourceFiles)
+		//		fmt.Printf("SourceFilesPath: %v\n", sourceFilesPath)
+		//		fmt.Printf("SourceFiles: %v\n", sourceFiles)
 	}
 
 	return
@@ -88,7 +145,25 @@ func getStaticLibOSExtension() string {
 	return LINUX_STATIC_EXT
 }
 
-func getStaticLibsLinks(libsToLink []string, libs []StaticLibType, avoidLib string) (linkPaths []string, linkNames []string,
+func getSharedLibOsExtension() string {
+	if osType == WINDOWS {
+		return WINDOWS_DYNAMIC_EXT
+	} else if osType == OSX {
+		return OSX_DYNAMIC_EXT
+	}
+	return LINUX_DYNAMIC_EXT
+}
+
+func getBinaryOSExtension() string {
+	if osType == WINDOWS {
+		return WINDOWS_BINARY_EXT
+	} else if osType == OSX {
+		return OSX_BINARY_EXT
+	}
+	return LINUX_BINARY_EXT
+}
+
+func getStaticLibsLinks(libsToLink []string, libs []*StaticLibType, avoidLib string) (linkPaths []string, linkNames []string,
 	linkIncludes []string) {
 
 	//	fmt.Printf("GetStaticLibsLinks LibsToLink: %v\n", libsToLink)
@@ -99,7 +174,7 @@ func getStaticLibsLinks(libsToLink []string, libs []StaticLibType, avoidLib stri
 		//		fmt.Printf("GetStaticLibsLinks Libs: %s\n", staticLib.name)
 		if (staticLib.name != avoidLib) && (contains(libsToLink, staticLib.name)) {
 			path := "-L" + staticLib.outFolder
-			name := "-l" + staticLib.outFolder + "/" + staticLib.name
+			name := "-l" + staticLib.outFolder + "/" + staticLib.name + getStaticLibOSExtension()
 
 			linkIncludes = append(linkIncludes, "-I"+"./"+staticLib.name+"/.")
 			for _, includeHeader := range staticLib.headerFolders {
@@ -109,6 +184,7 @@ func getStaticLibsLinks(libsToLink []string, libs []StaticLibType, avoidLib stri
 			linkPaths = append(linkPaths, path)
 			linkNames = append(linkNames, name)
 
+			fmt.Printf("GetStaticLibsLinks Names: %v\n", linkNames)
 		}
 	}
 	//	fmt.Printf("GetStaticLibsLinks LinkPaths: %v\n", linkPaths)

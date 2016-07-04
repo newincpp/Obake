@@ -1,0 +1,12 @@
+{
+  "Plugin":
+   {
+     "name": "WindowEvent",
+     "srcFolders": ["Win32"],
+     "staticLibs": ["Obake"],
+     "srcExtension": ".cpp",
+     "headersFolders": ["Win32"],
+     "externIncludes": [],
+     "outFolder": "Bin"
+   }
+}
