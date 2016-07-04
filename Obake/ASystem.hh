@@ -3,6 +3,7 @@
 #include <functional>
 #include <vector>
 #include <iostream>
+#include <typeTraitsUtility.hh>
 
 namespace Obake {
     class Core;
@@ -18,7 +19,7 @@ namespace Obake {
 
 		void jump();
 
-#define OBAKE_ADD(func) _executionQueue.push_back(std::bind(func, this));  \
+#define OBAKE_ADD(func) _executionQueue.push_back(std::bind(&Obake::__remove_reference__<decltype(*this)>::type::func, this));  \
 		if (_pushNextAsBeginLoop) \
 		{  if (_executionQueue.size() > 0) { _beginLoop = --_executionQueue.end(); } \
 		else { _beginLoop = _executionQueue.end(); } _pushNextAsBeginLoop = false;}
