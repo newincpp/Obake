@@ -20,8 +20,8 @@ public:
     DummySystem();
 };
 DummySystem::DummySystem() : ASystem() {
-	//auto x = std::bind(&std::remove_pointer<decltype(this)>::type::printA, this);
-	OBAKE_ADD(printA);
+	//OBAKE_ADD(&DummySystem::printA); // before magic
+	OBAKE_ADD(printA);  // afterMagic
 	OBAKE_ADD(printB);
 	OBAKE_ADD(printC);
 	OBAKE_ADD(printD);

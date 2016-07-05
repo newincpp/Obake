@@ -99,7 +99,7 @@ Obake::PluginsManager::~PluginsManager()
 
 Obake::PluginsManager::PluginsManager()
 {
-	std::vector<std::string> pluginsPaths = _getFilesPathsFromFolder(PLUGINS_FOLDER);
+	eastl::vector<std::string> pluginsPaths = _getFilesPathsFromFolder(PLUGINS_FOLDER);
 
 	/*std::cout << "NbFilesFound: " << pluginsPaths.size() << std::endl;*/
 
@@ -132,9 +132,9 @@ Obake::PluginsManager::PluginsManager()
 
 }
 
-std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const std::string& folder) const
+eastl::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const std::string& folder) const
 {
-	std::vector<std::string> filesPaths;
+	eastl::vector<std::string> filesPaths;
 
 #if defined(LINUX) || defined (APPLE)
 
@@ -188,7 +188,7 @@ bool Obake::PluginsManager::_isAvailablePluginExists(AvailablePlugin* testPlugin
 	return false;
 }
 
-const std::vector<Obake::AvailablePlugin*>& Obake::PluginsManager::getAllAvailablePlugins() const
+const eastl::vector<Obake::AvailablePlugin*>& Obake::PluginsManager::getAllAvailablePlugins() const
 {
 	return _availablePlugins;
 }

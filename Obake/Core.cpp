@@ -1,7 +1,47 @@
 #include "Core.hh"
 
+#if O_DEBUG
+void* operator new[](size_t size, const char* pName, int flags, unsigned debugFlags, const char* file, int line) {
+	std::cout << "allocSize:" << size << std::endl;
+	if (pName) {
+		std::cout << "pName" << pName << std::endl;
+	}
+	std::cout << "flags " << flags << std::endl;
+	std::cout << "debug " << debugFlags << std::endl;
+	if (file) {
+		std::cout << "file " << file << std::endl;
+	}
+	std::cout << "line " << line << std::endl << std::endl;
+#else
+void* operator new[](size_t size, const char*, int, unsigned , const char*, int) {
+#endif
+	return malloc(size);
+}
+#if O_DEBUG
+void* operator new[](size_t size, size_t alignment, size_t alignmentOffset, const char* pName, int flags, unsigned debugFlags, const char* file, int line) {
+	std::cout << "allocSize:" << size << std::endl;
+	std::cout << "alignment " << alignment << std::endl;
+	std::cout << "alignmentOffset " << alignmentOffset << std::endl;
+	if (pName) {
+		std::cout << "pName" << pName << std::endl;
+	}
+	std::cout << "flags " << flags << std::endl;
+	std::cout << "debug " << debugFlags << std::endl;
+	if (file) {
+		std::cout << "file " << file << std::endl;
+	}
+	std::cout << "line " << line << std::endl << std::endl;
+#else
+void* operator new[](size_t size, size_t alignment, size_t, const char*, int, unsigned, const char*, int) {
+#endif
+	//force alignment for performance reason (like SIMDs)
+	EASTL_ASSERT(alignment <= 8);
+	return aligned_alloc(alignment, size);
+}
+
+
 void Obake::Core::executeNext(ASystem* system_) {
-	std::function<void(void)> task = []() {};
+	eastl::function<void(void)> task = []() {};
 	system_->fillTask(task);
 
 	if (_threadingDisabled)
@@ -38,17 +78,17 @@ int Obake::Core::run() {
 	bool currentSystemStill = false;
 	while (still) {
 		still = false;
-	/*	for (decltype(_registeredSystems)::value_type system : _registeredSystems)
-		{
+		/*	for (decltype(_registeredSystems)::value_type system : _registeredSystems)
+			{
 			if (system != nullptr)
 			{
-				executeNext(system);
-				still |= system->isStillWorking();
+			executeNext(system);
+			still |= system->isStillWorking();
 			}
-		}*/
+			}*/
 
 		for (decltype(_registeredSystems)::iterator systemIt = _registeredSystems.begin()
-			; systemIt != _registeredSystems.end(); ++systemIt)
+				; systemIt != _registeredSystems.end(); ++systemIt)
 		{
 			if ((*systemIt) != nullptr)
 			{
@@ -56,11 +96,11 @@ int Obake::Core::run() {
 				currentSystemStill = (*systemIt)->isStillWorking();
 				still |= currentSystemStill;
 				/*if (!currentSystemStill)
-				{
-					(*systemIt)->unload();
-					_registeredSystems.erase(systemIt);
-					systemIt = _registeredSystems.begin();
-				}*/
+				  {
+				  (*systemIt)->unload();
+				  _registeredSystems.erase(systemIt);
+				  systemIt = _registeredSystems.begin();
+				  }*/
 			}
 		}
 		//std::cout << "Still: " << std::boolalpha << still << " | RegisteredSystems Size: " << _registeredSystems.size() << std::endl;
@@ -68,8 +108,8 @@ int Obake::Core::run() {
 	return 0;
 }
 
-Obake::Core::Core()
-	: _threadingDisabled(true)
+	Obake::Core::Core()
+: _threadingDisabled(true)
 {
 	std::cout << "launching: " << std::thread::hardware_concurrency() << " threads" << std::endl;
 }

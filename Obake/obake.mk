@@ -3,6 +3,6 @@ SRC	= ../Obake/ASystem.cpp \
 	  ../Obake/SharedLibrary.cpp \
 	  ../Obake/Core.cpp
 
-INCLUDE=-I./
+INCLUDE=-I./ -I./EASTL
 
-LIBS= -ldl
+LIBS= -ldl #-L./ -lEASTL

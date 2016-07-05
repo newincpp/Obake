@@ -1,4 +1,6 @@
 #pragma once
+#include <EASTL/EASTL/vector.h>
+#include <
 #include "SharedLibrary.hh"
 
 namespace Obake
@@ -30,16 +32,16 @@ namespace Obake
 	class PluginsManager
 	{
 	private:
-		std::vector<AvailablePlugin*> _availablePlugins;
+		eastl::vector<AvailablePlugin*> _availablePlugins;
 		
-		std::vector<std::string> _getFilesPathsFromFolder(const std::string& folder_) const;
+		eastl::vector<std::string> _getFilesPathsFromFolder(const std::string& folder_) const;
 		bool _isAvailablePluginExists(AvailablePlugin* testPlugin_) const;
 
 	public:
 		~PluginsManager();
 		explicit PluginsManager();
 
-		const std::vector<AvailablePlugin*>& getAllAvailablePlugins() const;
+		const eastl::vector<AvailablePlugin*>& getAllAvailablePlugins() const;
 		void displayPluginsInfos();
 		AvailablePlugin* getAvailablePlugin(const std::string& name_) const;
 		AvailablePlugin* getAvailablePlugin(uint16_t id_) const;

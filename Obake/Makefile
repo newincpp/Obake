@@ -3,7 +3,7 @@ include ./obake.mk
 SRC	+= ./main.cpp
 EXT     =cpp
 NAME	=demo
-DEFINE 	=-D THREAD_SHOW #-D FPS_COUNTER
+DEFINE 	=-D THREAD_SHOW #-D O_DEBUG 
 DEBUG 	= -g 
 GLM_DEFINE=-DGLM_SWIZZLE -DGLM_FORCE_AVX
 OPTIM= $(GLM_DEFINE) -march=native -O2 -fno-rtti -fno-exceptions -Wconversion #-Weffc++ 
