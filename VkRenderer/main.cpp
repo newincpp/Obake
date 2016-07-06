@@ -51,7 +51,7 @@ int main()
 	//	vulkanExample->renderLoop();
 
 	system("Pause");
-	vulkanExample->dieDieDie();
+	//	vulkanExample->dieDieDie();
 	//	delete(vulkanExample);
 	return 0;
 }

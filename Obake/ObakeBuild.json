@@ -4,7 +4,7 @@
      "name": "Obake",
      "srcFolders": ["."],
      "srcExtension": ".cpp",
-     "headersFolders": ["glm"],
+     "headersFolders": [".", "external"],
      "outFolder": "Bin"
    }
 }

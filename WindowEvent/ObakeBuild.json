@@ -7,6 +7,8 @@
      "srcExtension": ".cpp",
      "headersFolders": ["Win32"],
      "externIncludes": [],
-     "outFolder": "Bin"
+	 "externLibs": ["user32.lib"],
+     "outFolder": "Bin",
+	 "compilerFlags": []
    }
 }

@@ -37,7 +37,7 @@ VkRenderer::initialize()
 	// Call window event
 	_core->eventsManager.executeEvent<void>("Window Event");
 
-	OBAKE_ADD(&VkRenderer::eInitVulkan);
+	OBAKE_ADD(eInitVulkan);
 }
 
 void

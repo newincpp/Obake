@@ -87,9 +87,9 @@ func getSourceFiles(srcFolders []string, extension string, folderInfos ObakeBuil
 
 	for _, srcFolder := range srcFolders {
 		if srcFolder == "." {
-			sourceFilesInFolder = getAllFilesFromDir(folderInfos.path+"/", extension)
+			sourceFilesInFolder = append(sourceFilesInFolder, getAllFilesFromDir(folderInfos.path+"/", extension)...)
 		} else {
-			sourceFilesInFolder = getAllFilesFromDir(folderInfos.path+"/"+srcFolder, extension)
+			sourceFilesInFolder = append(sourceFilesInFolder, getAllFilesFromDir(folderInfos.path+"/"+srcFolder, extension)...)
 		}
 		sourceFiles = append(sourceFiles, sourceFilesInFolder...)
 		//		fmt.Printf("SourceFiles: %v\n", sourceFiles)
@@ -184,7 +184,7 @@ func getStaticLibsLinks(libsToLink []string, libs []*StaticLibType, avoidLib str
 			linkPaths = append(linkPaths, path)
 			linkNames = append(linkNames, name)
 
-			fmt.Printf("GetStaticLibsLinks Names: %v\n", linkNames)
+			//	fmt.Printf("GetStaticLibsLinks Names: %v\n", linkNames)
 		}
 	}
 	//	fmt.Printf("GetStaticLibsLinks LinkPaths: %v\n", linkPaths)
@@ -216,6 +216,13 @@ func getOsType(osStr string) ObakeOSType {
 		return OSX
 	}
 	return UNKNOWN
+}
+
+func returnDefaultIfEmpty(toCheck string, defaultStr string) string {
+	if toCheck == "" {
+		return defaultStr
+	}
+	return toCheck
 }
 
 func exists(path string) (bool, error) {
