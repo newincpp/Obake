@@ -8,6 +8,6 @@
      "outBinary": "Editor",
      "outPluginsFolder": "Plugins",
      "outFolder": "BuildTest",
-     "FullStatic": false
+     "fullStatic": false,
    }
 }
