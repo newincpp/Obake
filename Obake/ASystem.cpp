@@ -19,7 +19,7 @@ void Obake::ASystem::executeAtBegin()
 	//std::cout << "Execute at begin" << std::endl;
 	if (_executionQueue.size() > 0)
 	{
-		_beginLoop = --_executionQueue.end();
+		_beginLoop = _executionQueue.rbegin().base();
 	}
 	else
 	{

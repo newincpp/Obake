@@ -1,8 +1,8 @@
 #pragma once
-#include <string>
 #include <cassert>
 #include "Definitions.hh"
 #include "Plugin.hh"
+#include <EASTL/EASTL/string.h>
 
 #ifdef WIN32
 	#include <Windows.h>
@@ -28,13 +28,13 @@ namespace Obake
 	{
 	private: 
 		lib_t _lib;
-		std::string _error;
+		eastl::string _error;
 
 	public:
 		~SharedLibrary();
 		SharedLibrary();
 
-		bool open(const std::string& path_);
+		bool open(const eastl::string& path_);
 		bool sym(const char* name_, void** ptr_);
 		void close();
 	/*	void setError(const std::string& prefix);

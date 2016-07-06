@@ -1,4 +1,6 @@
 #pragma once
+#include <EASTL/EASTL/vector.h>
+#include <EASTL/EASTL/string.h>
 #include "SharedLibrary.hh"
 
 namespace Obake
@@ -7,7 +9,7 @@ namespace Obake
 	{
 	private:
 
-		std::string _path;
+		eastl::string _path;
 		bool _isLoaded;
 		PluginInfos _infos;
 		IPlugin*	_plugin;
@@ -16,13 +18,13 @@ namespace Obake
 	public:
 
 		~AvailablePlugin();
-		explicit AvailablePlugin(const std::string& path_);
+		explicit AvailablePlugin(const eastl::string& path_);
 
 		bool load();
 		bool unload();
 		bool reload();
 		bool isLoaded() const;
-		const std::string& getPath() const;
+		const eastl::string& getPath() const;
 		PluginInfos& getInfos();
 		IPlugin* getPlugin();
 	};
@@ -30,22 +32,22 @@ namespace Obake
 	class PluginsManager
 	{
 	private:
-		std::vector<AvailablePlugin*> _availablePlugins;
+		eastl::vector<AvailablePlugin*> _availablePlugins;
 		
-		std::vector<std::string> _getFilesPathsFromFolder(const std::string& folder_) const;
+		eastl::vector<eastl::string> _getFilesPathsFromFolder(const eastl::string& folder_) const;
 		bool _isAvailablePluginExists(AvailablePlugin* testPlugin_) const;
 
 	public:
 		~PluginsManager();
 		explicit PluginsManager();
 
-		const std::vector<AvailablePlugin*>& getAllAvailablePlugins() const;
+		const eastl::vector<AvailablePlugin*>& getAllAvailablePlugins() const;
 		void displayPluginsInfos();
-		AvailablePlugin* getAvailablePlugin(const std::string& name_) const;
+		AvailablePlugin* getAvailablePlugin(const eastl::string& name_) const;
 		AvailablePlugin* getAvailablePlugin(uint16_t id_) const;
-		bool loadAvailablePlugin(const std::string& name_) const;
+		bool loadAvailablePlugin(const eastl::string& name_) const;
 		bool loadAvailablePlugin(uint16_t id_) const;
-		bool unloadAvailablePlugin(const std::string& name_) const;
+		bool unloadAvailablePlugin(const eastl::string& name_) const;
 		bool unloadAvailablePlugin(uint16_t id_) const;
 		void loadAllAvailablePlugins() const;
 	};

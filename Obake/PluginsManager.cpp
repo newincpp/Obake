@@ -6,7 +6,7 @@ Obake::AvailablePlugin::~AvailablePlugin()
 	unload();
 }
 
-Obake::AvailablePlugin::AvailablePlugin(const std::string& path_)
+Obake::AvailablePlugin::AvailablePlugin(const eastl::string& path_)
 	: _path(path_), _isLoaded(false)
 {
 	if (load())
@@ -31,10 +31,10 @@ bool Obake::AvailablePlugin::load()
 		_lib.sym("exports", reinterpret_cast<void**>(&tmpInfos));
 
 		_infos.apiVersion = tmpInfos->apiVersion;
-		_infos.fileName = std::string(tmpInfos->fileName);
-		_infos.className = std::string(tmpInfos->className);
-		_infos.pluginName = std::string(tmpInfos->pluginName);
-		_infos.pluginVersion = std::string(tmpInfos->pluginVersion);
+		_infos.fileName = eastl::string(tmpInfos->fileName);
+		_infos.className = eastl::string(tmpInfos->className);
+		_infos.pluginName = eastl::string(tmpInfos->pluginName);
+		_infos.pluginVersion = eastl::string(tmpInfos->pluginVersion);
 		_infos.initializeFunc = tmpInfos->initializeFunc;
 		_plugin = static_cast<Obake::IPlugin*>(_infos.initializeFunc());
 
@@ -78,7 +78,7 @@ bool Obake::AvailablePlugin::isLoaded() const
 	return _isLoaded;
 }
 
-const std::string& Obake::AvailablePlugin::getPath() const
+const eastl::string& Obake::AvailablePlugin::getPath() const
 {
 	return _path;
 }
@@ -99,11 +99,11 @@ Obake::PluginsManager::~PluginsManager()
 
 Obake::PluginsManager::PluginsManager()
 {
-	std::vector<std::string> pluginsPaths = _getFilesPathsFromFolder(PLUGINS_FOLDER);
+	eastl::vector<eastl::string> pluginsPaths = _getFilesPathsFromFolder(PLUGINS_FOLDER);
 
 	/*std::cout << "NbFilesFound: " << pluginsPaths.size() << std::endl;*/
 
-	for (const std::string& pluginPath : pluginsPaths)
+	for (const eastl::string& pluginPath : pluginsPaths)
 	{
 		/*	std::cout << "Path[" << i << "]: " << pluginsPaths[i] << std::endl;*/
 		AvailablePlugin* newPlugin = new AvailablePlugin(pluginPath);
@@ -132,25 +132,25 @@ Obake::PluginsManager::PluginsManager()
 
 }
 
-std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const std::string& folder) const
+eastl::vector<eastl::string> Obake::PluginsManager::_getFilesPathsFromFolder(const eastl::string& folder) const
 {
-	std::vector<std::string> filesPaths;
+	eastl::vector<eastl::string> filesPaths;
 
 #if defined(LINUX) || defined (APPLE)
 
-	dirp = opendir(PLUGINS_FOLDER);
-	while ((dp = readdir(dirp)) != NULL)
-	{
-		filesPaths.push_back(dp->d_name);
-	}
-	(void)closedir(dirp);
+	//dirp = opendir(PLUGINS_FOLDER);
+	//while ((dp = readdir(dirp)) != NULL)
+	//{
+	//	filesPaths.push_back(dp->d_name);
+	//}
+	//(void)closedir(dirp);
 
 #elif defined (WIN32)
 
 	WIN32_FIND_DATA findFileData;
 	HANDLE hFind;
 
-	hFind = FindFirstFile(std::string(std::string(PLUGINS_FOLDER) + "*.dll").c_str(), &findFileData);
+	hFind = FindFirstFile(eastl::string(eastl::string(PLUGINS_FOLDER) + "*.dll").c_str(), &findFileData);
 
 	if (INVALID_HANDLE_VALUE == hFind)
 	{
@@ -166,7 +166,7 @@ std::vector<std::string> Obake::PluginsManager::_getFilesPathsFromFolder(const s
 		}
 		else
 		{
-			filesPaths.push_back(std::string(PLUGINS_FOLDER + std::string(findFileData.cFileName)));
+			filesPaths.push_back(eastl::string(PLUGINS_FOLDER + eastl::string(findFileData.cFileName)));
 		}
 	} while (FindNextFile(hFind, &findFileData) != 0);
 
@@ -188,7 +188,7 @@ bool Obake::PluginsManager::_isAvailablePluginExists(AvailablePlugin* testPlugin
 	return false;
 }
 
-const std::vector<Obake::AvailablePlugin*>& Obake::PluginsManager::getAllAvailablePlugins() const
+const eastl::vector<Obake::AvailablePlugin*>& Obake::PluginsManager::getAllAvailablePlugins() const
 {
 	return _availablePlugins;
 }
@@ -206,17 +206,17 @@ void Obake::PluginsManager::displayPluginsInfos()
 
 		std::cout << "Plugin[" << (i) << "]:" << std::endl
 			<< "\n\tAPI Version: " << infos.apiVersion
-			<< "\n\tFile Name: " << infos.fileName
-			<< "\n\tClass Name: " << infos.className
-			<< "\n\tPlugin Name: " << infos.pluginName
-			<< "\n\tPlugin Version: " << infos.pluginVersion
+			<< "\n\tFile Name: " << infos.fileName.c_str()
+			<< "\n\tClass Name: " << infos.className.c_str()
+			<< "\n\tPlugin Name: " << infos.pluginName.c_str()
+			<< "\n\tPlugin Version: " << infos.pluginVersion.c_str()
 			<< "\n\tIs Loaded: " << std::boolalpha << availablePlugin->isLoaded()
-			<< "\n\tPath: " << availablePlugin->getPath()
+			<< "\n\tPath: " << availablePlugin->getPath().c_str()
 			<< std::endl << std::endl;
 	}
 }
 
-Obake::AvailablePlugin* Obake::PluginsManager::getAvailablePlugin(const std::string& name_) const
+Obake::AvailablePlugin* Obake::PluginsManager::getAvailablePlugin(const eastl::string& name_) const
 {
 	for (decltype(_availablePlugins)::value_type plugin : _availablePlugins)
 	{
@@ -231,7 +231,7 @@ Obake::AvailablePlugin* Obake::PluginsManager::getAvailablePlugin(uint16_t id) c
 	return (id < _availablePlugins.size()) ? _availablePlugins[id] : nullptr;
 }
 
-bool Obake::PluginsManager::loadAvailablePlugin(const std::string& name_) const
+bool Obake::PluginsManager::loadAvailablePlugin(const eastl::string& name_) const
 {
 	for (decltype(_availablePlugins)::value_type plugin : _availablePlugins)
 	{
@@ -246,7 +246,7 @@ bool Obake::PluginsManager::loadAvailablePlugin(uint16_t id) const
 	return (id < _availablePlugins.size()) ? _availablePlugins[id]->load() : false;
 }
 
-bool Obake::PluginsManager::unloadAvailablePlugin(const std::string& name_) const
+bool Obake::PluginsManager::unloadAvailablePlugin(const eastl::string& name_) const
 {
 	for (decltype(_availablePlugins)::value_type plugin : _availablePlugins)
 	{

@@ -27,10 +27,10 @@ void WindowEvent::initialize()
 	// Call vulkan event
 	//_core->eventsManager.executeEvent<void>("Vulkan Event");
 
-	OBAKE_ADD(&WindowEvent::messageLoop);
+	OBAKE_ADD(messageLoop);
 	OBAKE_LOOP
 	{
-		OBAKE_ADD(&WindowEvent::messageLoop);
+		OBAKE_ADD(messageLoop);
 	}
 }
 
