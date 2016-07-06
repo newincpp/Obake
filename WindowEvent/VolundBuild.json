@@ -1,5 +1,5 @@
 {
-  "Plugin":
+  "SharedLib":
    {
      "name": "WindowEvent",
      "srcFolders": ["Win32"],
@@ -7,6 +7,12 @@
      "srcExtension": ".cpp",
      "headersFolders": ["Win32"],
      "externIncludes": [],
-     "outFolder": "Bin"
+     "externLibs": ["user32.lib"],
+     "outFolder": "Bin",
+     "compilerFlags": [],
+     "Windows":
+     {
+       "compilerFlags": ["-fms-compatibility-version=19.00"]
+     }
    }
 }

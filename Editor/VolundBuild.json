@@ -4,10 +4,15 @@
      "name": "Editor",
      "srcFolders": ["."],
      "staticLibs": ["Obake"],
+     "sharedLibs" : ["WindowEvent"],
      "srcExtension": ".cpp",
      "headersFolders": [".", "vulkan"],
      "externIncludes": [],
      "externLibs": [],
-     "outFolder": "Bin"
+     "outFolder": "Bin",
+     "Windows":
+     {
+       "compilerFlags": ["-fms-compatibility-version=19.00"]
+     }
    }
 }

@@ -1,0 +1,13 @@
+{
+   "Builder":
+   {
+     "OS": "Windows",
+     "toolchain": "clang++",
+     "staticLibs" : ["Obake"],
+     "sharedLibs" : ["WindowEvent"],
+     "outBinary": "Editor",
+     "outPluginsFolder": "Plugins",
+     "outFolder": "BuildTest",
+     "FullStatic": false
+   }
+}

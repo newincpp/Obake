@@ -5,6 +5,10 @@
      "srcFolders": ["."],
      "srcExtension": ".cpp",
      "headersFolders": [".", "glm"],
-     "outFolder": "Bin"
+     "outFolder": "Bin",
+     "Windows":
+     {
+       "compilerFlags": ["-fms-compatibility-version=19.00"]
+     }
    }
 }

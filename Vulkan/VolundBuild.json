@@ -3,7 +3,7 @@
    {
      "name": "VulkanRenderer",
      "srcFolders": ["."],
-     "staticLibs": ["Obake"],
+     "staticLibs": ["Volund"],
      "srcExtension": ".cpp",
      "headersFolders": [".", "vulkan"],
      "externIncludes": ["C:\\VulkanSDK\\1.0.13.0\\Include"],
