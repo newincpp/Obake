@@ -1,6 +1,6 @@
 #pragma once
 
-#include <vector>
+#include <EASTL/EASTL/vector.h>
 #include <thread>
 #include <iostream>
 
@@ -17,18 +17,18 @@
 
 namespace Obake {
 	class ASystem;
-    class Core {
-    private:
-		bool _threadingDisabled;
-        std::vector<ASystem*> _registeredSystems;
-        std::vector<std::thread> _threadPool;
-		std::vector<SharedLibrary> _libs;
-        void executeNext(ASystem* system_);
-    public:
-        explicit Core();
-        ~Core();
-        bool registerSystem(ASystem*);
-        int run();
-		EventsManager eventsManager;
-    };
+	class Core {
+		private:
+			bool _threadingDisabled;
+			eastl::vector<ASystem*> _registeredSystems;
+			eastl::vector<std::thread> _threadPool;
+			eastl::vector<SharedLibrary> _libs;
+			void executeNext(ASystem* system_);
+		public:
+			explicit Core();
+			~Core();
+			bool registerSystem(ASystem*);
+			int run();
+			EventsManager eventsManager;
+	};
 }

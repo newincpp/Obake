@@ -5,6 +5,7 @@
      "srcFolders": ["."],
      "srcExtension": ".cpp",
      "headersFolders": [".", "external"],
+origin/master
      "outFolder": "Bin"
    }
 }
