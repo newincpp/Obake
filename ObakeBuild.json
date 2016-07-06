@@ -3,10 +3,7 @@
    {
      "OS": "Windows",
      "toolchain": "clang++",
-     "binary": "",
      "outBinary": "Editor",
-     "staticLibs": [],
-     "plugins": [],
      "pluginsFolder": "Plugins",
      "compilerFlags": ["-fms-compatibility-version=19.00"],
      "outFolder": "BuildTest"
