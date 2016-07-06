@@ -2,17 +2,22 @@
   "SharedLib":
    {
      "name": "WindowEvent",
-     "srcFolders": ["Win32"],
      "staticLibs": ["Obake"],
      "srcExtension": ".cpp",
-     "headersFolders": ["Win32"],
      "externIncludes": [],
      "externLibs": ["user32.lib"],
      "outFolder": "Bin",
      "compilerFlags": [],
      "Windows":
      {
-       "compilerFlags": ["-fms-compatibility-version=19.00"]
+       "headersFolders": ["Win32"],
+       "compilerFlags": ["-fms-compatibility-version=19.00"],
+       "srcFolders": ["Win32"]
+     },
+     "Linux":
+     {
+       "compilerFlags": ["-lxcb"],
+       "srcFolders": ["Linux"]
      }
    }
 }

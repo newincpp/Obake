@@ -5,6 +5,6 @@ SRC	= ../Obake/ASystem.cpp \
 	  ../Obake/PluginsManager.cpp \
 	  ../Obake/Core.cpp
 
-INCLUDE=-I./ -I./EASTL
+INCLUDE=-I./../Obake/external -I./../Obake/external/EASTL -I./../Obake
 
-LIBS= -ldl -L./ -lEASTL
+LIBS= -ldl -L./../Obake -lEASTL

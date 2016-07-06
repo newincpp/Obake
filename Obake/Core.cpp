@@ -68,6 +68,7 @@ void Obake::Core::executeNext(ASystem* system_) {
 
 bool Obake::Core::registerSystem(ASystem* sys_)
 {
+	sys_->registerCore(this);
 	sys_->start();
 	_registeredSystems.push_back(sys_);
 	return true;
