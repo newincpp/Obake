@@ -1,7 +1,7 @@
 {
    "Builder":
    {
-     "OS": "Windows",
+     "OS": "Linux",
      "toolchain": "clang++",
      "staticLibs" : ["Obake"],
      "sharedLibs" : ["WindowEvent"],

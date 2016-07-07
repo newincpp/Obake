@@ -20,7 +20,7 @@ namespace System
 
 			void destroyWindow();
 			void refresh();
-			inline bool alive() { return (_connection != nullptr); }
+			//inline bool alive() { return (_connection != nullptr); }
 
 			void createWindow();
 			void sendWindowHandle();

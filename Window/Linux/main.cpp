@@ -7,11 +7,12 @@ int main() {
 	sleep(1);
 	System::Window win;
 	c.registerSystem(&win);
+	c.run();
 
-	win.createWindow();
+//	win.createWindow();
 	// Run the message loop.
-	while (win.alive()) {
-		win.refresh();
-	}
+//	while (win.alive()) {
+//		win.refresh();
+//	}
 	return 0;
 }

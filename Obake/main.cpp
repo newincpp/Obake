@@ -9,6 +9,10 @@
 #include "Event.hh"
 
 
+
+#include <unistd.h>
+
+
 class DummySystem : public Obake::ASystem {
 public:
     void printA();
@@ -24,15 +28,17 @@ DummySystem::DummySystem() : ASystem() {
 	OBAKE_ADD(printA);  // afterMagic
 	OBAKE_ADD(printB);
 	OBAKE_ADD(printC);
+	OBAKE_LOOP {
 	OBAKE_ADD(printD);
 	OBAKE_ADD(printE);
-	OBAKE_ADD(printE);
+	}
+	OBAKE_ADD(printA);
 }
 void DummySystem::printA() { std::cout << "A" << std::endl; }
 void DummySystem::printB() { std::cout << "B" << std::endl; }
 void DummySystem::printC() { std::cout << "C" << std::endl; }
 void DummySystem::printD() { std::cout << "D" << std::endl; }
-void DummySystem::printE() { std::cout << "E" << std::endl; }
+void DummySystem::printE() { std::cout << "E" << std::endl; sleep(1); }
 void DummySystem::throwEvent() { }
 
 int main(int, const char*[]) {

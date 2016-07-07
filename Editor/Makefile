@@ -1,10 +1,7 @@
 include ../Obake/obake.mk
+include ../Window/Window.mk
+
 SRC	+=main.cpp
-	 #ASystem.cpp \
-	 #EventsManager.cpp \
-	 #WindowEvent.cpp \
-	 #WindowEvent.hh \
-	 #Core.cpp
 
 EXT     =cpp
 NAME	=demo
@@ -12,10 +9,10 @@ DEFINE 	=-D THREAD_SHOW #-D FPS_COUNTER
 DEBUG 	= -g 
 GLM_DEFINE=-DGLM_SWIZZLE -DGLM_FORCE_AVX
 OPTIM= $(GLM_DEFINE) -march=native -O2 -fno-rtti -fno-exceptions -Wconversion #-Weffc++ 
-INCLUDE= -I ../Obake/
+#INCLUDE+= 
 CXXFLAGS= -Wall -Wextra -W -std=c++0x $(OPTIM) $(DEFINE) $(DEBUG) $(INCLUDE)
-IBS= -pthread
-LDFLAGS	= $(LIBS) $(OPTIM) $(DEBUG)
+#LIBS= 
+LDFLAGS	= $(LIBS) $(OPTIM) $(DEBUG) $(LIBS)
 OBJS	= $(SRC:.$(EXT)=.o)
 RM	= rm -f
 CXX	= clang++

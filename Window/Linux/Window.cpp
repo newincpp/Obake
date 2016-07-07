@@ -5,6 +5,10 @@
 #include <Core.hh>
 
 System::Window::Window() : _connection(nullptr), _screen(nullptr) {
+	OBAKE_ADD(createWindow);
+	OBAKE_LOOP {
+		OBAKE_ADD(refresh);
+	}
 }
 
 void System::Window::createWindow() {
@@ -97,5 +101,10 @@ void System::Window::refresh() {
 	} else if (_lastEvent->response_type == XCB_KEY_PRESS) { // "press" seems ignored while "released" seems to be called while pressed...
 		std::cout << "keyboard" << std::endl;
 		destroyWindow();	
+	}
+
+	std::cout << "refresh" << std::endl;
+	if (_connection == nullptr) {
+		shutdown();
 	}
 }

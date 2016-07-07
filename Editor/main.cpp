@@ -1,5 +1,6 @@
 #include <Core.hh>
 #include <PluginsManager.hh>
+#include <Window.hh>
 //#include "TestEventSystem1.hh"
 //#include "TestEventSystem2.hh"
 //#include "VulkanRenderer.hh"
@@ -12,7 +13,7 @@ int main()
 
 	pluginsManager.loadAllAvailablePlugins();
 	pluginsManager.displayPluginsInfos();
-	const std::vector<Obake::AvailablePlugin*>& availablePlugins = pluginsManager.getAllAvailablePlugins();
+	const eastl::vector<Obake::AvailablePlugin*>& availablePlugins = pluginsManager.getAllAvailablePlugins();
 
 	for (Obake::AvailablePlugin* plugin : availablePlugins)
 	{
@@ -23,6 +24,9 @@ int main()
 			core.registerSystem(plugin->getPlugin());
 		}
 	}
+
+	System::Window win;
+	core.registerSystem(&win);
 
 	int runRet = core.run();
 	//return runRet;
