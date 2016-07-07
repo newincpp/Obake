@@ -1,5 +1,6 @@
 {
-  "SharedLib":
+
+  "StaticLib":
    {
      "name": "Window",
      "staticLibs": ["Obake"],
@@ -15,8 +16,6 @@
      },
      "Linux":
      {
-       "externLibs": ["xcb"],
-       "compilerFlags": ["-fPIC"],
        "srcFolders": ["Linux"]
      }
    }

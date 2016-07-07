@@ -3,9 +3,12 @@
    {
      "name": "Editor",
      "srcFolders": ["."],
-     "staticLibs": ["Obake"],
+     "staticLibs": ["Obake", "Window"],
      "sharedLibs" : ["WindowEvent"],
      "srcExtension": ".cpp",
+     "externIncludes":["../Obake/"],
+     "compilerFlags": ["-L./Obake/"],
+     "externLibs": ["EASTL", "dl"],
      "headersFolders": [".", "vulkan"],
      "outFolder": "Bin",
      "Windows":
@@ -15,7 +18,9 @@
      },
      "Linux":
      {
-       "headersFolders": ["../Window/Linux"]
+       "headersFolders": ["../Window/Linux"],
+       "compilerFlags": ["-pthread"],
+       "externLibs": ["xcb"]
      }
    }
 }
