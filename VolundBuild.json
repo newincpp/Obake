@@ -7,7 +7,8 @@
      "sharedLibs" : ["WindowEvent"],
      "outBinary": "Editor",
      "outPluginsFolder": "Plugins",
+     "compilerFlags" : ["-std=c++0x", "-march=native", "-O2", "-fno-rtti", "-fno-exceptions"],
      "outFolder": "BuildTest",
-     "fullStatic": false,
+     "fullStatic": false
    }
 }

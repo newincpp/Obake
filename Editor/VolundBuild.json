@@ -7,12 +7,15 @@
      "sharedLibs" : ["WindowEvent"],
      "srcExtension": ".cpp",
      "headersFolders": [".", "vulkan"],
-     "externIncludes": [],
-     "externLibs": [],
      "outFolder": "Bin",
      "Windows":
      {
-       "compilerFlags": ["-fms-compatibility-version=19.00"]
+       "compilerFlags": ["-fms-compatibility-version=19.00"],
+       "headersFolders": ["../Window/Win32"]
+     },
+     "Linux":
+     {
+       "headersFolders": ["../Window/Linux"]
      }
    }
 }

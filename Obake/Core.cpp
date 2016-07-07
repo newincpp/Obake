@@ -36,7 +36,12 @@ void* operator new[](size_t size, size_t alignment, size_t, const char*, int, un
 #endif
 	//force alignment for performance reason (like SIMDs)
 	EASTL_ASSERT(alignment <= 8);
+
+#if defined (WIN32)
+	return _aligned_alloc(size, alignment);
+#else
 	return aligned_alloc(alignment, size);
+#endif
 }
 
 
