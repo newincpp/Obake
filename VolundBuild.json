@@ -1,14 +1,25 @@
 {
    "Builder":
    {
+<<<<<<< HEAD
      "OS": "auto",
      "toolchain": "clang++",
      "staticLibs" : ["Obake", "Window"],
+=======
+     "OS": "Auto",
+     "compiler": "clang++",
+     "staticLibs" : ["Obake"],
+>>>>>>> a8c529cc127311232eb27316b4e2813f1ae2ca90
      "sharedLibs" : ["WindowEvent"],
-     "outBinary": "Editor",
-     "outPluginsFolder": "Plugins",
+     "mainExecutable": "Editor",
+     "mainSharedLibsFolder": "Plugins",
      "compilerFlags" : ["-std=c++0x", "-march=native", "-O2", "-fno-rtti", "-fno-exceptions"],
+<<<<<<< HEAD
      "outFolder": "BuildTest",
      "fullStatic": true
+=======
+     "mainFolder": "BuildTest",
+     "fullStatic": false
+>>>>>>> a8c529cc127311232eb27316b4e2813f1ae2ca90
    }
 }
