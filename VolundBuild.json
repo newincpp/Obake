@@ -1,14 +1,14 @@
 {
    "Builder":
    {
-     "OS": "Linux",
-     "toolchain": "clang++",
+     "OS": "Auto",
+     "compiler": "clang++",
      "staticLibs" : ["Obake"],
      "sharedLibs" : ["WindowEvent"],
-     "outBinary": "Editor",
-     "outPluginsFolder": "Plugins",
+     "mainExecutable": "Editor",
+     "mainSharedLibsFolder": "Plugins",
      "compilerFlags" : ["-std=c++0x", "-march=native", "-O2", "-fno-rtti", "-fno-exceptions"],
-     "outFolder": "BuildTest",
+     "mainFolder": "BuildTest",
      "fullStatic": false
    }
 }

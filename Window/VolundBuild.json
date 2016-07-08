@@ -1,8 +1,8 @@
 {
   "SharedLib":
    {
-     "name": "Window",
-     "staticLibs": ["Obake"],
+     "targetName": "Window",
+     "staticLibsDeps": ["Obake"],
      "srcExtension": ".cpp",
      "externIncludes": [],
      "outFolder": "Bin",
