@@ -3,11 +3,11 @@
    {
      "OS": "Auto",
      "compiler": "clang++",
-     "staticLibs" : ["Obake"],
-     "sharedLibs" : ["WindowEvent"],
-     "mainExecutable": "Editor",
+     "staticLibs" : ["Obake", "Window"],
+     "sharedLibs" : [""],
+     "mainExecutable": "VkRenderer",
      "mainSharedLibsFolder": "Plugins",
-     "compilerFlags" : ["-std=c++0x", "-march=native", "-O2", "-fno-rtti", "-fno-exceptions"],
+     "compilerFlags" : ["-std=c++0x", "-march=native", "-O2", "-fno-exceptions"],
      "mainFolder": "BuildTest",
      "fullStatic": false
    }

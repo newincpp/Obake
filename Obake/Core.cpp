@@ -38,7 +38,7 @@ void* operator new[](size_t size, size_t alignment, size_t, const char*, int, un
 	EASTL_ASSERT(alignment <= 8);
 
 #if defined (WIN32)
-	return _aligned_alloc(size, alignment);
+	return _aligned_malloc(size, alignment);
 #else
 	return aligned_alloc(alignment, size);
 #endif

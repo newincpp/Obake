@@ -3,7 +3,7 @@
    {
      "targetName": "VkRenderer",
      "srcFolders": ["."],
-     "staticLibsDeps": ["Obake"],
+     "staticLibsDeps": ["Obake", "Window"],
      "srcExtension": ".cpp",
      "headersFolders": [".", "vulkan", "external"],
      "externIncludes": ["C:\\VulkanSDK\\1.0.13.0\\Include"],

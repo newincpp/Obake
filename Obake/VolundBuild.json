@@ -6,7 +6,6 @@
      "srcExtension": ".cpp",
      "headersFolders": [".", "external", "external/EASTL"],
      "outFolder": "Bin",
-	 "excludeSrc": "main.cpp",
      "Windows":
      {
        "compilerFlags": ["-fms-compatibility-version=19.00"]
