@@ -8,11 +8,6 @@
 #include "ASystem.hh"
 #include "Event.hh"
 
-
-
-#include <unistd.h>
-
-
 class DummySystem : public Obake::ASystem {
 public:
     void printA();
@@ -38,7 +33,7 @@ void DummySystem::printA() { std::cout << "A" << std::endl; }
 void DummySystem::printB() { std::cout << "B" << std::endl; }
 void DummySystem::printC() { std::cout << "C" << std::endl; }
 void DummySystem::printD() { std::cout << "D" << std::endl; }
-void DummySystem::printE() { std::cout << "E" << std::endl; sleep(1); }
+void DummySystem::printE() { std::cout << "E" << std::endl; }
 void DummySystem::throwEvent() { }
 
 int main(int, const char*[]) {
