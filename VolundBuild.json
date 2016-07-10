@@ -7,7 +7,7 @@
      "sharedLibs" : [""],
      "mainExecutable": "VkRenderer",
      "mainSharedLibsFolder": "Plugins",
-     "compilerFlags" : ["-std=c++0x", "-march=native", "-O2", "-fno-exceptions", "-DEA_COMPILER_CLANG"],
+     "compilerFlags" : ["-std=c++0x", "-march=native", "-O2", "-fno-exceptions"],
      "mainFolder": "BuildTest",
      "fullStatic": false
    }

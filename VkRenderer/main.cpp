@@ -1,5 +1,3 @@
-#pragma once
-
 #include "main.h"
 
 VulkanExample::VulkanExample(bool enableDebug_)
