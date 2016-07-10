@@ -10,7 +10,7 @@
      "Windows":
      {
        "headersFolders": ["Win32"],
-       "compilerFlags": ["-fms-compatibility-version=19.00"],
+       "compilerFlags": ["-fms-compatibility-version=19.00", "-D EA_COMPILER_NO_VARIADIC_TEMPLATES"],
        "srcFolders": ["Win32"],
        "externLibs": ["user32.lib"]
      },
