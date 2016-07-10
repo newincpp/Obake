@@ -13,6 +13,5 @@
      {
        "compilerFlags": ["-fms-compatibility-version=19.00"]
      }
-
    }
 }
