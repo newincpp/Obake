@@ -9,6 +9,7 @@
      "mainSharedLibsFolder": "Plugins",
      "compilerFlags" : ["-std=c++0x", "-march=native", "-O2", "-fno-exceptions"],
      "mainFolder": "BuildTest",
-     "fullStatic": false
+     "fullStatic": false,
+	 "externLibs": ["external/eastl/EASTL.lib"]
    }
 }

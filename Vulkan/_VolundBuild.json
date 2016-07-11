@@ -1,5 +1,5 @@
 {
-  "SharedLib":
+  "Executable":
    {
      "name": "VulkanRenderer",
      "srcFolders": ["."],
