@@ -23,7 +23,7 @@ VkRenderer::initialize()
 void
 VkRenderer::unload()
 {
-	
+	Renderer::unload();
 }
 
 void

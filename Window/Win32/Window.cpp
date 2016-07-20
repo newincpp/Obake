@@ -23,7 +23,7 @@ void Window::initialize()
 	_core->eventsManager.bindEvent("Window Event", this, &Window::evWindowEvent);
 	_core->eventsManager.bindEvent("Create Window", this, &Window::evCreateWindow);
 	_core->eventsManager.bindEvent("Destroy Window", this, &Window::evDestroyWindow);
-	_core->eventsManager.bindEvent("Get Windows Handle", this, &Window::evSendWindowHandle);
+	_core->eventsManager.bindEvent("Get Window Handle", this, &Window::evSendWindowHandle);
 	// Call vulkan event
 	//_core->eventsManager.executeEvent<void>("Vulkan Event");
 
