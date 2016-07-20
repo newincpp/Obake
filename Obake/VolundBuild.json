@@ -1,14 +1,14 @@
 {
   "StaticLib":
    {
-     "targetName": "Obake",
-     "srcFolders": ["."],
-     "srcExtension": ".cpp",
-     "headersFolders": [".", "external", "external/EASTL"],
-     "outFolder": "Bin",
+     "targetName"		: "Obake",
+     "srcExtension"		: ".cpp",
+     "outFolder"		: "Bin",
+     "srcFolders"		: ["."],
+     "headersFolders"	: [".", "external", "external/EASTL"],
      "Windows":
      {
-       "compilerFlags": ["-fms-compatibility-version=19.00"]
+       "compilerFlags"	: ["-fms-compatibility-version=19.00"]
      }
    }
 }

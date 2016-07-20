@@ -1,19 +1,22 @@
 {
   "SharedLib":
    {
-     "targetName": "VkRenderer",
-     "srcExtension": ".cpp",
-     "outFolder": "Bin",
-     "srcFolders": ["."],
-     "staticLibsDeps": ["Obake"],
-     "headersFolders": [".", "vulkan", "external"],
-     "externIncludes": ["C:\\VulkanSDK\\1.0.17.0\\Include"],
-     "externLibs": ["C:\\VulkanSDK\\1.0.17.0\\Bin\\vulkan-1.lib", "user32.lib", "gdi32.lib"],
-	 "compilerFlags": ["-std=c++11"],
+     "targetName"		: "VkRenderer",
+     "srcExtension"		: ".cpp",
+     "outFolder"		: "Bin",
+     "staticLibsDeps"	: ["Obake"],
+	 "sharedLibsDeps"	: [],
+	 "excludeSrc"		: [],
+     "srcFolders"		: ["."],
+     "headersFolders"	: [".", "vulkan", "external"],
+	 "internLibs"		: [],
+     "externIncludes"	: ["C:\\VulkanSDK\\1.0.17.0\\Include"],
+     "externLibs"		: ["C:\\VulkanSDK\\1.0.17.0\\Bin\\vulkan-1.lib", "user32.lib", "gdi32.lib"],
+	 "compilerFlags"	: ["-std=c++11"],
      "Windows":
      {
-       "headersFolders": ["..\\Window\\Win32"],
-       "compilerFlags": ["-fms-compatibility-version=19.00"]
+       "headersFolders"	: ["..\\Window\\Win32"],
+       "compilerFlags"	: ["-fms-compatibility-version=19.00"]
      }
    }
 }

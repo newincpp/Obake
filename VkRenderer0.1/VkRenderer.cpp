@@ -2,6 +2,8 @@
 
 using namespace System;
 
+OBAKE_PLUGIN(VkRenderer, "Vulkan Renderer", "0.1.0")
+
 VkRenderer::VkRenderer()
 : Renderer()
 {

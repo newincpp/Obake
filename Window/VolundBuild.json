@@ -1,21 +1,28 @@
 {
   "SharedLib":
    {
-     "targetName": "Window",
-     "staticLibsDeps": ["Obake"],
-     "srcExtension": ".cpp",
-     "externIncludes": [],
-     "outFolder": "Bin",
+     "targetName"		: "Window",
+     "srcExtension"		: ".cpp",
+     "outFolder"		: "Bin",
+     "staticLibsDeps"	: ["Obake"],
+	 "sharedLibsDeps"	: [],
+	 "excludeSrc"		: [],
+     "srcFolders"		: ["."],
+     "headersFolders"	: [".", "external", "external/EASTL"],
+	 "internLibs"		: [],
+	 "externIncludes"	: [],
+	 "externLibs"		: [],
+	 "compilerFlags"	: [],
      "Windows":
      {
-       "headersFolders": ["Win32"],
-       "compilerFlags": ["-fms-compatibility-version=19.00", "-D EA_COMPILER_NO_VARIADIC_TEMPLATES"],
-       "srcFolders": ["Win32"],
-       "externLibs": ["user32.lib"]
+       "srcFolders"		: ["Win32"],
+       "headersFolders"	: ["Win32"],
+       "externLibs"		: ["user32.lib"]
+       "compilerFlags"	: ["-fms-compatibility-version=19.00", "-D EA_COMPILER_NO_VARIADIC_TEMPLATES"],
      },
      "Linux":
      {
-       "srcFolders": ["Linux"]
+       "srcFolders"		: ["Linux"]
      }
    }
 }

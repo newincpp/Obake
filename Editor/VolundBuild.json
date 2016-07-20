@@ -1,26 +1,25 @@
 {
   "Executable":
    {
-     "targetName": "Editor",
-     "srcExtension": ".cpp",
-     "outFolder": "Bin",
-     "srcFolders": ["."],
-     "staticLibsDeps": ["Obake", "Window"],
-     "sharedLibsDeps" : ["WindowEvent"],
-     "headersFolders": [".", "vulkan"],
-     "externIncludes":["../Obake/"],
-     "externLibs": ["EASTL", "dl"],
-     "compilerFlags": ["-L./Obake/"],
+     "targetName"		: "Editor",
+     "srcExtension"		: ".cpp",
+     "outFolder"		: "Bin",
+     "staticLibsDeps"	: ["Obake", "Window"],
+     "sharedLibsDeps" 	: ["WindowEvent"],
+     "srcFolders"		: ["."],
+     "headersFolders"	: [".", "vulkan"],
+     "externIncludes"	: ["../Obake/"],
+     "compilerFlags"	: ["-L./Obake/"],
      "Windows":
      {
-       "compilerFlags": ["-fms-compatibility-version=19.00"],
-       "headersFolders": ["../Window/Win32"]
+       "headersFolders"	: ["../Window/Win32"],
+       "compilerFlags"	: ["-fms-compatibility-version=19.00"]
      },
      "Linux":
      {
-       "headersFolders": ["../Window/Linux"],
-       "compilerFlags": ["-pthread"],
-       "externLibs": ["xcb"]
+       "headersFolders"	: ["../Window/Linux"],
+       "externLibs"		: ["xcb"],
+       "compilerFlags"	: ["-pthread"]
      }
    }
 }
