@@ -21,7 +21,6 @@ int main()
 		}
 	}
 
-
 	int runRet = core.run();
 	//return runRet;
 
@@ -32,8 +31,6 @@ int main()
 			plugin->getPlugin()->unload();
 		}
 	}
-
-	system("Pause");
-
+	
 	return 0;
 }

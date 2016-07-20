@@ -15,9 +15,7 @@ Renderer::~Renderer()
 void
 Renderer::initialize()
 {
-	std::cout << "[BIND] Set Renderer Exit State" << std::endl;
 	_core->eventsManager.bindEvent("Set Renderer Exit State", this, &Renderer::evSetExit);
-	std::cout << "[BIND] Receive Window Info" << std::endl;
 	_core->eventsManager.bindEvent("Receive Window Info", this, &Renderer::evGetWinPtr);
 	
 	OBAKE_ADD(start);
@@ -26,16 +24,13 @@ Renderer::initialize()
 void
 Renderer::start()
 {
-	std::cout << "[EXECUTE] Create Window" << std::endl;
 	_core->eventsManager.executeEvent<void>("Create Window");
-	std::cout << "[EXECUTE] Get Window Handle" << std::endl;
 	_core->eventsManager.executeEvent<void>("Get Window Handle");
 }
 
 void
 Renderer::unload()
 {
-	std::cout << "[EXECUTE] Destroy Window" << std::endl;
 	_core->eventsManager.executeEvent<void>("Destroy Window");
 }
 

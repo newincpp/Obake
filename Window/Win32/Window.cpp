@@ -45,7 +45,7 @@ void Window::evSendWindowHandle()
 
 void Window::evWindowEvent()
 {
-	//std::cout << "WINDOW EVENT" << std::endl;
+	messageLoop();
 }
 
 void Window::registerCore(Obake::Core* core_)
@@ -194,7 +194,7 @@ void Window::messageLoop()
 
 	while (PeekMessage(&_msg, NULL, 0, 0, PM_REMOVE))
 	{
-		if (_msg.message == WM_CLOSE)
+		if (_msg.message == WM_CLOSE || _msg.message == WM_QUIT)
 		{
 			std::cout << "QUITING" << std::endl;
 			isExiting = true;
