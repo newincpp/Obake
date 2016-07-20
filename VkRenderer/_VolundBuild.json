@@ -1,0 +1,17 @@
+{
+  "Executable":
+   {
+     "targetName": "VkRenderer",
+     "srcFolders": ["."],
+     "staticLibsDeps": ["Obake", "Window"],
+     "srcExtension": ".cpp",
+     "headersFolders": [".", "vulkan", "external"],
+     "externIncludes": ["C:\\VulkanSDK\\1.0.17.0\\Include"],
+     "externLibs": ["C:\\VulkanSDK\\1.0.17.0\\Bin\\vulkan-1.lib", "user32.lib", "gdi32.lib"],
+     "outFolder": "Bin",
+     "Windows":
+     {
+       "compilerFlags": ["-fms-compatibility-version=19.00"]
+     }
+   }
+}

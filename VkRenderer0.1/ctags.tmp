@@ -1,0 +1,34 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_MOD_BY	Bostjan Mihoric	/ccompletion@gmail.com/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	/unofficial modification/
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	/unofficial modification/
+Renderer	Renderer.cpp	5;"	function	class:Renderer
+Renderer	Renderer.hpp	10;"	class	namespace:System
+Renderer	Renderer.hpp	17;"	prototype	class:System::Renderer
+System	Renderer.hpp	8;"	namespace
+VkRenderer	VkRenderer.cpp	3;"	function	class:VkRenderer
+VkRenderer	VkRenderer.hpp	5;"	class
+VkRenderer	VkRenderer.hpp	8;"	prototype	class:VkRenderer
+_winInstance	Renderer.hpp	14;"	member	class:System::Renderer
+createWindow	Renderer.cpp	8;"	prototype	file:
+destroyWindow	Renderer.cpp	13;"	prototype	file:
+initialize	Renderer.cpp	17;"	function	class:Renderer
+initialize	Renderer.hpp	23;"	prototype	class:System::Renderer
+initialize	VkRenderer.cpp	15;"	function	class:VkRenderer
+initialize	VkRenderer.hpp	12;"	prototype	class:VkRenderer
+main	main.cpp	4;"	function
+mainLoop	Renderer.cpp	29;"	function	class:Renderer
+mainLoop	Renderer.hpp	20;"	prototype	class:System::Renderer
+messageLoop	Renderer.cpp	31;"	prototype	file:
+renderer	main.cpp	6;"	local
+unload	Renderer.cpp	23;"	function	class:Renderer
+unload	Renderer.hpp	24;"	prototype	class:System::Renderer
+unload	VkRenderer.cpp	21;"	function	class:VkRenderer
+unload	VkRenderer.hpp	13;"	prototype	class:VkRenderer
+~Renderer	Renderer.cpp	11;"	function	class:Renderer
+~Renderer	Renderer.hpp	18;"	prototype	class:System::Renderer
+~VkRenderer	VkRenderer.cpp	9;"	function	class:VkRenderer
+~VkRenderer	VkRenderer.hpp	9;"	prototype	class:VkRenderer

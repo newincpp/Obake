@@ -2,13 +2,10 @@
 
 VulkanExample::VulkanExample(bool enableDebug_)
 	: VkRenderer(enableDebug_)
-{
-}
+{}
 
 VulkanExample::~VulkanExample()
-{
-
-}
+{}
 
 // # # # # # # #
 

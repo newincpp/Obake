@@ -49,74 +49,75 @@ messageCallback(
 	return false;
 }
 
-	VkDebug::VkDebug()
+VkDebug::VkDebug()
+{
+	_validationLayerCount = 1;
+	_validationLayerNames.push_back("VK_LAYER_LUNARG_standard_validation");
+}
+
+VkDebug::~VkDebug()
+{
+
+}
+
+void
+VkDebug::dieDieDie()
+{
+	std::cout << "DIEDIEDIE" << std::endl;
+	DestroyDebugReportCallback(_instance, _msgCallback, nullptr);
+	system("Pause");
+}
+
+//	// Debug Create Info
+//	VkDebugReportCallbackCreateInfoEXT _debugCallbackCreateInfo = {};
+
+void
+VkDebug::initDebugging(VkDebugReportFlagsEXT flags_)
+{
+	VkDebugReportCallbackCreateInfoEXT dbgCreateInfo =
 	{
-		_validationLayerCount = 1;
-		_validationLayerNames.push_back("VK_LAYER_LUNARG_standard_validation");
+		dbgCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT,
+		dbgCreateInfo.pNext = nullptr,
+		dbgCreateInfo.flags = flags_,
+		dbgCreateInfo.pfnCallback = messageCallback,
+		dbgCreateInfo.pUserData = nullptr
+	};
+
+	_debugCallbackCreateInfo = dbgCreateInfo;
+	std::cout << "[FIRST] If the following string is empty, then FUCK YOU : " << _debugCallbackCreateInfo.sType << std::endl;
+}
+
+void
+VkDebug::setupDebugging(VkInstance instance_, VkDebugReportCallbackEXT callBack_)
+{
+	_instance = instance_;
+	CreateDebugReportCallback = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkCreateDebugReportCallbackEXT");
+	DestroyDebugReportCallback = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkDestroyDebugReportCallbackEXT");
+	DebugBreakCallback = (PFN_vkDebugReportMessageEXT)vkGetInstanceProcAddr(instance_, "vkDebugReportMessageEXT");
+
+	if (CreateDebugReportCallback == VK_NULL_HANDLE || DestroyDebugReportCallback == VK_NULL_HANDLE || DebugBreakCallback == VK_NULL_HANDLE)
+	{
+		assert(0 && "##Vulkan ERROR: Can't fetch debug function pointers.");
 	}
 
-	VkDebug::~VkDebug()
+	std::cout << "[THIRD] If the following string is empty, then FUCK YOU : " << _debugCallbackCreateInfo.sType << std::endl;
+	VkResult err = CreateDebugReportCallback(instance_, &_debugCallbackCreateInfo, nullptr, ((callBack_ != VK_NULL_HANDLE) ? &callBack_ : &_msgCallback));
+	if (err)
 	{
-
+		vkTools::exitFatal("Could not create Debug Report Callback : \n" + vkTools::errorString(err), "Fatal error");
 	}
+	//		assert(!err);
+}
 
-	void
-		VkDebug::dieDieDie()
+void
+VkDebug::freeDebugCallback(VkInstance instance_)
+{
+	if (_msgCallback != VK_NULL_HANDLE)
 	{
-		std::cout << "DIEDIEDIE" << std::endl;
-		DestroyDebugReportCallback(_instance, _msgCallback, nullptr);
-		system("Pause");
+		DestroyDebugReportCallback(instance_, _msgCallback, nullptr);
 	}
+}
 
-	//	// Debug Create Info
-	//	VkDebugReportCallbackCreateInfoEXT _debugCallbackCreateInfo = {};
-
-	void
-		VkDebug::initDebugging(VkDebugReportFlagsEXT flags_)
-	{
-		VkDebugReportCallbackCreateInfoEXT dbgCreateInfo =
-		{
-			dbgCreateInfo.sType = VK_STRUCTURE_TYPE_DEBUG_REPORT_CREATE_INFO_EXT,
-			dbgCreateInfo.pNext = nullptr,
-			dbgCreateInfo.flags = flags_,
-			dbgCreateInfo.pfnCallback = messageCallback,
-			dbgCreateInfo.pUserData = nullptr
-		};
-
-		_debugCallbackCreateInfo = dbgCreateInfo;
-		std::cout << "[FIRST] If the following string is empty, then FUCK YOU : " << _debugCallbackCreateInfo.sType << std::endl;
-	}
-
-	void
-		VkDebug::setupDebugging(VkInstance instance_, VkDebugReportCallbackEXT callBack_)
-	{
-		_instance = instance_;
-		CreateDebugReportCallback = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkCreateDebugReportCallbackEXT");
-		DestroyDebugReportCallback = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkDestroyDebugReportCallbackEXT");
-		DebugBreakCallback = (PFN_vkDebugReportMessageEXT)vkGetInstanceProcAddr(instance_, "vkDebugReportMessageEXT");
-
-		if (CreateDebugReportCallback == VK_NULL_HANDLE || DestroyDebugReportCallback == VK_NULL_HANDLE || DebugBreakCallback == VK_NULL_HANDLE)
-		{
-			assert(0 && "##Vulkan ERROR: Can't fetch debug function pointers.");
-		}
-
-		std::cout << "[THIRD] If the following string is empty, then FUCK YOU : " << _debugCallbackCreateInfo.sType << std::endl;
-		VkResult err = CreateDebugReportCallback(instance_, &_debugCallbackCreateInfo, nullptr, ((callBack_ != VK_NULL_HANDLE) ? &callBack_ : &_msgCallback));
-		if (err)
-		{
-			vkTools::exitFatal("Could not create Debug Report Callback : \n" + vkTools::errorString(err), "Fatal error");
-		}
-		//		assert(!err);
-	}
-
-	void
-		VkDebug::freeDebugCallback(VkInstance instance_)
-	{
-		if (_msgCallback != VK_NULL_HANDLE)
-		{
-			DestroyDebugReportCallback(instance_, _msgCallback, nullptr);
-		}
-	}
 /*
 	namespace DebugMarker
 	{

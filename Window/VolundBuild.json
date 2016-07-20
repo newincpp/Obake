@@ -1,6 +1,5 @@
 {
-
-  "StaticLib":
+  "SharedLib":
    {
      "targetName": "Window",
      "staticLibsDeps": ["Obake"],

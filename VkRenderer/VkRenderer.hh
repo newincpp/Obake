@@ -147,10 +147,11 @@ namespace System
 		VkResult	createDevice(VkDeviceQueueCreateInfo requestedQueues, bool enableValidation);
 		void		createCommandPool();
 		void		createSetupCommandBuffer();
+		void		createCommandBuffers();
 
 		void setupConsole(std::string title);
 		void setupSwapChain();
-		void createCommandBuffers();
+		void buildPresentCommandBuffers();
 	protected:
 	public:
 		VkRenderer(bool enableValidation_);

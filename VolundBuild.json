@@ -3,9 +3,9 @@
    {
      "OS": "Auto",
      "compiler": "clang++",
-     "staticLibs" : ["Obake", "Window"],
-     "sharedLibs" : [""],
-     "mainExecutable": "VkRenderer",
+     "staticLibs" : ["Obake"],
+     "sharedLibs" : ["Window", "VkRenderer"],
+     "mainExecutable": "Editor",
      "mainSharedLibsFolder": "Plugins",
      "compilerFlags" : ["-std=c++0x", "-march=native", "-O2", "-fno-exceptions"],
      "mainFolder": "BuildTest",

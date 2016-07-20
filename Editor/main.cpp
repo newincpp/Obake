@@ -1,6 +1,6 @@
 #include <Core.hh>
 #include <PluginsManager.hh>
-#include <Window.hh>
+//#include <Window.hh>
 //#include "TestEventSystem1.hh"
 //#include "TestEventSystem2.hh"
 //#include "VulkanRenderer.hh"

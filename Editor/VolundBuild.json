@@ -1,16 +1,16 @@
 {
-  "Binary":
+  "Executable":
    {
-     "name": "Editor",
-     "srcFolders": ["."],
-     "staticLibs": ["Obake", "Window"],
-     "sharedLibs" : ["WindowEvent"],
+     "targetName": "Editor",
      "srcExtension": ".cpp",
-     "externIncludes":["../Obake/"],
-     "compilerFlags": ["-L./Obake/"],
-     "externLibs": ["EASTL", "dl"],
-     "headersFolders": [".", "vulkan"],
      "outFolder": "Bin",
+     "srcFolders": ["."],
+     "staticLibsDeps": ["Obake", "Window"],
+     "sharedLibsDeps" : ["WindowEvent"],
+     "headersFolders": [".", "vulkan"],
+     "externIncludes":["../Obake/"],
+     "externLibs": ["EASTL", "dl"],
+     "compilerFlags": ["-L./Obake/"],
      "Windows":
      {
        "compilerFlags": ["-fms-compatibility-version=19.00"],
