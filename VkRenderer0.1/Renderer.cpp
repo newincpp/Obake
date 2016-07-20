@@ -19,14 +19,13 @@ Renderer::initialize()
 	_core->eventsManager.bindEvent("Receive Window Info", this, &Renderer::evGetWinPtr);
 	
 	OBAKE_ADD(start);
-	
 }
 
 void
 Renderer::start()
 {
 	_core->eventsManager.executeEvent<void>("Create Window");
-	_core->eventsManager.executeEvent<void>("Get Window Handle");	
+	_core->eventsManager.executeEvent<void>("Get Window Handle");
 }
 
 void

@@ -7,21 +7,19 @@ OBAKE_PLUGIN(VkRenderer, "Vulkan Renderer", "0.1.0")
 VkRenderer::VkRenderer()
 : Renderer()
 {
-	OBAKE_LOOP
-	{
-		OBAKE_ADD(mainLoop);
-	}
 }
 
 VkRenderer::~VkRenderer()
 {
-	
 }
 
 void
 VkRenderer::initialize()
 {
-	
+	OBAKE_LOOP
+	{
+		OBAKE_ADD(mainLoop);
+	}	
 }
 
 void

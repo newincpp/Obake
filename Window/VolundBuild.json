@@ -17,8 +17,8 @@
      {
        "srcFolders"		: ["Win32"],
        "headersFolders"	: ["Win32"],
-       "externLibs"		: ["user32.lib"]
-       "compilerFlags"	: ["-fms-compatibility-version=19.00", "-D EA_COMPILER_NO_VARIADIC_TEMPLATES"],
+       "externLibs"		: ["user32.lib"],
+       "compilerFlags"	: ["-fms-compatibility-version=19.00", "-D EA_COMPILER_NO_VARIADIC_TEMPLATES"]
      },
      "Linux":
      {
