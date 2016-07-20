@@ -4,8 +4,15 @@
      "targetName"		: "Obake",
      "srcExtension"		: ".cpp",
      "outFolder"		: "Bin",
+	 "staticLibsDeps"	: [],
+	 "sharedLibsDeps"	: [],
+	 "excludeSrc"		: [],
      "srcFolders"		: ["."],
      "headersFolders"	: [".", "external", "external/EASTL"],
+	 "internLibs"		: [],
+	 "externIncludes"	: [],
+	 "externLibs"		: [],
+	 "compilerFlags"	: [],
      "Windows":
      {
        "compilerFlags"	: ["-fms-compatibility-version=19.00"]

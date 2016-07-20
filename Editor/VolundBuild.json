@@ -6,9 +6,12 @@
      "outFolder"		: "Bin",
      "staticLibsDeps"	: ["Obake", "Window"],
      "sharedLibsDeps" 	: ["WindowEvent"],
+	 "excludeSrc"		: [],
      "srcFolders"		: ["."],
      "headersFolders"	: [".", "vulkan"],
+	 "internLibs"		: [],
      "externIncludes"	: ["../Obake/"],
+     "externLibs"		: [],
      "compilerFlags"	: ["-L./Obake/"],
      "Windows":
      {
