@@ -16,10 +16,8 @@ VkRenderer::~VkRenderer()
 void
 VkRenderer::initialize()
 {
-	OBAKE_LOOP
-	{
-		OBAKE_ADD(mainLoop);
-	}	
+	Renderer::initialize();
+	OBAKE_ADD(mainLoop);
 }
 
 void

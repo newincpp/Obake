@@ -100,16 +100,12 @@ Obake::PluginsManager::~PluginsManager()
 Obake::PluginsManager::PluginsManager()
 {
 	eastl::vector<eastl::string> pluginsPaths = _getFilesPathsFromFolder(PLUGINS_FOLDER);
-	
-	std::cout << "Hello" << std::endl;
 
-	std::cout << "NbFilesFound: " << pluginsPaths.size() << std::endl;
+//	std::cout << "NbFilesFound: " << pluginsPaths.size() << std::endl;
 
-	
-	int i = 0;
 	for (const eastl::string& pluginPath : pluginsPaths)
 	{
-		std::cout << "Path[" << i << "]: " << pluginsPaths[i].c_str() << std::endl;
+//		std::cout << "Path[" << i << "]: " << pluginsPaths[i].c_str() << std::endl;
 		AvailablePlugin* newPlugin = new AvailablePlugin(pluginPath);
 
 		if (_isAvailablePluginExists(newPlugin))
@@ -120,7 +116,6 @@ Obake::PluginsManager::PluginsManager()
 		{
 			_availablePlugins.push_back(newPlugin);
 		}
-		++i;
 	}
 
 	//for (decltype(_availablePlugins)::value_type availablePlugin : _availablePlugins)
@@ -184,7 +179,6 @@ bool Obake::PluginsManager::_isAvailablePluginExists(AvailablePlugin* testPlugin
 {
 	for (decltype(_availablePlugins)::value_type currentPlugin : _availablePlugins)
 	{
-std::cout << "I" << std::endl;
 		PluginInfos& infos = currentPlugin->getInfos();
 		PluginInfos& testInfos = testPlugin_->getInfos();
 

@@ -21,12 +21,10 @@ namespace System
 		virtual ~Renderer();
 		virtual void mainLoop();
 		protected:
-		// - - -
-		private:
 		virtual void initialize();
 		void start();
 		virtual void unload();
-		
+		private:
 		void evSetExit(bool isExiting_);
 		void evGetWinPtr(HWND winHandle_, HINSTANCE winInstance_);
 	};

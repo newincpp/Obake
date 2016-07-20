@@ -3,12 +3,9 @@
 
 int main()
 {
-	std::cout << "Plop" << std::endl;
 	Obake::Core core;
 
-	std::cout << "Plip" << std::endl;
 	Obake::PluginsManager pluginsManager;
-	std::cout << "Plap" << std::endl;
 
 	pluginsManager.loadAllAvailablePlugins();
 	pluginsManager.displayPluginsInfos();
@@ -18,9 +15,9 @@ int main()
 	{
 		if (plugin->isLoaded())
 		{
-			//plugin->getPlugin()->registerCore(&core);
-			//plugin->getPlugin()->initialize();
-			//core.registerSystem(plugin->getPlugin());
+			plugin->getPlugin()->registerCore(&core);
+			plugin->getPlugin()->initialize();
+			core.registerSystem(plugin->getPlugin());
 		}
 	}
 
