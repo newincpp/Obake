@@ -120,7 +120,7 @@ void VulkanRenderer::_InitInstance()
 	};
 
 	//Creates the Vulkan Instance
-	ErrorCheck(vkCreateInstance(&instanceCreateInfo, nullptr, &_instance));
+	VK_CHECK_RESULT(vkCreateInstance(&instanceCreateInfo, nullptr, &_instance));
 }
 
 void VulkanRenderer::_DeInitInstance()

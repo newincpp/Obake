@@ -1,4 +1,6 @@
 #include "MACRO.h"
+
+#include "vulkanTools.h"
 #include "vulkanDebug.h"
 
 #include "VkRenderer.hpp"
@@ -53,7 +55,7 @@ VkRenderer::initVulkan()
 		PRINT("## INIT DEBUG");
 		VkDebug::instance().initDebugging(VK_DEBUG_REPORT_FLAG_BITS_MAX_ENUM_EXT);
 	}
-	createInstance(_enableValidation);
+	VK_CHECK_RESULT(createInstance(_enableValidation));
 }
 
 VkResult
