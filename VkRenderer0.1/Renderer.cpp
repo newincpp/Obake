@@ -47,7 +47,6 @@ Renderer::evGetWinPtr(HWND winHandle_, HINSTANCE winInstance_)
 {
 	_winHandle = winHandle_;
 	_winInstance = winInstance_;
-	std::cout << "Stuff have been set" << '\n';
 }
 
 // # # # # # # # # # # # # # # //

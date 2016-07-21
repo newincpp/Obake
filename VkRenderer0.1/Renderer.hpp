@@ -7,24 +7,24 @@ namespace System
 {
 	class Renderer : public Obake::IPlugin
 	{
-		public:
+	public:
 		// - - -
-		protected:
+	protected:
 		bool _isExiting = false;
 		HWND _winHandle = 0;
 		HINSTANCE _winInstance = 0;
-		private:
+	private:
 		// - - -
 		
-		public:
+	public:
 		Renderer();
 		virtual ~Renderer();
 		virtual void mainLoop();
-		protected:
+	protected:
 		virtual void initialize();
 		void start();
 		virtual void unload();
-		private:
+	private:
 		void evSetExit(bool isExiting_);
 		void evGetWinPtr(HWND winHandle_, HINSTANCE winInstance_);
 	};
