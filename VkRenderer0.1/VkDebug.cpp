@@ -53,6 +53,7 @@ VkDebug::VkDebug()
 {
 	_validationLayerNames.push_back("VK_LAYER_LUNARG_standard_validation");
 	_validationLayerCount = _validationLayerNames.size();
+	setupDebugging();
 }
 
 VkDebug::~VkDebug()

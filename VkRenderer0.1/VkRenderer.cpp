@@ -53,7 +53,9 @@ VkRenderer::initVulkan()
 {
 	_enableValidation = VULKAN_VALIDATION_LAYER;
 
-	_debug.setupDebugging(VK_DEBUG_REPORT_FLAG_BITS_MAX_ENUM_EXT);
+	// This is done at the construction of VkDebug but you can call it again
+	// to specify debug flags
+	//_debug.setupDebugging(VK_DEBUG_REPORT_FLAG_BITS_MAX_ENUM_EXT);
 	createInstance();
 	if (_enableValidation)
 		_debug.createDebugging(_instance);
