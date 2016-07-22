@@ -3,7 +3,8 @@
 #include "DEBUG.h"
 
 #include "Renderer.hpp"
-#include "VDeleter.hpp"
+#include "VkDebug.hpp"
+
 
 namespace System
 {
@@ -15,8 +16,9 @@ namespace System
 	protected:
 		// - - -
 	private:
-		bool _enableValidation;
-		VDeleter<VkInstance> _instance{vkDestroyInstance};
+		bool 		_enableValidation;
+		VkInstance 	_instance;
+		VkDebug 	_debug;
 	
 	public:
 		// - - -

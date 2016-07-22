@@ -1,7 +1,6 @@
 #include "MACRO.h"
 
 #include "vulkanTools.h"
-#include "vulkanDebug.h"
 
 #include "VkRenderer.hpp"
 
@@ -24,6 +23,7 @@ void
 VkRenderer::initialize()
 {
 	Renderer::initialize();
+	
 	OBAKE_ADD(initVulkan);
 	OBAKE_ADD(mainLoop);
 }
@@ -31,6 +31,10 @@ VkRenderer::initialize()
 void
 VkRenderer::unload()
 {
+	std::cout << "## UNINIT DEBUG\n";
+	_debug.freeDebugCallback(_instance);	
+	std::cout << "### DESTROYING INSTANCE\n";
+	vkDestroyInstance(_instance, nullptr);
 	Renderer::unload();
 }
 
@@ -53,14 +57,20 @@ VkRenderer::initVulkan()
 	if (_enableValidation)
 	{
 		PRINT("## INIT DEBUG");
-		VkDebug::instance().initDebugging(VK_DEBUG_REPORT_FLAG_BITS_MAX_ENUM_EXT);
+		_debug.initDebugging(VK_DEBUG_REPORT_FLAG_BITS_MAX_ENUM_EXT);
 	}
 	VK_CHECK_RESULT(createInstance(_enableValidation));
+	if (_enableValidation)
+	{
+		_debug.setupDebugging(_instance);
+	}
+
 }
 
 VkResult
 VkRenderer::createInstance(bool enableValidation_)
 {	
+	PRINT("### CREATE INSTANCE");
 	// Contains info in regards to the application
 	VkApplicationInfo applicationInfo =
 	{
@@ -77,7 +87,7 @@ VkRenderer::createInstance(bool enableValidation_)
 		// A developer-supplied version number of the engine
 		applicationInfo.engineVersion = VK_MAKE_VERSION(0, 1, 0),
 		// (MANDATORY) The version of the Vulkan API that is being used
-		applicationInfo.apiVersion = VK_MAKE_VERSION(1, 0, 17)
+		applicationInfo.apiVersion = VK_MAKE_VERSION(1, 0, 21)
 	};
 	
 	// Enable surface extensions depending on os
@@ -97,15 +107,15 @@ VkRenderer::createInstance(bool enableValidation_)
 		// (MANDATORY) sType is the type of the structure
 		instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
-		instanceCreateInfo.pNext = &(VkDebug::instance()._debugCallbackCreateInfo),
+		instanceCreateInfo.pNext = &(_debug._debugCallbackCreateInfo),
 		// - Is reserved for future use -
 		instanceCreateInfo.flags = 0,
 		// A pointer to a valid VkApplicationInfo structure
 		instanceCreateInfo.pApplicationInfo = &applicationInfo,
 		// The number of layers that are enabled
-		instanceCreateInfo.enabledLayerCount = (_enableValidation) ? (VkDebug::instance()._validationLayerCount) : (0),
+		instanceCreateInfo.enabledLayerCount = (_enableValidation) ? (_debug._validationLayerCount) : (0),
 		// An array of pointer that contains the names of the layers to activate
-		instanceCreateInfo.ppEnabledLayerNames = (_enableValidation) ? (VkDebug::instance()._validationLayerNames.data()) : (nullptr),
+		instanceCreateInfo.ppEnabledLayerNames = (_enableValidation) ? (_debug._validationLayerNames.data()) : (nullptr),
 		// The number of extensions that are enabled
 		instanceCreateInfo.enabledExtensionCount = enabledExtensions.size(),
 		// An array of pointers that contains the names of the extensions to activate
