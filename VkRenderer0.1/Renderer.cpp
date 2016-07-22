@@ -54,7 +54,7 @@ Renderer::evGetWinPtr(HWND winHandle_, HINSTANCE winInstance_)
 }
 #elif __linux__
 void
-Renderer::evGetWinPtr(xcb_connection_t* connection, xcb_window_t window)
+Renderer::evGetWinPtr(xcb_connection_t* connection_, xcb_window_t window_)
 {
 	_winHandle.connection = connection_;
 	_winHandle.window = window_;

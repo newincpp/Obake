@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PLATFORM.h"
 #include "Core.hh"
 #include "Plugin.hh"
 

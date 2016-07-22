@@ -1,24 +1,24 @@
 {
-  "SharedLib":
-   {
-    "targetName"		: "VkRenderer",
-    "srcExtension"		: ".cpp",
-    "outFolder"			: "Bin",
-    "staticLibsDeps"	: ["Obake"],
+    "SharedLib":
+    {
+	"targetName"		: "VkRenderer",
+	"srcExtension"		: ".cpp",
+	"outFolder"		: "Bin",
+	"staticLibsDeps"	: ["Obake"],
 	"sharedLibsDeps"	: [],
 	"excludeSrc"		: [],
-    "srcFolders"		: ["."],
-    "headersFolders"	: [".", "vulkan", "external"],
+	"srcFolders"		: ["."],
+	"headersFolders"	: [".", "vulkan", "external"],
 	"internLibs"		: [],
-    "externIncludes"	: [],
-    "externLibs"		: [],
+	"externIncludes"	: [],
+	"externLibs"		: [],
 	"compilerFlags"		: ["-std=c++11"],
-    "Windows":
+	"Windows":
 	{
-		"headersFolders"	: ["..\\Window\\Win32"],
-		"externIncludes"	: ["C:\\VulkanSDK\\1.0.21.0\\Include"],
-        "externLibs"		: ["C:\\VulkanSDK\\1.0.21.0\\Bin\\vulkan-1.lib", "user32.lib", "gdi32.lib"],
-		"compilerFlags"		: ["-fms-compatibility-version=19.00", "-DEA_COMPILER_NO_VARIADIC_TEMPLATES"]
+	    "headersFolders"	: ["..\\Window\\Win32"],
+	    "externIncludes"	: ["C:\\VulkanSDK\\1.0.21.0\\Include"],
+	    "externLibs"	: ["C:\\VulkanSDK\\1.0.21.0\\Bin\\vulkan-1.lib", "user32.lib", "gdi32.lib"],
+	    "compilerFlags"	: ["-fms-compatibility-version=19.00", "-DEA_COMPILER_NO_VARIADIC_TEMPLATES"]
 	}
-   }
+    }
 }
