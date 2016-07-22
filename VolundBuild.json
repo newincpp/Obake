@@ -1,22 +1,22 @@
 {
    "Builder":
    {
-     "OS"					: "Auto",
-     "compiler"				: "clang++",
-     "mainExecutable"		: "Editor",
-     "mainFolder"			: "BuildTest",
-     "mainSharedLibsFolder"	: "Plugins",
-	 "executables"			: [],
-     "staticLibs" 			: ["Obake"],
-     "sharedLibs" 			: ["Window", "VkRenderer"],
-	 "externIncludes" 		: [],
-	 "externLibs"			: [],
-     "compilerFlags" 		: ["-std=c++0x", "-march=native", "-O2", "-fno-exceptions"],
-     "fullStatic"			: false,
-       "Windows":
-       {
-    	 "externLibs"			: ["external/eastl/EASTL.lib"],
-         "compilerFlags"	: ["-fms-compatibility-version=19.00"]
-       }
+    "OS"					: "Auto",
+    "compiler"				: "clang++",
+    "mainExecutable"		: "Editor",
+    "mainFolder"			: "BuildTest",
+    "mainSharedLibsFolder"	: "Plugins",
+	"executables"			: [],
+    "staticLibs" 			: ["Obake"],
+    "sharedLibs" 			: ["Window", "VkRenderer"],
+	"externIncludes" 		: [],
+	"externLibs"			: [],
+    "compilerFlags" 		: ["-std=c++0x", "-march=native", "-O2", "-fno-exceptions"],
+    "fullStatic"			: false,
+	"Windows":
+	{
+		"externLibs"	: ["external/eastl/EASTL.lib"],
+		"compilerFlags"	: ["-fms-compatibility-version=19.00"]
+	}
    }
 }
