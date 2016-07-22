@@ -7,6 +7,8 @@
 */
 #include <iostream>
 
+#include "MACRO.h"
+
 #include "VkDebug.hpp"
 
 VkDebug* VkDebug::s_instance = nullptr;
@@ -59,7 +61,7 @@ VkDebug::~VkDebug()
 }
 
 void
-VkDebug::initDebugging(VkDebugReportFlagsEXT flags_)
+VkDebug::setupDebugging(VkDebugReportFlagsEXT flags_)
 {
 	VkDebugReportCallbackCreateInfoEXT dbgCreateInfo =
 	{
@@ -74,8 +76,9 @@ VkDebug::initDebugging(VkDebugReportFlagsEXT flags_)
 }
 
 void
-VkDebug::setupDebugging(VkInstance instance_)
+VkDebug::createDebugging(VkInstance instance_)
 {
+	PRINT("## [VKDEBUG] [" << __FILE__ << "] CREATE DEBUGGING");
 	CreateDebugReportCallback = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkCreateDebugReportCallbackEXT");
 	DestroyDebugReportCallback = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkDestroyDebugReportCallbackEXT");
 
@@ -85,17 +88,12 @@ VkDebug::setupDebugging(VkInstance instance_)
 	}
 
 	VK_CHECK_RESULT(CreateDebugReportCallback(instance_, &_debugCallbackCreateInfo, nullptr, &_msgCallback));
-//	if (err)
-//	{
-//		vkTools::exitFatal("Could not create Debug Report Callback : \n" + vkTools::errorString(err), "Fatal error");
-//	}
-//		assert(!err);
 }
 
 void
 VkDebug::freeDebugCallback(VkInstance instance_)
 {
-//	return;
+	PRINT("## [VKDEBUG] [" << __FILE__ << "] FREE DEBUGGING");
 	if (_msgCallback != VK_NULL_HANDLE)
 	{
 		DestroyDebugReportCallback(instance_, _msgCallback, nullptr);

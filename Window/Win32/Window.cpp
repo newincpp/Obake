@@ -1,5 +1,7 @@
 #include <chrono>
 
+#include "MACRO.h"
+
 #include "Window.hpp"
 #include "Core.hh"
 
@@ -63,7 +65,7 @@ void Window::unload()
 
 void Window::evCreateWindow()
 {
-	std::cout << "### CREATE WINDOW" << std::endl;
+	PRINT("## [WINDOW] [" << __FILE__ << "] CREATE WINDOW");
 	// Current Instance
 	_windowInstance = GetModuleHandle(NULL);
 
@@ -128,7 +130,7 @@ void Window::evCreateWindow()
 
 void Window::evDestroyWindow()
 {
-	std::cout << "### DESTROY WINDOW" << std::endl;
+	PRINT("## [WINDOW] [" << __FILE__ << "] DESTROY WINDOW");
 }
 
 void Window::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -140,10 +142,8 @@ void Window::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 	case WM_CLOSE:
 		PostQuitMessage(0);
-		std::cout << "Closing Window" << std::endl;
 		break;
 	case WM_QUIT:
-		std::cout << "Quiting Window" << std::endl;
 		break;
 	case WM_KEYDOWN:
 		switch (wParam)
@@ -196,7 +196,6 @@ void Window::messageLoop()
 	{
 		if (_msg.message == WM_CLOSE || _msg.message == WM_QUIT)
 		{
-			std::cout << "QUITING" << std::endl;
 			isExiting = true;
 			_core->eventsManager.executeEvent<void, bool>("Set Renderer Exit State", isExiting);
 		}

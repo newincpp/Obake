@@ -1,3 +1,3 @@
 #pragma once
 
-#define VULKAN_DEBUG_LAYER true
+#define VULKAN_VALIDATION_LAYER true

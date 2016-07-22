@@ -16,9 +16,11 @@ namespace System
 	protected:
 		// - - -
 	private:
-		bool 		_enableValidation;
-		VkInstance 	_instance;
-		VkDebug 	_debug;
+		bool _enableValidation = false;
+		
+		VkInstance 			_instance 		= VK_NULL_HANDLE;
+		VkDebug 			_debug;
+		VkPhysicalDevice	_physicalDevice = VK_NULL_HANDLE;
 	
 	public:
 		// - - -
@@ -28,8 +30,13 @@ namespace System
 
 		virtual void mainLoop();
 	private:
-		void		initVulkan();
-		VkResult	createInstance(bool enableValidation_);
+		void	initVulkan();
+		void	createInstance();
+		void	destroyInstance();
+		void	createDevice();
+		void	pickPhysicalDevice();
+		bool	isDeviceSuitable(VkPhysicalDevice device_);
+		bool	findQueueFamilies(VkPhysicalDevice device_, VkQueueFlags flags_);
 	};	
 }
 

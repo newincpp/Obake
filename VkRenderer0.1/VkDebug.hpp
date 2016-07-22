@@ -42,10 +42,9 @@ class VkDebug
 		}
 
 		// Fills the _debugCallbackCreateInfo struct
-		void initDebugging(VkDebugReportFlagsEXT flags_);
+		void setupDebugging(VkDebugReportFlagsEXT flags_ = VK_DEBUG_REPORT_FLAG_BITS_MAX_ENUM_EXT);
 		// Load debug function pointers and set debug callback
-		// if callBack is NULL, default message callback will be used
-		void setupDebugging(VkInstance instance_);
+		void createDebugging(VkInstance instance_);
 		// Clear debug callback
 		void freeDebugCallback(VkInstance instance);
 	protected:

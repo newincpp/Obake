@@ -1,3 +1,5 @@
+#include "MACRO.h"
+
 #include "Renderer.hpp"
 
 using namespace System;
@@ -39,6 +41,7 @@ Renderer::unload()
 void
 Renderer::evSetExit(bool isExiting_)
 {
+	PRINT("## [RENDERER] [" << __FILE__ << "] EXIT STATE == " << isExiting_);	
 	_isExiting = isExiting_;
 }
 

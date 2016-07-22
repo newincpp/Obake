@@ -31,10 +31,9 @@ VkRenderer::initialize()
 void
 VkRenderer::unload()
 {
-	std::cout << "## UNINIT DEBUG\n";
-	_debug.freeDebugCallback(_instance);	
-	std::cout << "### DESTROYING INSTANCE\n";
-	vkDestroyInstance(_instance, nullptr);
+	if (_enableValidation)
+		_debug.freeDebugCallback(_instance);
+	destroyInstance();
 	Renderer::unload();
 }
 
@@ -52,25 +51,19 @@ VkRenderer::mainLoop()
 void
 VkRenderer::initVulkan()
 {
-	_enableValidation = VULKAN_DEBUG_LAYER;
+	_enableValidation = VULKAN_VALIDATION_LAYER;
 
+	_debug.setupDebugging(VK_DEBUG_REPORT_FLAG_BITS_MAX_ENUM_EXT);
+	createInstance();
 	if (_enableValidation)
-	{
-		PRINT("## INIT DEBUG");
-		_debug.initDebugging(VK_DEBUG_REPORT_FLAG_BITS_MAX_ENUM_EXT);
-	}
-	VK_CHECK_RESULT(createInstance(_enableValidation));
-	if (_enableValidation)
-	{
-		_debug.setupDebugging(_instance);
-	}
-
+		_debug.createDebugging(_instance);
+	createDevice();
 }
 
-VkResult
-VkRenderer::createInstance(bool enableValidation_)
+void
+VkRenderer::createInstance()
 {	
-	PRINT("### CREATE INSTANCE");
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE INSTANCE");
 	// Contains info in regards to the application
 	VkApplicationInfo applicationInfo =
 	{
@@ -95,7 +88,7 @@ VkRenderer::createInstance(bool enableValidation_)
 	{
 		enabledExtensions.push_back(PLATFORM_SURFACE_EXTENSION_NAME);
 		enabledExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-		if (enableValidation_)
+		if (_enableValidation)
 		{
 			enabledExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
 		}
@@ -107,7 +100,7 @@ VkRenderer::createInstance(bool enableValidation_)
 		// (MANDATORY) sType is the type of the structure
 		instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
-		instanceCreateInfo.pNext = &(_debug._debugCallbackCreateInfo),
+		instanceCreateInfo.pNext = (_enableValidation) ? (&(_debug._debugCallbackCreateInfo)) : (nullptr),
 		// - Is reserved for future use -
 		instanceCreateInfo.flags = 0,
 		// A pointer to a valid VkApplicationInfo structure
@@ -122,5 +115,66 @@ VkRenderer::createInstance(bool enableValidation_)
 		instanceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data()
 	};
 	
-	return vkCreateInstance(&instanceCreateInfo, nullptr, &_instance);
+	VK_CHECK_RESULT(vkCreateInstance(&instanceCreateInfo, nullptr, &_instance));
+}
+
+void
+VkRenderer::destroyInstance()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY INSTANCE");
+	vkDestroyInstance(_instance, nullptr);	
+}
+
+void
+VkRenderer::createDevice()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE DEVICE");
+	pickPhysicalDevice();
+}
+
+void
+VkRenderer::pickPhysicalDevice()
+{
+	// Physical device
+	uint32_t deviceCount = 0;
+	VK_CHECK_RESULT(vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr));
+	// If no device supports Vulkan than there is no point in continuing
+	assert(deviceCount > 0);
+	std::vector<VkPhysicalDevice> devices(deviceCount);
+	VK_CHECK_RESULT(vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data()));
+	
+	for (const auto& device : devices) 
+	{
+		if (isDeviceSuitable(device))
+		{
+			_physicalDevice = device;
+			break;
+		}
+	}
+	assert(_physicalDevice != VK_NULL_HANDLE);
+}
+
+bool
+VkRenderer::isDeviceSuitable(VkPhysicalDevice device_)
+{
+	findQueueFamilies(device_, VK_QUEUE_GRAPHICS_BIT);
+	return true;		
+}
+
+bool
+VkRenderer::findQueueFamilies(VkPhysicalDevice device_, VkQueueFlags flags_)
+{
+	uint32_t queueCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(device_, &queueCount, NULL);
+	if (queueCount < 1)
+		return false;
+	std::vector<VkQueueFamilyProperties> queueProps(queueCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(device_, &queueCount, queueProps.data());
+	
+	for (int graphicsQueueIndex = 0; graphicsQueueIndex < queueCount; ++graphicsQueueIndex)
+	{
+		if (queueProps[graphicsQueueIndex].queueFlags & flags_)
+			return true;
+	}
+	return false;
 }
