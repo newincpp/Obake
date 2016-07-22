@@ -10,13 +10,15 @@
      "srcFolders"		: ["."],
      "headersFolders"	: [".", "vulkan", "external"],
 	 "internLibs"		: [],
-     "externIncludes"	: ["C:\\VulkanSDK\\1.0.21.0\\Include"],
-     "externLibs"		: ["C:\\VulkanSDK\\1.0.21.0\\Bin\\vulkan-1.lib", "user32.lib", "gdi32.lib"],
+     "externIncludes"	: [],
+     "externLibs"		: [],
 	 "compilerFlags"	: ["-std=c++11", "-DEA_COMPILER_NO_VARIADIC_TEMPLATES"],
      "Windows":
      {
        "headersFolders"	: ["..\\Window\\Win32"],
-       "compilerFlags"	: ["-fms-compatibility-version=19.00"]
+       "compilerFlags"	: ["-fms-compatibility-version=19.00"],
+         "externIncludes"	: ["C:\\VulkanSDK\\1.0.21.0\\Include"],
+         "externLibs"		: ["C:\\VulkanSDK\\1.0.21.0\\Bin\\vulkan-1.lib", "user32.lib", "gdi32.lib"],
      }
    }
 }
