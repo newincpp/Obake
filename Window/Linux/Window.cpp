@@ -16,6 +16,7 @@ void System::Window::createWindow() {
 		_core->eventsManager.bindEvent("Window Event", this, &Window::windowEvent);
 		_core->eventsManager.bindEvent("Create Window", this, &Window::createWindow);
 		_core->eventsManager.bindEvent("Get Windows Handle", this, &Window::sendWindowHandle);
+		_core->eventsManager.bindEvent("Get Window Handle", this, &Window::evSendWindowHandle);
 	}
 	const xcb_setup_t* setup;
 	xcb_screen_iterator_t iter;
@@ -38,7 +39,9 @@ void System::Window::destroyWindow() {
 	_connection = nullptr;
 }
 
-void System::Window::sendWindowHandle() {
+void System::Window::evSendWindowHandle()
+{
+	_core->eventsManager.executeEvent<void, HWND, HINSTANCE>("Receive Window Info", _connection, _window);
 }
 
 void System::Window::windowEvent() {

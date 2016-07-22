@@ -45,12 +45,23 @@ Renderer::evSetExit(bool isExiting_)
 	_isExiting = isExiting_;
 }
 
+#ifdef _WIN32
 void
 Renderer::evGetWinPtr(HWND winHandle_, HINSTANCE winInstance_)
 {
-	_winHandle = winHandle_;
-	_winInstance = winInstance_;
+	_winHandle.winHandle = winHandle_;
+	_winHandle.winInstance = winInstance_;
 }
+#elif __linux__
+void
+Renderer::evGetWinPtr(xcb_connection_t* connection, xcb_window_t window)
+{
+	_winHandle.connection = connection_;
+	_winHandle.window = window_;
+}
+#else
+	// - - - 
+#endif
 
 // # # # # # # # # # # # # # # //
 

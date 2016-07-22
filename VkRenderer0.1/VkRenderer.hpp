@@ -21,6 +21,7 @@ namespace System
 		VkInstance 			_instance 		= VK_NULL_HANDLE;
 		VkDebug 			_debug;
 		VkPhysicalDevice	_physicalDevice = VK_NULL_HANDLE;
+		VkSurfaceKHR		_surface = VK_NULL_HANDLE;
 	
 	public:
 		// - - -
