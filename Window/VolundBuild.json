@@ -8,23 +8,24 @@
 	 "sharedLibsDeps"	: [],
 	 "excludeSrc"		: [],
      "srcFolders"		: ["."],
-     "headersFolders"	: [".", "external", "external/EASTL"],
+     "headersFolders"	: ["."],
 	 "internLibs"		: [],
-	 "externIncludes"	: [],
+	 "externIncludes"	: ["external/EASTL"],
 	 "externLibs"		: [],
 	 "compilerFlags"	: [],
      "Windows":
      {
-       "srcFolders"		: ["Win32"],
-       "headersFolders"	: ["Win32"],
-       "externLibs"		: ["user32.lib"],
-       "compilerFlags"	: ["-fms-compatibility-version=19.00", "-D EA_COMPILER_NO_VARIADIC_TEMPLATES"]
+		"srcFolders"		: ["Win32"],
+		"headersFolders"	: ["Win32"],
+		"externIncludes"	: ["Obake/external/EASTL"],
+		"externLibs"		: ["user32", "EASTL"],
+		"compilerFlags"		: ["-DEA_COMPILER_NO_VARIADIC_TEMPLATES",  "-L./external/eastl"]
      },
      "Linux":
      {
        "srcFolders"		: ["Linux"],
        "externLibs"		: ["xcb", "dl"],
-       "compilerFlags"    	: ["Obake/external/EASTL/libEASTL.a"]
+       "compilerFlags"  : ["Obake/external/EASTL/libEASTL.a"]
      }
    }
 }

@@ -3,7 +3,7 @@
     {
 	"targetName"		: "VkRenderer",
 	"srcExtension"		: ".cpp",
-	"outFolder"		: "Bin",
+	"outFolder"			: "Bin",
 	"staticLibsDeps"	: ["Obake"],
 	"sharedLibsDeps"	: [],
 	"excludeSrc"		: [],
@@ -16,9 +16,9 @@
 	"Windows":
 	{
 	    "headersFolders"	: ["..\\Window\\Win32"],
-	    "externIncludes"	: ["C:\\VulkanSDK\\1.0.21.0\\Include"],
-	    "externLibs"	: ["C:\\VulkanSDK\\1.0.21.0\\Bin\\vulkan-1.lib", "user32.lib", "gdi32.lib"],
-	    "compilerFlags"	: ["-fms-compatibility-version=19.00", "-DEA_COMPILER_NO_VARIADIC_TEMPLATES"]
+	    "externIncludes"	: ["C:/VulkanSDK/1.0.21.0/Include"],
+	    "externLibs"		: ["vulkan-1", "user32", "gdi32", "EASTL"],
+	    "compilerFlags"		: ["-DEA_COMPILER_NO_VARIADIC_TEMPLATES", "-L./external/eastl/", "-LC:/VulkanSDK/1.0.21.0/Bin"]
 	}
     }
 }

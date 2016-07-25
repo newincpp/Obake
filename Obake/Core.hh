@@ -16,7 +16,6 @@
 #include "SharedLibrary.hh"
 
 namespace Obake {
-	class ASystem;
 	class Core {
 		private:
 			bool _threadingDisabled;
