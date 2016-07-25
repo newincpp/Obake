@@ -7,7 +7,8 @@
 */
 
 #pragma once
-#include "PLATFORM.h"
+
+//#include "PLATFORM.h"
 
 #include "vulkanTools.h"
 
