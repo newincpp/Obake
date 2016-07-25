@@ -37,6 +37,7 @@
 #include <cstdio>
 #include <sstream>
 #include <fstream>
+#include <vector>
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE

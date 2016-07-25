@@ -8,7 +8,6 @@ namespace System
 {
 	class Renderer : public Obake::IPlugin
 	{
-	
 	typedef struct
 	{
 	#ifdef _WIN32
@@ -34,10 +33,10 @@ namespace System
 		Renderer();
 		virtual ~Renderer();
 		virtual void mainLoop();
-	protected:
 		virtual void initialize();
-		void start();
 		virtual void unload();
+	protected:
+		virtual void start();
 	private:
 		void evSetExit(bool isExiting_);
 	#ifdef _WIN32

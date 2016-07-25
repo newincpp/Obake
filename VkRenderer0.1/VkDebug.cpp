@@ -94,7 +94,7 @@ VkDebug::createDebugging(VkInstance instance_)
 void
 VkDebug::freeDebugCallback(VkInstance instance_)
 {
-	PRINT("## [VKDEBUG] [" << __FILE__ << "] FREE DEBUGGING");
+	PRINT("## [VKDEBUG] [" << __FILE__ << "] DESTROY DEBUGGING");
 	if (_msgCallback != VK_NULL_HANDLE)
 	{
 		DestroyDebugReportCallback(instance_, _msgCallback, nullptr);
