@@ -21,8 +21,8 @@
      "Linux":
      {
        "headersFolders"	: ["../Window/Linux"],
-       "externLibs"		: ["xcb"],
-       "compilerFlags"	: ["-pthread"]
+       "externLibs"		: ["xcb", "dl"],
+       "compilerFlags"	: ["-pthread", "Obake/external/EASTL/libEASTL.a"]
      }
    }
 }

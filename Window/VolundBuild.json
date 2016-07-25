@@ -22,7 +22,9 @@
      },
      "Linux":
      {
-       "srcFolders"		: ["Linux"]
+       "srcFolders"		: ["Linux"],
+       "externLibs"		: ["xcb", "dl"],
+       "compilerFlags"    	: ["Obake/external/EASTL/libEASTL.a"]
      }
    }
 }

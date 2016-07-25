@@ -24,6 +24,7 @@ namespace System
 
 			void createWindow();
 			void sendWindowHandle();
+			void evSendWindowHandle();
 			void windowEvent();
 	};
 }

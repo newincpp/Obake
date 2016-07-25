@@ -15,7 +15,8 @@ void System::Window::createWindow() {
 	if (_core) {
 		_core->eventsManager.bindEvent("Window Event", this, &Window::windowEvent);
 		_core->eventsManager.bindEvent("Create Window", this, &Window::createWindow);
-		_core->eventsManager.bindEvent("Get Windows Handle", this, &Window::sendWindowHandle);
+		_core->eventsManager.bindEvent("Destroy Window", this, &Window::destroyWindow);
+		//_core->eventsManager.bindEvent("Get Windows Handle", this, &Window::sendWindowHandle);
 		_core->eventsManager.bindEvent("Get Window Handle", this, &Window::evSendWindowHandle);
 	}
 	const xcb_setup_t* setup;
@@ -41,7 +42,7 @@ void System::Window::destroyWindow() {
 
 void System::Window::evSendWindowHandle()
 {
-	_core->eventsManager.executeEvent<void, HWND, HINSTANCE>("Receive Window Info", _connection, _window);
+	_core->eventsManager.executeEvent<void, xcb_connection_t*, xcb_window_t>("Receive Window Info", _connection, _window);
 }
 
 void System::Window::windowEvent() {

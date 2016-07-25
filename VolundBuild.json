@@ -10,13 +10,17 @@
     "staticLibs" 			: ["Obake"],
     "sharedLibs" 			: ["Window", "VkRenderer"],
 	"externIncludes" 		: [],
-	"externLibs"			: ["external/eastl/EASTL.lib"],
     "compilerFlags" 		: ["-std=c++0x", "-march=native", "-O2", "-fno-exceptions"],
     "fullStatic"			: false,
 	"Windows":
 	{
-		"externLibs"	: [],
+		"externLibs"	: ["Obake/external/EASTL/EASTL.lib"],
 		"compilerFlags"	: ["-fms-compatibility-version=19.00"]
+	},
+	"Linux":
+	{
+		"externLibs"	: ["Obake/external/EASTL/libEASTL.a"]
+		
 	}
    }
 }

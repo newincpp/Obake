@@ -13,6 +13,12 @@
 
 VkDebug* VkDebug::s_instance = nullptr;
 
+#ifdef __linux__
+void MessageBox(void*, const char* msg, const char* title, unsigned int){
+	std::cerr << title << ": " << msg << '\n';
+}
+#endif
+
 VKAPI_ATTR VkBool32 VKAPI_CALL
 messageCallback(
 	VkDebugReportFlagsEXT flags,
