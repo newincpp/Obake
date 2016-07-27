@@ -1,6 +1,11 @@
 #pragma once
+#ifdef stdMode
+#include <vector>
+#include <string>
+#else
 #include <EASTL/EASTL/vector.h>
 #include <EASTL/EASTL/string.h>
+#endif
 #include "SharedLibrary.hh"
 
 namespace Obake
@@ -9,7 +14,7 @@ namespace Obake
 	{
 	private:
 
-		eastl::string _path;
+		STL::string _path;
 		bool _isLoaded;
 		PluginInfos _infos;
 		IPlugin*	_plugin;
@@ -18,13 +23,13 @@ namespace Obake
 	public:
 
 		~AvailablePlugin();
-		explicit AvailablePlugin(const eastl::string& path_);
+		explicit AvailablePlugin(const STL::string& path_);
 
 		bool load();
 		bool unload();
 		bool reload();
 		bool isLoaded() const;
-		const eastl::string& getPath() const;
+		const STL::string& getPath() const;
 		PluginInfos& getInfos();
 		IPlugin* getPlugin();
 	};
@@ -32,22 +37,22 @@ namespace Obake
 	class PluginsManager
 	{
 	private:
-		eastl::vector<AvailablePlugin*> _availablePlugins;
+		STL::vector<AvailablePlugin*> _availablePlugins;
 		
-		eastl::vector<eastl::string> _getFilesPathsFromFolder(const eastl::string& folder_) const;
+		STL::vector<STL::string> _getFilesPathsFromFolder(const STL::string& folder_) const;
 		bool _isAvailablePluginExists(AvailablePlugin* testPlugin_) const;
 
 	public:
 		~PluginsManager();
 		explicit PluginsManager();
 
-		const eastl::vector<AvailablePlugin*>& getAllAvailablePlugins() const;
+		const STL::vector<AvailablePlugin*>& getAllAvailablePlugins() const;
 		void displayPluginsInfos();
-		AvailablePlugin* getAvailablePlugin(const eastl::string& name_) const;
+		AvailablePlugin* getAvailablePlugin(const STL::string& name_) const;
 		AvailablePlugin* getAvailablePlugin(uint16_t id_) const;
-		bool loadAvailablePlugin(const eastl::string& name_) const;
+		bool loadAvailablePlugin(const STL::string& name_) const;
 		bool loadAvailablePlugin(uint16_t id_) const;
-		bool unloadAvailablePlugin(const eastl::string& name_) const;
+		bool unloadAvailablePlugin(const STL::string& name_) const;
 		bool unloadAvailablePlugin(uint16_t id_) const;
 		void loadAllAvailablePlugins() const;
 	};

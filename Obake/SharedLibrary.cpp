@@ -8,7 +8,7 @@ Obake::SharedLibrary::SharedLibrary()
 {
 }
 
-bool Obake::SharedLibrary::open(const eastl::string& path_)
+bool Obake::SharedLibrary::open(const STL::string& path_)
 {
 #if defined (WIN32)
 	HMODULE library = LoadLibraryA(path_.c_str());

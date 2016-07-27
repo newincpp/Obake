@@ -1,52 +1,49 @@
 #include "Core.hh"
 
-#if O_DEBUG
+#ifndef stdMode
 void* operator new[](size_t size, const char* pName, int flags, unsigned debugFlags, const char* file, int line) {
-	std::cout << "allocSize:" << size << std::endl;
-	if (pName) {
-		std::cout << "pName" << pName << std::endl;
-	}
-	std::cout << "flags " << flags << std::endl;
-	std::cout << "debug " << debugFlags << std::endl;
-	if (file) {
-		std::cout << "file " << file << std::endl;
-	}
-	std::cout << "line " << line << std::endl << std::endl;
-#else
-void* operator new[](size_t size, const char*, int, unsigned , const char*, int) {
-#endif
-	return malloc(size);
-}
-#if O_DEBUG
-void* operator new[](size_t size, size_t alignment, size_t alignmentOffset, const char* pName, int flags, unsigned debugFlags, const char* file, int line) {
-	std::cout << "allocSize:" << size << std::endl;
-	std::cout << "alignment " << alignment << std::endl;
-	std::cout << "alignmentOffset " << alignmentOffset << std::endl;
-	if (pName) {
-		std::cout << "pName" << pName << std::endl;
-	}
-	std::cout << "flags " << flags << std::endl;
-	std::cout << "debug " << debugFlags << std::endl;
-	if (file) {
-		std::cout << "file " << file << std::endl;
-	}
-	std::cout << "line " << line << std::endl << std::endl;
-#else
-void* operator new[](size_t size, size_t alignment, size_t, const char*, int, unsigned, const char*, int) {
-#endif
-	//force alignment for performance reason (like SIMDs)
-	EASTL_ASSERT(alignment <= 8);
+    Obake::log::debug("allocate");
 
+    //std::cout << "allocSize:" << size << std::endl;
+    //if (pName) {
+    //	std::cout << "pName" << pName << std::endl;
+    //}
+    //std::cout << "flags " << flags << std::endl;
+    //std::cout << "debug " << debugFlags << std::endl;
+    //if (file) {
+    //	std::cout << "file " << file << std::endl;
+    //}
+    //std::cout << "line " << line << std::endl << std::endl;
+    return malloc(size);
+}
+
+void* operator new[](size_t size, size_t alignment, size_t alignmentOffset, const char* pName, int flags, unsigned debugFlags, const char* file, int line) {
+    Obake::log::debug("alligned allocation");
+    //std::cout << "allocSize:" << size << std::endl;
+    //std::cout << "alignment " << alignment << std::endl;
+    //std::cout << "alignmentOffset " << alignmentOffset << std::endl;
+    //if (pName) {
+    //	std::cout << "pName" << pName << std::endl;
+    //}
+    //std::cout << "flags " << flags << std::endl;
+    //std::cout << "debug " << debugFlags << std::endl;
+    //if (file) {
+    //	std::cout << "file " << file << std::endl;
+    //}
+    //std::cout << "line " << line << std::endl << std::endl;
+    //force alignment for performance reason (like SIMDs)
+    EASTL_ASSERT(alignment <= 8);
 #if defined (WIN32)
-	return _aligned_malloc(size, alignment);
+    return _aligned_malloc(size, alignment);
 #else
-	return aligned_alloc(alignment, size);
+    return aligned_alloc(alignment, size);
 #endif
 }
+#endif
 
 
 void Obake::Core::executeNext(ASystem* system_) {
-	eastl::function<void(void)> task = []() {};
+	STL::function<void(void)> task = []() {};
 	system_->fillTask(task);
 
 	if (_threadingDisabled)

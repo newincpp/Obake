@@ -2,7 +2,12 @@
 #include <cassert>
 #include "Definitions.hh"
 #include "Plugin.hh"
+
+#ifdef stdMode
+#include <string>
+#else
 #include <EASTL/EASTL/string.h>
+#endif
 
 #ifdef WIN32
 	#include <Windows.h>
@@ -28,13 +33,13 @@ namespace Obake
 	{
 	private: 
 		lib_t _lib;
-		eastl::string _error;
+		STL::string _error;
 
 	public:
 		~SharedLibrary();
 		SharedLibrary();
 
-		bool open(const eastl::string& path_);
+		bool open(const STL::string& path_);
 		bool sym(const char* name_, void** ptr_);
 		void close();
 	/*	void setError(const std::string& prefix);
