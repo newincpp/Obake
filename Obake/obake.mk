@@ -7,4 +7,4 @@ SRC	+= ../Obake/ASystem.cpp \
 
 INCLUDE+=-I./../Obake/external -I./../Obake/external/EASTL -I./../Obake
 
-LIBS+= -ldl -L./../Obake -lEASTL -pthread 
+LIBS+= -ldl -L./../Obake -L../Obake/external/EASTL -lEASTL -pthread 

@@ -1,7 +1,14 @@
 #pragma once
 
+#include "config.hh"
+#ifdef stdMode
+#include <vector>
+#include <functional>
+#else
 #include <EASTL/EASTL/functional.h>
 #include <EASTL/EASTL/vector.h>
+#endif
+
 #include <iostream>
 #include <typeTraitsUtility.hh>
 
@@ -11,7 +18,7 @@ namespace Obake {
 	protected:
 		void executeAtBegin();
 		void executeAtEnd();
-		eastl::vector<eastl::function<void(void)>> _executionQueue;
+		STL::vector<STL::function<void(void)>> _executionQueue;
 		decltype(_executionQueue)::iterator _beginLoop;
 		decltype(_executionQueue)::iterator _task;
 		bool _pushNextAsBeginLoop;
@@ -20,7 +27,7 @@ namespace Obake {
 
 #define OBAKE_ADD(func) _executionQueue.push_back(std::bind(&Obake::__remove_reference__<decltype(*this)>::type::func, this));  \
 		if (_pushNextAsBeginLoop) \
-		{  if (_executionQueue.size() > 0) { std::cout << "add beginLoop " # func << std::endl;  _beginLoop = std::prev(_executionQueue.end()); } \
+		{  if (_executionQueue.size() > 0) { _beginLoop = std::prev(_executionQueue.end()); } \
 		else { _beginLoop = _executionQueue.end(); } _pushNextAsBeginLoop = false;}
 #define OBAKE_LOOP for (executeAtBegin(); _pushNextAsBeginLoop; executeAtEnd())
 

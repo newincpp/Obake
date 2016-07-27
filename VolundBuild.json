@@ -4,24 +4,22 @@
     "OS"					: "Auto",
     "compiler"				: "g++",
     "mainExecutable"		: "Editor",
-    "mainFolder"			: "BuildTest",
+    "mainFolder"			: "Build",
     "mainSharedLibsFolder"	: "Plugins",
 	"executables"			: [],
     "staticLibs" 			: ["Obake"],
     "sharedLibs" 			: ["Window", "VkRenderer"],
 	"externIncludes" 		: [],
-    "compilerFlags" 		: ["-std=c++0x", "-march=native", "-O2", "-fno-exceptions"],
+    "compilerFlags" 		: ["-std=c++14", "-march=native", "-O2", "-fno-exceptions"],
     "fullStatic"			: false,
 	"Windows":
 	{
-		"externIncludes"	: ["external/EASTL"],
-		"externLibs"		: ["EASTL"],
 		"compilerFlags"		: []
 	},
 	"Linux":
 	{
 		"externLibs"	: ["Obake/external/EASTL/libEASTL.a"]
-		
+
 	}
    }
 }

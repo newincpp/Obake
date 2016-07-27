@@ -1,6 +1,11 @@
 #pragma once
+#include "config.hh"
 #include <iostream>
+#ifdef stdMode
+#include <string>
+#else
 #include <EASTL/EASTL/string.h>
+#endif
 #include "Definitions.hh"
 #if defined(LINUX) || defined (APPLE)
 #	include <dlfcn.h>
@@ -50,10 +55,10 @@ namespace Obake
 	struct PluginInfos
 	{
 		uint16_t apiVersion;
-		eastl::string fileName;
-		eastl::string className;
-		eastl::string pluginName;
-		eastl::string pluginVersion;
+		STL::string fileName;
+		STL::string className;
+		STL::string pluginName;
+		STL::string pluginVersion;
 		CreatePluginFunc initializeFunc;
 		ExternPluginInfos* externInfos;
 	};

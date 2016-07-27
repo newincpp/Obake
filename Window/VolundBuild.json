@@ -19,7 +19,7 @@
 		"headersFolders"	: ["Win32"],
 		"externIncludes"	: ["Obake/external/EASTL"],
 		"externLibs"		: ["user32", "EASTL"],
-		"compilerFlags"		: ["-DEA_COMPILER_NO_VARIADIC_TEMPLATES",  "-L./external/eastl"]
+		"compilerFlags"		: ["-DEA_COMPILER_NO_VARIADIC_TEMPLATES",  "-L./Obake/external/EASTL/Win"]
      },
      "Linux":
      {

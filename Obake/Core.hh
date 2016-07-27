@@ -1,6 +1,5 @@
 #pragma once
 
-#include <EASTL/EASTL/vector.h>
 #include <thread>
 #include <iostream>
 
@@ -10,7 +9,14 @@
 #endif
 // #define GLM_FORCE_AVX
 
+#ifdef stdMode
+#include <string>
+#else
+#include <EASTL/EASTL/string.h>
+#endif
+
 #include "glm/glm.hpp"
+#include "config.hh"
 #include "ASystem.hh"
 #include "EventsManager.hh"
 #include "SharedLibrary.hh"
@@ -19,9 +25,9 @@ namespace Obake {
 	class Core {
 		private:
 			bool _threadingDisabled;
-			eastl::vector<ASystem*> _registeredSystems;
-			eastl::vector<std::thread> _threadPool;
-			eastl::vector<SharedLibrary> _libs;
+			STL::vector<ASystem*> _registeredSystems;
+			STL::vector<std::thread> _threadPool;
+			STL::vector<SharedLibrary> _libs;
 			void executeNext(ASystem* system_);
 		public:
 			explicit Core();

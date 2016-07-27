@@ -168,7 +168,7 @@ VkRenderer::createSurface()
 		surfaceCreateInfo.window = _winHandle.window
 	};
 
-	VK_CHECK_RESULT(vkCreateXcbSurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface));
+	VK_CHECK_RESULT(vkCreateXcbSurfaceKHR(_instance, &surfaceCreateInfo, nullptr, &_surface));
 #else
 	// - - -
 #endif
