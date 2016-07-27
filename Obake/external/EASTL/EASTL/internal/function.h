@@ -964,7 +964,7 @@ public:
 		}
 	}
 
-	template<typename Allocator>
+	template<typename Allocator, typename T>
 	function(eastl::allocator_arg_t, const Allocator & allocator, const function & other)
 		: call(other.call)
 	{
@@ -1163,7 +1163,7 @@ public:
 		}
 	}
 
-	template<typename Allocator>
+	template<typename Allocator, typename T>
 	function(eastl::allocator_arg_t, const Allocator & allocator, const function & other)
 		: call(other.call)
 	{

@@ -2,7 +2,7 @@
    "Builder":
    {
     "OS"					: "Auto",
-    "compiler"				: "clang++",
+    "compiler"				: "g++",
     "mainExecutable"		: "Editor",
     "mainFolder"			: "BuildTest",
     "mainSharedLibsFolder"	: "Plugins",
@@ -14,8 +14,9 @@
     "fullStatic"			: false,
 	"Windows":
 	{
-		"externLibs"	: ["Obake/external/EASTL/EASTL.lib"],
-		"compilerFlags"	: ["-fms-compatibility-version=19.00"]
+		"externIncludes"	: ["external/EASTL"],
+		"externLibs"		: ["EASTL"],
+		"compilerFlags"		: []
 	},
 	"Linux":
 	{

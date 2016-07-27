@@ -15,8 +15,10 @@
      "compilerFlags"	: ["-L./Obake/"],
      "Windows":
      {
-       "headersFolders"	: ["../Window/Win32"],
-       "compilerFlags"	: ["-fms-compatibility-version=19.00"]
+		"headersFolders"	: ["../Window/Win32"],
+		"externIncludes"	: [],
+		"externLibs"		: ["EASTL"],
+		"compilerFlags"		: ["-L./external/eastl"]
      },
      "Linux":
      {

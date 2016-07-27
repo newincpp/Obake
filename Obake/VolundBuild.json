@@ -15,7 +15,7 @@
 	 "compilerFlags"	: [],
      "Windows":
      {
-       "compilerFlags"	: ["-fms-compatibility-version=19.00"]
+       "compilerFlags"	: ["-L./external/eastl/"]
      }
    }
 }
