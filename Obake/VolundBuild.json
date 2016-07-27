@@ -15,6 +15,7 @@
 	 "compilerFlags"	: [],
      "Windows":
      {
+       "internLibs" : ["external/EASTL/libEASTL.a"],
        "compilerFlags"	: ["-L./external/eastl/"]
      }
    }
