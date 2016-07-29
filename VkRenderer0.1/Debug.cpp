@@ -1,17 +1,12 @@
-/*
-* Vulkan examples debug wrapper
-*
-* Copyright (C) 2016 by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
 #include <iostream>
 
 #include "MACRO.h"
 
-#include "VkDebug.hpp"
+#include "Debug.hpp"
 
-VkDebug* VkDebug::s_instance = nullptr;
+using namespace Platy;
+
+Debug* Debug::s_instance = nullptr;
 
 #ifdef __linux__
 void MessageBox(void*, const char* msg, const char* title, unsigned int){
@@ -55,20 +50,20 @@ messageCallback(
 	return false;
 }
 
-VkDebug::VkDebug()
+Debug::Debug()
 {
 	_validationLayerNames.push_back("VK_LAYER_LUNARG_standard_validation");
 	_validationLayerCount = _validationLayerNames.size();
 	setupDebugging();
 }
 
-VkDebug::~VkDebug()
+Debug::~Debug()
 {
 
 }
 
 void
-VkDebug::setupDebugging(VkDebugReportFlagsEXT flags_)
+Debug::setupDebugging(VkDebugReportFlagsEXT flags_)
 {
 	VkDebugReportCallbackCreateInfoEXT dbgCreateInfo =
 	{
@@ -83,9 +78,9 @@ VkDebug::setupDebugging(VkDebugReportFlagsEXT flags_)
 }
 
 void
-VkDebug::createDebugging(VkInstance instance_)
+Debug::createDebugging(VkInstance instance_)
 {
-	PRINT("## [VKDEBUG] [" << __FILE__ << "] CREATE DEBUGGING");
+	PRINT("## [DEBUG] [" << __FILE__ << "] CREATE DEBUGGING");
 	CreateDebugReportCallback = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkCreateDebugReportCallbackEXT");
 	DestroyDebugReportCallback = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkDestroyDebugReportCallbackEXT");
 
@@ -98,9 +93,9 @@ VkDebug::createDebugging(VkInstance instance_)
 }
 
 void
-VkDebug::freeDebugCallback(VkInstance instance_)
+Debug::freeDebugCallback(VkInstance instance_)
 {
-	PRINT("## [VKDEBUG] [" << __FILE__ << "] DESTROY DEBUGGING");
+	PRINT("## [DEBUG] [" << __FILE__ << "] DESTROY DEBUGGING");
 	if (_msgCallback != VK_NULL_HANDLE)
 	{
 		DestroyDebugReportCallback(instance_, _msgCallback, nullptr);
