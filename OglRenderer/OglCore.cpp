@@ -32,9 +32,7 @@ void OglCore::renderScene() {
     }
 }
 
-
-
-void OglCore::init(){
+void OglCore::init() {
     _beginTime = std::chrono::high_resolution_clock::now();
 
     checkGlError;
@@ -54,18 +52,33 @@ void OglCore::init(){
         2, 3, 0
     };
 
-    _base.add("./frag.glsl", GL_FRAGMENT_SHADER);
+    _sgBuffer.add("./fragGBuffer.glsl", GL_FRAGMENT_SHADER);
     checkGlError;
-    _base.add("./vert.glsl", GL_VERTEX_SHADER);
+    _sgBuffer.add("./vertGBuffer.glsl", GL_VERTEX_SHADER);
     checkGlError;
-    _base.link();
+    _sgBuffer.link();
+    checkGlError;
+
+    _srender.add("./frag.glsl", GL_FRAGMENT_SHADER);
+    checkGlError;
+    _srender.add("./vert.glsl", GL_VERTEX_SHADER);
+    checkGlError;
+    _srender.link();
     checkGlError;
 
     import("neloNoArm.dae");
     Mesh m;
     m.uploadToGPU(vertices, elements);
     _scene.push_back(m);
+    checkGlError;
 
+
+    gBuffer.enable();
+    checkGlError;
+    gBuffer.addBuffer(); // Position
+    gBuffer.addBuffer(); // Normal
+    gBuffer.addBuffer(); // albedo
+    gBuffer.enable();
     checkGlError;
 }
 
@@ -75,11 +88,16 @@ unsigned long OglCore::render() {
     uTime = time;
     uTime.upload();
     checkGlError;
-
-
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     c.refresh();
+
+    _sgBuffer.use();
+    gBuffer.enable();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderScene();
+    gBuffer.disable();
+    //_srender.use();
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //renderScene();
 
     std::chrono::time_point<std::chrono::high_resolution_clock> endFrame = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>(endFrame-beginFrame).count();
