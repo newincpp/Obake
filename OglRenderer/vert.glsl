@@ -13,8 +13,6 @@ out vec3 frag;
 void main()
 {
     vec3 displacement = vec3(sin(time * .001), 0.0f, sin(time*0.003));
-    frag = vec3(0.0f,0.0f,1.0f); 
-    vec3 lol = vertexNormal_;
-    frag = vec3(uvCoord_,0.0f);
+    frag = vec3(vertexNormal_);
     gl_Position = camera * meshTransform * vec4(vertexPos_ + displacement, 1.0);
 }

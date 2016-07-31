@@ -49,7 +49,6 @@ class FrameBuffer {
 		glGenFramebuffers(1, &_fbo);
 	    }
 	    glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-
 	    if (_rtt.size()) {
 		GLuint attachments[_rtt.size()];
 		for (unsigned short i = 0; i < _rtt.size() ; ++i) {
@@ -57,7 +56,6 @@ class FrameBuffer {
 		}
 		glDrawBuffers(_rtt.size(), attachments);
 	    }
-
 	    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
 		std::cout << "\033[32mframeBuffer valid \\o/\033[0m" << '\n';
 	    }

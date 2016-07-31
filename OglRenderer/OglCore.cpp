@@ -26,9 +26,10 @@ void OglCore::import(std::string file_) {
 }
 
 void OglCore::renderScene() {
+    //checkGlError;
     for (Mesh& m : _scene) {
         m.render();
-        checkGlError;
+    //    checkGlError;
     }
 }
 
@@ -41,10 +42,10 @@ void OglCore::init() {
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     std::vector<GLfloat> vertices = {
     	//vertexPos		//normal		//uvCoord
-        -0.5f,  0.5f,-2.5f, 	0.0f,0.0f,0.0f, 	0.0f,0.0f, // Top-left
-        0.5f,  0.5f, -2.5f, 	0.0f,0.0f,0.0f, 	1.0f,0.0f, // Top-right
-        0.5f, -0.5f, -2.5f, 	0.0f,0.0f,0.0f, 	0.0f,1.0f, // Bottom-right
-        -0.5f, -0.5f, -2.5f, 	0.0f,0.0f,0.0f, 	1.0f,1.0f  // Bottom-left
+        -2.5f,  2.5f,5.5f, 	0.0f,0.0f,1.0f, 	0.0f,0.0f, // Top-left
+        2.5f,  2.5f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,0.0f, // Top-right
+        2.5f, -2.5f, 5.5f, 	0.0f,0.0f,1.0f, 	0.0f,1.0f, // Bottom-right
+        -2.5f, -2.5f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,1.0f  // Bottom-left
     };
 
     std::vector<GLuint> elements = {
@@ -92,12 +93,15 @@ unsigned long OglCore::render() {
 
     _sgBuffer.use();
     gBuffer.enable();
+    checkGlError;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    checkGlError;
     renderScene();
     gBuffer.disable();
-    //_srender.use();
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //renderScene();
+
+    _srender.use();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    renderScene();
 
     std::chrono::time_point<std::chrono::high_resolution_clock> endFrame = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>(endFrame-beginFrame).count();

@@ -4,14 +4,23 @@ layout(location = 1) uniform float time;
 layout(location = 2) uniform mat4 camera;
 layout(location = 3) uniform mat4 transformation;
 
-in vec3 gPosition;
-in vec3 gNormal;
-in vec4 gAlbedoSpec;
+in vec3 vInfVertexPos_;
+in vec3 vInfVertexNormal_;
+in vec2 vInfUvCoord_;
 
-out vec4 outColor;
+layout (location = 0) out vec3 gPosition;
+layout (location = 1) out vec3 gNormal;
+layout (location = 2) out vec3 gAlbedoSpec;
 
 void main()
 {
-    outColor = vec4(gNormal, 0.0f);
-//    outColor = vec4(sin(time), sin(time), sin(time*10), 1.0);
+    // Store the fragment position vector in the first gbuffer texture
+    gPosition = vInfVertexPos_;
+    // Also store the per-fragment normals into the gbuffer
+    gNormal = vInfVertexNormal_;
+    // And the diffuse per-fragment color
+    gAlbedoSpec.rgb = vec3(vInfUvCoord_, 0.0f);
+    //gAlbedoSpec.rgb = texture(texture_diffuse1, TexCoords).rgb;
+    //// Store specular intensity in gAlbedoSpec's alpha component
+    //gAlbedoSpec.a = texture(texture_specular1, TexCoords).r;
 }
