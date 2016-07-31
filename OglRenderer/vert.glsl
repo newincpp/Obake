@@ -2,6 +2,7 @@
 
 layout(location = 1) uniform float time;
 layout(location = 2) uniform mat4 camera;
+layout(location = 3) uniform mat4 meshTransform;
 
 layout(location = 0)in vec3  vertexPos_;
 layout(location = 1)in vec3  vertexNormal_;
@@ -15,5 +16,5 @@ void main()
     frag = vec3(0.0f,0.0f,1.0f); 
     vec3 lol = vertexNormal_;
     frag = vec3(uvCoord_,0.0f);
-    gl_Position = camera * vec4(vertexPos_ + displacement, 1.0);
+    gl_Position = camera * meshTransform * vec4(vertexPos_ + displacement, 1.0);
 }
