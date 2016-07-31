@@ -12,13 +12,13 @@
 	 "internLibs"		: [],
      "externIncludes"	: ["../Obake/"],
      "externLibs"		: [],
-     "compilerFlags"	: ["-L./Obake/"],
+     "compilerFlags"	: ["-L./Obake/Bin/"],
      "Windows":
      {
 		"headersFolders"	: ["../Window/Win32"],
 		"externIncludes"	: [],
 		"externLibs"		: ["EASTL"],
-		"compilerFlags"		: ["-L./external/eastl"]
+		"compilerFlags"		: ["-L./Obake/external/EASTL/Win"]
      },
      "Linux":
      {

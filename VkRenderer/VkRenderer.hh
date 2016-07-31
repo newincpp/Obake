@@ -1,11 +1,10 @@
 #pragma once
-
-#include "Core.hh"
-#include "Plugin.hh"
-
 #include "MACRO.h"
 #include "BUILD_OPTIONS.h"
 #include "PLATFORM.h"
+
+#include "Core.hh"
+#include "Plugin.hh"
 
 // Sascha's code
 #include "vulkanDebug.h"
