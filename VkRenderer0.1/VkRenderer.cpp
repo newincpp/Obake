@@ -1,6 +1,6 @@
 #include "MACRO.h"
 
-#include "vulkanTools.h"
+#include "Tools.hpp"
 
 #include "VkRenderer.hpp"
 
@@ -32,6 +32,8 @@ void
 VkRenderer::unload()
 {
 	destroyGraphicsPipeline();
+	destroyShaderModule();
+	destroyRenderPass();
 	destroyImageViews();
 	destroySwapchain();
 	destroyDevice();
@@ -66,6 +68,7 @@ VkRenderer::initVulkan()
 	createDevice();
 	createSwapchain();
 	createImageViews();
+	createRenderPass();
 	createGraphicsPipeline();
 }
 
@@ -106,7 +109,7 @@ VkRenderer::createInstance()
 	// Contains info in regards to the Vulkan instance
 	VkInstanceCreateInfo instanceCreateInfo =
 	{
-		// (MANDATORY) sType is the type of the structure0
+		// (MANDATORY) sType is the type of the structure
 		instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
 		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
 		instanceCreateInfo.pNext = (_enableValidation) ? (&(_debug._debugCallbackCreateInfo)) : (nullptr),
@@ -586,12 +589,350 @@ VkRenderer::destroyImageViews()
 	}
 }
 
-void System::VkRenderer::createGraphicsPipeline()
+void
+VkRenderer::createRenderPass()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE GRAPHICS PIPELINE");
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE RENDER PASS");
+
+	// COMMENT !!!
+	VkAttachmentDescription colorAttachment =
+	{
+		// A bitmask describing additional properties of the attachment
+		colorAttachment.flags = 0,
+		colorAttachment.format = _swapchainImageFormat,
+		colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT,
+		colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
+		colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE,
+		colorAttachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE,
+		colorAttachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE,
+		colorAttachment.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED,
+		colorAttachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR
+	};
+
+	VkAttachmentReference colorAttachmentRef =
+	{
+		// The index of the attachment of the render pass, and corresponds to the index of the corresponding element
+		// in the pAttachments array of the VkRenderPassCreateInfo structure
+		colorAttachmentRef.attachment = 0,
+		// A VkImageLayout value specifying the layout the attachment uses during the subpass.
+		colorAttachmentRef.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL
+	};
+
+	// COMMENT !!!
+	VkSubpassDescription subPass =
+	{
+		subPass.flags = 0,
+		subPass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS,
+		// The number of input attachments
+		subPass.inputAttachmentCount = 0,
+		subPass.pInputAttachments = nullptr,
+		subPass.colorAttachmentCount = 1,
+		subPass.pColorAttachments = &colorAttachmentRef,
+		subPass.pResolveAttachments = nullptr,
+		subPass.pDepthStencilAttachment = nullptr,
+		subPass.preserveAttachmentCount = 0,
+		subPass.pPreserveAttachments = nullptr
+	};
+
+	// COMMENT !!!
+	VkRenderPassCreateInfo renderPassInfo =
+	{
+		renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
+		renderPassInfo.pNext = nullptr,
+		renderPassInfo.flags = 0,
+		renderPassInfo.attachmentCount = 1,
+		renderPassInfo.pAttachments = &colorAttachment,
+		renderPassInfo.subpassCount = 1,
+		renderPassInfo.pSubpasses = &subPass,
+		renderPassInfo.dependencyCount = 0,
+		renderPassInfo.pDependencies = nullptr
+
+	};
+
+	VK_CHECK_RESULT(vkCreateRenderPass(_device, &renderPassInfo, nullptr, &_renderPass));
 }
 
-void System::VkRenderer::destroyGraphicsPipeline()
+void
+VkRenderer::destroyRenderPass()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY RENDER PASS");
+	vkDestroyRenderPass(_device, _renderPass, nullptr);
+}
+
+void
+VkRenderer::createGraphicsPipeline()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE GRAPHICS PIPELINE");
+
+	std::vector<char> vertShaderCode = Tools::readFile("shaders/vert.spv");
+	std::vector<char> fragShaderCode = Tools::readFile("shaders/frag.spv");
+	createShaderModule(vertShaderCode, _vertShaderModule);
+	createShaderModule(fragShaderCode, _fragShaderModule);
+
+	VkPipelineShaderStageCreateInfo vertShaderStageInfo =
+	{
+		// (MANDATORY) sType is the type of the structure
+		vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		vertShaderStageInfo.pNext = nullptr,
+		// - Is reserved for future use -
+		vertShaderStageInfo.flags = 0,
+		// Names a single pipeline stage (VkShaderStageFlagBits)
+		vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT,
+		// A VkShaderModule object that contains the shader for this stage
+		vertShaderStageInfo.module = _vertShaderModule,
+		// A pointer to a null-terminated UTF-8 string specifying the entry point name of the shader for this stage
+		vertShaderStageInfo.pName = "main",
+		// A pointer to VkSpecializationInfo, as described in Specialization Constants, and can be NULL
+		vertShaderStageInfo.pSpecializationInfo = VK_NULL_HANDLE
+	};
+
+	VkPipelineShaderStageCreateInfo fragShaderStageInfo =
+	{
+		// (MANDATORY) sType is the type of the structure
+		fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		fragShaderStageInfo.pNext = nullptr,
+		// - Is reserved for future use -
+		fragShaderStageInfo.flags = 0,
+		// Names a single pipeline stage (VkShaderStageFlagBits)
+		fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT,
+		// A VkShaderModule object that contains the shader for this stage
+		fragShaderStageInfo.module = _fragShaderModule,
+		// A pointer to a null-terminated UTF-8 string specifying the entry point name of the shader for this stage
+		fragShaderStageInfo.pName = "main",
+		// A pointer to VkSpecializationInfo, as described in Specialization Constants, and can be NULL
+		fragShaderStageInfo.pSpecializationInfo = VK_NULL_HANDLE
+	};
+
+	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
+
+	// Describes the format of the vertex data that will be passed to the vertex shader
+	VkPipelineVertexInputStateCreateInfo vertexInputInfo =
+	{
+		// (MANDATORY) sType is the type of the structure
+		vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		vertexInputInfo.pNext = nullptr,
+		// - Is reserved for future use -
+		vertexInputInfo.flags = 0,
+		// The number of vertex binding descriptions provided in pVertexBindingDescriptions
+		vertexInputInfo.vertexBindingDescriptionCount = 0,
+		// A pointer to an array of VkVertexInputBindingDescription structures
+		vertexInputInfo.pVertexBindingDescriptions = nullptr,
+		// The number of vertex attribute descriptions provided in pVertexAttributeDescriptions
+		vertexInputInfo.vertexAttributeDescriptionCount = 0,
+		// A pointer to an array of VkVertexInputAttributeDescriptions structures
+		vertexInputInfo.pVertexAttributeDescriptions = nullptr
+	};
+
+	// Mainly describes what kind of geometry will be drawn from the vetices
+	VkPipelineInputAssemblyStateCreateInfo inputAssembly =
+	{
+		// (MANDATORY) sType is the type of the structure
+		inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		inputAssembly.pNext = nullptr,
+		// - Is reserved for future use -
+		inputAssembly.flags = 0,
+		// Defines the primitive topology
+		// Primitive topology determines how consecutive vertices are organized into primitives
+		inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST,
+		// Controls whether a special vertex index value is treated as restarting the assembly of primitives.
+		inputAssembly.primitiveRestartEnable = VK_FALSE
+	};
+
+	VkViewport viewport =
+	{
+		// The viewport's upper left corner
+		viewport.x = 0.0f,
+		viewport.y = 0.0f,
+		// The viewort's width and height0
+		viewport.width = (float)_swapchainExtent.width,
+		viewport.height = (float)_swapchainExtent.height,
+		// The min and max depth range for the viewport
+		viewport.minDepth = 0.0f,
+		viewport.maxDepth = 1.0f
+	};
+
+	VkRect2D scissor =
+	{
+		scissor.offset = { 0, 0 },
+		scissor.extent = _swapchainExtent
+	};
+
+	VkPipelineViewportStateCreateInfo viewportState =
+	{
+		// (MANDATORY) sType is the type of the structure
+		viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		viewportState.pNext = nullptr,
+		// - Is reserved for future use -
+		viewportState.flags = 0,
+		// The number of viewports used by the pipeline
+		viewportState.viewportCount = 1,
+		// A pointer to an array of VkViewport structures, defining the viewport transforms
+		viewportState.pViewports = &viewport,
+		// The number of scissors (must match the number of viewports)
+		viewportState.scissorCount = 1,
+		// A pointer to an array of VkRect2D structures which define the rectangle bounds of the scissor for the corresponding viewport
+		viewportState.pScissors = &scissor
+	};
+
+	VkPipelineRasterizationStateCreateInfo rasterizer =
+	{
+		// (MANDATORY) sType is the type of the structure
+		rasterizer.sType = VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		rasterizer.pNext = nullptr,
+		// - Is reserved for future use -
+		rasterizer.flags = 0,
+		// Controls whether to clamp the fragment’s depth values instead of clipping primitives to the z planes of the frustum
+		rasterizer.depthClampEnable = VK_FALSE,
+		// Controls whether primitives are discarded immediately before the rasterization stage
+		rasterizer.rasterizerDiscardEnable = VK_FALSE,
+		// The triangle rendering mode
+		rasterizer.polygonMode = VK_POLYGON_MODE_FILL,
+		// The triangle facing direction used for primitive culling
+		rasterizer.cullMode = VK_CULL_MODE_BACK_BIT,
+		// the front-facing triangle orientation to be used for culling
+		rasterizer.frontFace = VK_FRONT_FACE_CLOCKWISE,
+		// Controls whether to bias fragment depth values
+		rasterizer.depthBiasEnable = VK_FALSE,
+		// A scalar factor controlling the constant depth value added to each fragment.
+		rasterizer.depthBiasConstantFactor = 0,
+		// The maximum (or minimum) depth bias of a fragment.
+		rasterizer.depthBiasClamp = 0,
+		// A scalar factor applied to a fragment’s slope in depth bias calculations
+		rasterizer.depthBiasSlopeFactor = 0,
+		// The width of rasterized line segments
+		rasterizer.lineWidth = 1.0f
+	};
+
+	VkPipelineMultisampleStateCreateInfo multisampling =
+	{
+		// (MANDATORY) sType is the type of the structure
+		multisampling.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		multisampling.pNext = nullptr,
+		// - Is reserved for future use -
+		multisampling.flags = 0,
+		// A VkSampleCountFlagBits specifying the number of samples per pixel used in rasterization
+		multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT,
+		// Specifies that fragment shading executes per-sample if VK_TRUE, or per-fragment if VK_FALSE
+		multisampling.sampleShadingEnable = VK_FALSE,
+		// The minimum fraction of sample shading
+		multisampling.minSampleShading = 0,
+		// A bitmask of static coverage information that is ANDed with the coverage information generated during rasterization
+		multisampling.pSampleMask = nullptr,
+		// Controls whether a temporary coverage value is generated based on the alpha component of the fragment’s first color output
+		multisampling.alphaToCoverageEnable = VK_FALSE,
+		// Controls whether the alpha component of the fragment’s first color output is replaced with one
+		multisampling.alphaToOneEnable = VK_FALSE
+	};
+
+	// COMMENT !!!
+	VkPipelineColorBlendAttachmentState colorBlendAttachment =
+	{
+		colorBlendAttachment.blendEnable = VK_FALSE,
+		colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_ZERO,
+		colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO,
+		colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD,
+		colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
+		colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO,
+		colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD,
+		colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT
+
+	};
+
+	// COMMENT !!!
+	VkPipelineColorBlendStateCreateInfo colorBlending =
+	{
+		colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
+		colorBlending.pNext = nullptr,
+		colorBlending.flags = 0,
+		colorBlending.logicOpEnable = VK_FALSE,
+		colorBlending.logicOp = VK_LOGIC_OP_COPY,
+		colorBlending.attachmentCount = 1,
+		colorBlending.pAttachments = &colorBlendAttachment,
+		colorBlending.blendConstants[0] = 0.0f,
+		colorBlending.blendConstants[1] = 0.0f,
+		colorBlending.blendConstants[2] = 0.0f,
+		colorBlending.blendConstants[3] = 0.0f
+	};
+
+	// COMMENT !!!
+	VkPipelineLayoutCreateInfo pipelineLayoutInfo =
+	{
+		pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
+		pipelineLayoutInfo.pNext = nullptr,
+		pipelineLayoutInfo.flags = 0,
+		pipelineLayoutInfo.setLayoutCount = 0,
+		pipelineLayoutInfo.pSetLayouts = nullptr,
+		pipelineLayoutInfo.pushConstantRangeCount = 0,
+		pipelineLayoutInfo.pPushConstantRanges = nullptr,
+	};
+
+	VK_CHECK_RESULT(vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout));
+
+	VkGraphicsPipelineCreateInfo pipelineInfo =
+	{
+		pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO,
+		pipelineInfo.pNext = nullptr,
+		pipelineInfo.flags = 0,
+		pipelineInfo.stageCount = 2,
+		pipelineInfo.pStages = shaderStages,
+		pipelineInfo.pVertexInputState = &vertexInputInfo,
+		pipelineInfo.pInputAssemblyState = &inputAssembly,
+		pipelineInfo.pTessellationState = nullptr,
+		pipelineInfo.pViewportState = &viewportState,
+		pipelineInfo.pRasterizationState = &rasterizer,
+		pipelineInfo.pMultisampleState = &multisampling,
+		pipelineInfo.pDepthStencilState = nullptr,
+		pipelineInfo.pColorBlendState = &colorBlending,
+		pipelineInfo.pDynamicState = nullptr,
+		pipelineInfo.layout = _pipelineLayout,
+		pipelineInfo.renderPass = _renderPass,
+		pipelineInfo.subpass = 0,
+		pipelineInfo.basePipelineHandle = VK_NULL_HANDLE
+	};
+
+	VK_CHECK_RESULT(vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_graphicsPipeline))
+}
+
+void
+VkRenderer::destroyGraphicsPipeline()
 {
 	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY GRAPHICS PIPELINE");
+	vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
+	vkDestroyPipeline(_device, _graphicsPipeline, nullptr);
 }
+
+void
+VkRenderer::createShaderModule(const std::vector<char>& code, VkShaderModule& shaderModule)
+{
+	VkShaderModuleCreateInfo createInfo =
+	{
+		// (MANDATORY) sType is the type of the structure
+		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		createInfo.pNext = nullptr,
+		// - Is reserved for future use -
+		createInfo.flags = 0,
+		// The size, in bytes, of the code pointed to by pCode
+		createInfo.codeSize = code.size(),
+		// Points to code that is used to create the shader module.
+		// The type and format of the code is determined from the content of the memory addressed by pCode
+		createInfo.pCode = (uint32_t*)code.data()
+	};
+
+	VK_CHECK_RESULT(vkCreateShaderModule(_device, &createInfo, nullptr, &shaderModule));
+}
+
+void
+VkRenderer::destroyShaderModule()
+{
+	vkDestroyShaderModule(_device, _vertShaderModule, nullptr);
+	vkDestroyShaderModule(_device, _fragShaderModule, nullptr);
+}
+

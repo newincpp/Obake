@@ -16,7 +16,7 @@
 #define DEFAULT_FENCE_TIMEOUT 100000000000
 
 // Macro to check and display Vulkan return results
-#define VK_CHECK_RESULT(f)																				\
+#define VK_CHECK_RESULTa(f)																				\
 {																										\
 	VkResult res = (f);																					\
 	if (res != VK_SUCCESS)																				\

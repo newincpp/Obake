@@ -61,6 +61,13 @@ namespace System
 		VkExtent2D					_swapchainExtent;
 		VkFormat					_swapchainImageFormat;
 
+		VkShaderModule _vertShaderModule;
+		VkShaderModule _fragShaderModule;
+
+		VkRenderPass		_renderPass;
+		VkPipelineLayout	_pipelineLayout;
+		VkPipeline			_graphicsPipeline;
+
 
 	
 	public:
@@ -73,6 +80,7 @@ namespace System
 		void initVulkan();
 		void createInstance();
 		void destroyInstance();
+
 		void createSurface();
 		void destroySurface();
 
@@ -93,8 +101,14 @@ namespace System
 
 		void createImageViews();
 		void destroyImageViews();
+
+		void createRenderPass();
+		void destroyRenderPass();
+
 		void createGraphicsPipeline();
 		void destroyGraphicsPipeline();
+		void createShaderModule(const std::vector<char>& code, VkShaderModule& shaderModule);
+		void destroyShaderModule();
 	};	
 }
 
