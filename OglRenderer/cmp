@@ -1,1 +1,1 @@
-clang++ -g *.cpp *.cxx -std=c++11 -lGL -lGLEW -lglfw ./libs/libassimp.a ./libs/libz.a -march=native -o ogl
+clang++ -g *.cpp *.cxx -std=c++11 -lGL -lglfw -DGLEW_STATIC ./libs/libGLEW.a ./libs/libassimp.a ./libs/libz.a -march=native -o ogl

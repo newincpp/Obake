@@ -3,8 +3,7 @@
 #include <fstream>
 #include <streambuf>
 
-#define GLEW_STATIC
-#include <GL/glew.h>
+#include "glew.h"
 
 class Shader {
     private:

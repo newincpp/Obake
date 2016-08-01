@@ -2,8 +2,7 @@
 #include <vector>
 #include <iostream>
 #include "shader.hh"
-#define GLEW_STATIC
-#include <GL/glew.h>
+#include "glew.h"
 #include <chrono>
 #include "Uniform.hh"
 #include "Importer.hh"
