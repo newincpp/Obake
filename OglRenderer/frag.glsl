@@ -6,10 +6,9 @@ layout(location = 3) uniform mat4 transformation;
 
 in vec3 frag;
 
-out vec4 outColor;
+out vec4 outColour;
 
-void main()
-{
-    outColor = vec4(frag, 0.0f);
-//    outColor = vec4(sin(time), sin(time), sin(time*10), 1.0);
+void main() {
+    outColour = vec4(frag, 0.0f);
+//    outColour = vec4(sin(time), sin(time), sin(time*10), 1.0);
 }

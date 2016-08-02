@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <vector>
 #include <streambuf>
 
 #include "glew.h"
@@ -33,7 +34,7 @@ class Shader {
     public:
 	Shader();
 	void add(std::string, GLenum);
-	void link();
+	void link(const std::vector<std::string>&& fragDataOutPut_);
 	inline void use() {
 	    glUseProgram(_programId);
 	}

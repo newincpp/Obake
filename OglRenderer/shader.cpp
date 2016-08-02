@@ -23,7 +23,7 @@ void Shader::add(std::string sourceFile_, GLenum type_) {
     _checkValidity(*id, s, sourceFile_);
 }
 
-void Shader::link() {
+void Shader::link(const std::vector<std::string>&& fragDataOutPut_) {
     _programId = glCreateProgram();
     if (_vertexId) {
 	glAttachShader(_programId, _vertexId);
@@ -34,7 +34,12 @@ void Shader::link() {
     if (_geometryId) {
 	glAttachShader(_programId, _geometryId);
     }
-    glBindFragDataLocation(_programId, 0, "outColor");
+    unsigned int i = 0;
+    for (const std::string& output : fragDataOutPut_) {
+	std::cout << i << ' ' << output << '\n';
+	glBindFragDataLocation(_programId, i, output.c_str());
+	++i;
+    }
     glLinkProgram(_programId);
     glUseProgram(_programId);
 }

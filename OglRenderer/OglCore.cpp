@@ -26,26 +26,23 @@ void OglCore::import(std::string file_) {
 }
 
 void OglCore::renderScene() {
-    //checkGlError;
     for (Mesh& m : _scene) {
-        m.render();
-    //    checkGlError;
+        checkGlError m.render();
     }
 }
 
 void OglCore::init() {
     _beginTime = std::chrono::high_resolution_clock::now();
 
-    checkGlError;
-    glEnable(GL_DEPTH_TEST);
+    checkGlError glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     std::vector<GLfloat> vertices = {
     	//vertexPos		//normal		//uvCoord
-        -2.5f,  2.5f,5.5f, 	0.0f,0.0f,1.0f, 	0.0f,0.0f, // Top-left
-        2.5f,  2.5f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,0.0f, // Top-right
-        2.5f, -2.5f, 5.5f, 	0.0f,0.0f,1.0f, 	0.0f,1.0f, // Bottom-right
-        -2.5f, -2.5f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,1.0f  // Bottom-left
+        -1.5f,  1.0f,5.5f, 	0.0f,0.0f,1.0f, 	0.0f,0.0f, // Top-left
+        1.5f,  1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,0.0f, // Top-right
+        1.5f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	0.0f,1.0f, // Bottom-right
+        -1.0f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,1.0f  // Bottom-left
     };
 
     std::vector<GLuint> elements = {
@@ -54,54 +51,55 @@ void OglCore::init() {
     };
 
     _sgBuffer.add("./fragGBuffer.glsl", GL_FRAGMENT_SHADER);
-    checkGlError;
     _sgBuffer.add("./vertGBuffer.glsl", GL_VERTEX_SHADER);
-    checkGlError;
-    _sgBuffer.link();
-    checkGlError;
+    _sgBuffer.link({"outColour"});
 
     _srender.add("./frag.glsl", GL_FRAGMENT_SHADER);
-    checkGlError;
     _srender.add("./vert.glsl", GL_VERTEX_SHADER);
-    checkGlError;
-    _srender.link();
-    checkGlError;
+    _srender.link({"vInfVertexPos_", "vInfVertexNormal_", "vInfUvCoord_"});
+
+    _sPostProc.add("./postProcess.glsl",GL_FRAGMENT_SHADER);
+    _sPostProc.add("./postProcessVert.glsl",GL_VERTEX_SHADER);
+    _sPostProc.link({"outColour"});
+
 
     import("neloNoArm.dae");
     Mesh m;
     m.uploadToGPU(vertices, elements);
     _scene.push_back(m);
-    checkGlError;
+
+    checkGlError _renderTarget.uploadToGPU(vertices, elements);
 
 
-    gBuffer.enable();
-    checkGlError;
+    checkGlError gBuffer.init();
     gBuffer.addBuffer(); // Position
     gBuffer.addBuffer(); // Normal
     gBuffer.addBuffer(); // albedo
-    gBuffer.enable();
-    checkGlError;
+    checkGlError gBuffer.enable();
 }
 
 unsigned long OglCore::render() {
     std::chrono::time_point<std::chrono::high_resolution_clock> beginFrame = std::chrono::high_resolution_clock::now();
     GLfloat time = std::chrono::duration_cast<std::chrono::milliseconds>(beginFrame - _beginTime).count();
     uTime = time;
-    uTime.upload();
-    checkGlError;
+    checkGlError uTime.upload();
     c.refresh();
 
     _sgBuffer.use();
     gBuffer.enable();
-    checkGlError;
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    checkGlError;
-    renderScene();
+    checkGlError renderScene();
     gBuffer.disable();
 
-    _srender.use();
+    //_srender.use();
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //renderScene();
+
+    gBuffer.bindGBuffer();
+    _sPostProc.use();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderScene();
+    _renderTarget.render();
+    checkGlError 
 
     std::chrono::time_point<std::chrono::high_resolution_clock> endFrame = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>(endFrame-beginFrame).count();
