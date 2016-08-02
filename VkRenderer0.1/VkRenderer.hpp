@@ -8,7 +8,7 @@
 
 namespace System
 {
-	class VkRenderer : public System::Renderer
+	class VkRenderer : public Renderer
 	{
 	typedef struct
 	{
@@ -43,6 +43,7 @@ namespace System
 		bool			_enableValidation = false;
 		Platy::Debug	_debug;
 
+		// Vulkan
 		VkInstance 					_instance 		= VK_NULL_HANDLE;
 		VkSurfaceKHR				_surface		= VK_NULL_HANDLE;
 		VkPhysicalDevice			_physicalDevice = VK_NULL_HANDLE;
@@ -57,6 +58,7 @@ namespace System
 		// Handles to all images in the swapchain
 		std::vector<VkImage>		_swapchainImages;
 		std::vector<VkImageView>	_swapchainImageViews;
+		std::vector<VkFramebuffer>	_swapchainFramebuffers;
 		// Window render pixel size
 		VkExtent2D					_swapchainExtent;
 		VkFormat					_swapchainImageFormat;
@@ -68,16 +70,27 @@ namespace System
 		VkPipelineLayout	_pipelineLayout;
 		VkPipeline			_graphicsPipeline;
 
+		VkCommandPool					_commandPool;
+		std::vector<VkCommandBuffer>	_commandBuffers;
 
+		VkSemaphore _imageAvailableSemaphore;
+		VkSemaphore _renderFinishedSemaphore;
+		// !Vulkan
 	
 	public:
 		virtual void mainLoop();
 		virtual void initialize();
 		virtual void unload();
 	protected:
-		// - - -
+		void evUpdateSurface();
 	private:
+
+		void drawFrame();
+
+		// Vulkan
 		void initVulkan();
+		void recreateSwapchain();
+
 		void createInstance();
 		void destroyInstance();
 
@@ -109,6 +122,18 @@ namespace System
 		void destroyGraphicsPipeline();
 		void createShaderModule(const std::vector<char>& code, VkShaderModule& shaderModule);
 		void destroyShaderModule();
+
+		void createFramebuffers();
+		void destroyFramebuffers();
+
+		void createCommandPool();
+		void destroyCommandPool();
+		void createCommandBuffers();
+		void destroyCommandBuffers();
+
+		void createSemaphore();
+		void destroySemaphore();
+		// !Vulkan
 	};	
 }
 

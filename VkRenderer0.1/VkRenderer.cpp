@@ -6,7 +6,7 @@
 
 using namespace System;
 
-OBAKE_PLUGIN(VkRenderer, "Vulkan Renderer", "0.1.0")
+OBAKE_PLUGIN(VkRenderer, "Vulkan Renderer", "0.1.2")
 
 VkRenderer::VkRenderer()
 	: Renderer()
@@ -24,6 +24,7 @@ VkRenderer::initialize()
 {
 	Renderer::initialize();
 
+
 	OBAKE_ADD(initVulkan);
 	OBAKE_ADD(mainLoop);
 }
@@ -31,6 +32,10 @@ VkRenderer::initialize()
 void
 VkRenderer::unload()
 {
+	destroySemaphore();
+	destroyCommandBuffers();
+	destroyCommandPool();
+	destroyFramebuffers();
 	destroyGraphicsPipeline();
 	destroyShaderModule();
 	destroyRenderPass();
@@ -46,13 +51,71 @@ VkRenderer::unload()
 // # # # # # # # # # # # # # # //
 
 void
+VkRenderer::evUpdateSurface()
+{
+	Renderer::evUpdateSurface();
+
+	recreateSwapchain();
+}
+
+// # # # # # # # # # # # # # # //
+
+void
 VkRenderer::mainLoop()
 {
 	while (!_isExiting)
 	{
 		Renderer::mainLoop();
+		drawFrame();
+		vkDeviceWaitIdle(_device);
 	}
 }
+
+void
+VkRenderer::drawFrame()
+{
+	uint32_t imageIndex;
+	VkSemaphore signalSemaphores[] = { _renderFinishedSemaphore };
+	{
+		VkSemaphore waitSemaphores[] = { _imageAvailableSemaphore };
+		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+
+		vkAcquireNextImageKHR(_device, _swapchain, std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+		VkSubmitInfo submitInfo =
+		{
+			submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
+			submitInfo.pNext = nullptr,
+			submitInfo.waitSemaphoreCount = 1,
+			submitInfo.pWaitSemaphores = waitSemaphores,
+			submitInfo.pWaitDstStageMask = waitStages,
+			submitInfo.commandBufferCount = 1,
+			submitInfo.pCommandBuffers = &_commandBuffers[imageIndex],
+			submitInfo.signalSemaphoreCount = 1,
+			submitInfo.pSignalSemaphores = signalSemaphores
+		};
+
+		VK_CHECK_RESULT(vkQueueSubmit(_queueHandles.graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE));
+	}
+
+	{
+		VkSwapchainKHR swapChains[] = { _swapchain };
+		VkPresentInfoKHR presentInfo =
+		{
+			presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
+			presentInfo.pNext = nullptr,
+			presentInfo.waitSemaphoreCount = 1,
+			presentInfo.pWaitSemaphores = signalSemaphores,
+			presentInfo.swapchainCount = 1,
+			presentInfo.pSwapchains = swapChains,
+			presentInfo.pImageIndices = &imageIndex
+		};
+
+		VK_CHECK_RESULT(vkQueuePresentKHR(_queueHandles.presentQueue, &presentInfo));
+	}
+}
+
+// Vulkan
 
 void
 VkRenderer::initVulkan()
@@ -70,6 +133,32 @@ VkRenderer::initVulkan()
 	createImageViews();
 	createRenderPass();
 	createGraphicsPipeline();
+	createFramebuffers();
+	createCommandPool();
+	createCommandBuffers();
+	createSemaphore();
+}
+
+void
+VkRenderer::recreateSwapchain()
+{
+	if (_device == VK_NULL_HANDLE)
+		return;
+	vkDeviceWaitIdle(_device);
+
+	destroyCommandBuffers();
+	destroyFramebuffers();
+	destroyGraphicsPipeline();
+	destroyRenderPass();
+	destroyImageViews();
+	destroySwapchain();
+
+	createSwapchain();
+	createImageViews();
+	createRenderPass();
+	createGraphicsPipeline();
+	createFramebuffers();
+	createCommandBuffers();
 }
 
 void
@@ -936,3 +1025,184 @@ VkRenderer::destroyShaderModule()
 	vkDestroyShaderModule(_device, _fragShaderModule, nullptr);
 }
 
+void
+VkRenderer::createFramebuffers()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE FRAMEBUFFERS");
+
+	_swapchainFramebuffers.resize(_swapchainImageViews.size());
+
+	for (size_t i = 0; i < _swapchainImageViews.size(); i++)
+	{
+		VkImageView attachments[] = { _swapchainImageViews[i] };
+
+		VkFramebufferCreateInfo framebufferInfo =
+		{
+			// (MANDATORY) sType is the type of the structure
+			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
+			// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+			framebufferInfo.pNext = nullptr,
+			// - Is reserved for future use -
+			framebufferInfo.flags = 0,
+			// A handle to a compatible renderPass (uses the same number and type of attachements)
+			framebufferInfo.renderPass = _renderPass,
+			// The number of attachments
+			framebufferInfo.attachmentCount = 1,
+			// An array of VkImageView handles, each of which will be used as the corresponding attachment in a render pass instance
+			framebufferInfo.pAttachments = attachments,
+			// The dimensions of the framebuffer
+			framebufferInfo.width = _swapchainExtent.width,
+			framebufferInfo.height = _swapchainExtent.height,
+			framebufferInfo.layers = 1
+		};
+
+		VK_CHECK_RESULT(vkCreateFramebuffer(_device, &framebufferInfo, nullptr, &_swapchainFramebuffers[i]));
+	}
+
+}
+
+void
+VkRenderer::destroyFramebuffers()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY FRAMEBUFFERS");
+
+	for (decltype(_swapchainFramebuffers)::value_type framebuffer : _swapchainFramebuffers)
+		vkDestroyFramebuffer(_device, framebuffer, nullptr);
+}
+
+void System::VkRenderer::createCommandPool()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE COMMAND POOL");
+
+	VkCommandPoolCreateInfo cmdPoolInfo =
+	{
+		// (MANDATORY) sType is the type of the structure
+		cmdPoolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
+		// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
+		cmdPoolInfo.pNext = nullptr,
+		// A bitmask indicating usage behavior for the pool and command buffers allocated from it
+		cmdPoolInfo.flags = 0,
+		// (NOTE) All command buffers created from this command pool must be submitted on queues from the same queue family.
+		cmdPoolInfo.queueFamilyIndex = _queueIndices.graphicsFamily
+	};
+
+	VK_CHECK_RESULT(vkCreateCommandPool(_device, &cmdPoolInfo, nullptr, &_commandPool));
+}
+
+void System::VkRenderer::destroyCommandPool()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY COMMAND POOL");
+
+	vkDestroyCommandPool(_device, _commandPool, nullptr);
+}
+
+void System::VkRenderer::createCommandBuffers()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] ALLOCATE COMMAND BUFFERS");
+
+	_commandBuffers.resize(_swapchainFramebuffers.size());
+
+	VkCommandBufferAllocateInfo allocInfo = 
+	{
+		// (MANDATORY) sType is the type of the structure
+		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
+		// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
+		allocInfo.pNext = nullptr,
+		// The name of the command pool that the command buffers allocate their memory from
+		allocInfo.commandPool = _commandPool,
+		// Determines whether the command buffers are primary or secondary command buffers
+		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
+		// The number of command buffers to allocate from the pool
+		allocInfo.commandBufferCount = (uint32_t)_commandBuffers.size()
+	};
+
+	vkAllocateCommandBuffers(_device, &allocInfo, _commandBuffers.data());
+
+	{
+		for (size_t i = 0; i < _commandBuffers.size(); i++)
+		{
+			VkCommandBufferBeginInfo beginInfo =
+			{
+				// (MANDATORY) sType is the type of the structure
+				beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
+				// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
+				beginInfo.pNext = nullptr,
+				//  A bitmask indicating usage behavior for the command buffer
+				beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT,
+				// A pointer to a VkCommandBufferInheritanceInfo structure, which is used if commandBuffer is a secondary command buffer
+				beginInfo.pInheritanceInfo = nullptr
+			};
+
+			vkBeginCommandBuffer(_commandBuffers[i], &beginInfo);
+			{
+				VkRenderPassBeginInfo renderPassInfo =
+				{
+					// (MANDATORY) sType is the type of the structure
+					renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO,
+					// (MANDATORY) pNext is NULL or a pointer to an extension-specific structure.
+					renderPassInfo.pNext = nullptr,
+					// The render pass to begin an instance of
+					renderPassInfo.renderPass = _renderPass,
+					// The framebuffer containing the attachments that are used with the render pass
+					renderPassInfo.framebuffer = _swapchainFramebuffers[i],
+					// The render area that is affected by the render pass instance
+					renderPassInfo.renderArea.offset = { 0, 0 },
+					renderPassInfo.renderArea.extent = _swapchainExtent,
+					// The number of elements in pClearValues
+					renderPassInfo.clearValueCount = 0,
+					// An array of VkClearValue structures that contains clear values for each attachment, if the attachment uses a loadOp value of
+					// VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
+					renderPassInfo.pClearValues = nullptr
+				};
+
+				VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+				renderPassInfo.clearValueCount = 1;
+				renderPassInfo.pClearValues = &clearColor;
+
+				vkCmdBeginRenderPass(_commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+				{
+					vkCmdBindPipeline(_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, _graphicsPipeline);
+
+					vkCmdDraw(_commandBuffers[i], 3, 1, 0, 0);
+				}
+				vkCmdEndRenderPass(_commandBuffers[i]);
+			}
+			VK_CHECK_RESULT(vkEndCommandBuffer(_commandBuffers[i]));
+		}
+	}
+}
+
+void System::VkRenderer::destroyCommandBuffers()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] FREE COMMAND BUFFERS");
+
+	vkFreeCommandBuffers(_device, _commandPool, _commandBuffers.size(), _commandBuffers.data());
+}
+
+void System::VkRenderer::createSemaphore()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE SEMAPHORE");
+
+	VkSemaphoreCreateInfo semaphoreInfo =
+	{
+		// (MANDATORY) sType is the type of the structure
+		semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		semaphoreInfo.pNext = nullptr,
+		// - Is reserved for future use -
+		semaphoreInfo.flags = 0
+	};
+
+	VK_CHECK_RESULT(vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &_imageAvailableSemaphore));
+	VK_CHECK_RESULT(vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &_renderFinishedSemaphore));
+}
+
+void System::VkRenderer::destroySemaphore()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY SEMAPHORE");
+
+	vkDestroySemaphore(_device, _imageAvailableSemaphore, nullptr);
+	vkDestroySemaphore(_device, _renderFinishedSemaphore, nullptr);
+}
+
+// !Vulkan

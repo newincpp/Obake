@@ -19,8 +19,10 @@ Renderer::initialize()
 {
 	_core->eventsManager.bindEvent("Set Renderer Exit State", this, &Renderer::evSetExit);
 	_core->eventsManager.bindEvent("Receive Window Info", this, &Renderer::evGetWinPtr);
-	
+	std::cout << "forgive me my weakness I just don't know why\n";
+	_core->eventsManager.bindEvent("Window Update", this, &Renderer::evUpdateSurface);
 	OBAKE_ADD(start);
+
 }
 
 void
@@ -62,6 +64,12 @@ Renderer::evGetWinPtr(xcb_connection_t* connection_, xcb_window_t window_)
 #else
 	// - - - 
 #endif
+
+void
+Renderer::evUpdateSurface()
+{
+	std::cout << "CAUSE EVERYTIME WE TOUCH I GET THIS FEELING !\n";
+}
 
 // # # # # # # # # # # # # # # //
 

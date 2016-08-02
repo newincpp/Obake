@@ -36,15 +36,16 @@ namespace System
 		virtual void initialize();
 		virtual void unload();
 	protected:
-		virtual void start();
-	private:
+		void start();
 		void evSetExit(bool isExiting_);
-	#ifdef _WIN32
+#ifdef _WIN32
 		void evGetWinPtr(HWND winHandle_, HINSTANCE winInstance_);
-	#elif __linux__
+#elif __linux__
 		void evGetWinPtr(xcb_connection_t* connection_, xcb_window_t window_);
-	#else
+#else
 		// - - - 
-	#endif
+#endif
+		void evUpdateSurface();
+	private:
 	};
 }
