@@ -4,8 +4,10 @@
 
 #include "DEBUG.h"
 
-#ifdef OBAKE_LOG
+#if OBAKE_LOG
 #define PRINT(string) std::cout << string << '\n';
+#else
+#define PRINT(string);
 #endif
 
 #define WIDTH 800

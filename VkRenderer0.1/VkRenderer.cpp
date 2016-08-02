@@ -23,7 +23,7 @@ void
 VkRenderer::initialize()
 {
 	Renderer::initialize();
-
+	_core->eventsManager.bindEvent("Window Update", this, &VkRenderer::evUpdateSurface);
 
 	OBAKE_ADD(initVulkan);
 	OBAKE_ADD(mainLoop);
@@ -37,7 +37,7 @@ VkRenderer::unload()
 	destroyCommandPool();
 	destroyFramebuffers();
 	destroyGraphicsPipeline();
-	destroyShaderModule();
+//	destroyShaderModule();
 	destroyRenderPass();
 	destroyImageViews();
 	destroySwapchain();
@@ -159,6 +159,7 @@ VkRenderer::recreateSwapchain()
 	createGraphicsPipeline();
 	createFramebuffers();
 	createCommandBuffers();
+	drawFrame();
 }
 
 void
@@ -995,6 +996,7 @@ VkRenderer::destroyGraphicsPipeline()
 	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY GRAPHICS PIPELINE");
 	vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
 	vkDestroyPipeline(_device, _graphicsPipeline, nullptr);
+	destroyShaderModule();
 }
 
 void

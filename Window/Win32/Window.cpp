@@ -21,6 +21,8 @@ Window::~Window()
 
 void Window::initialize()
 {
+	if (_core != nullptr)
+		getInstance()->_core = _core;
 	// Create & bind an event
 	_core->eventsManager.bindEvent("Window Event", this, &Window::evWindowEvent);
 	_core->eventsManager.bindEvent("Create Window", this, &Window::evCreateWindow);
@@ -154,6 +156,8 @@ void Window::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_SIZING :
+	if (_core != nullptr)
+		_core->eventsManager.executeEvent<void>("Window Update");
 		break;
 		//case WM_SYSKEYDOWN:
 		//	swprintf_s(msg, L"WM_SYSKEYDOWN: 0x%x\n", wParam);
@@ -201,13 +205,6 @@ void Window::messageLoop()
 			isExiting = true;
 			_core->eventsManager.executeEvent<void, bool>("Set Renderer Exit State", isExiting);
 		}
-		if (_msg.message == WM_SIZING)
-		{
-			std::cout <<"without you it's hard to surviiiiiiiiiiiiive\n";
-			std::cout <<"cout: " << _core;	
-			_core->eventsManager.executeEvent<void>("Window Update");
-		}
-		std::cout << _msg.message << std::endl;
 		TranslateMessage(&_msg);
 		DispatchMessage(&_msg);
 	}
