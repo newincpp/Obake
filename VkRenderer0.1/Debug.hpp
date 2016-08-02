@@ -1,21 +1,15 @@
-/*
-* Texture loader for Vulkan
-*
-* Copyright (C) 2016 by Sascha Willems - www.saschawillems.de
-*
-* This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
-*/
-
 #pragma once
 
 //#include "PLATFORM.h"
 
-#include "vulkanTools.h"
+#include "Tools.hpp"
 
-class VkDebug
+namespace Platy
 {
+	class Debug
+	{
 	public:
-		static VkDebug *s_instance;
+		static Debug *s_instance;
 		// Default validation layers
 		int							_validationLayerCount;
 		std::vector<const char*>	_validationLayerNames;
@@ -29,16 +23,16 @@ class VkDebug
 		//Variale given to createDebugReportCallback that will be filled with info
 		VkDebugReportCallbackEXT _msgCallback = VK_NULL_HANDLE;
 	private:
-	// - - -
-	
-	public:
-		VkDebug();
-		~VkDebug();
+		// - - -
 
-		static VkDebug &instance()
+	public:
+		Debug();
+		~Debug();
+
+		static Debug &instance()
 		{
 			if (!s_instance)
-				s_instance = new VkDebug;
+				s_instance = new Debug;
 			return *s_instance;
 		}
 
@@ -49,7 +43,8 @@ class VkDebug
 		// Clear debug callback
 		void freeDebugCallback(VkInstance instance);
 	protected:
-	// - - -
+		// - - -
 	private:
-	// - - -
-};
+		// - - -
+	};
+}

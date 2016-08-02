@@ -63,3 +63,4 @@ CVS
 *.csproj.user
 *.user
 *.generated.cs
+build&run.bat
