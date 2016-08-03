@@ -8,7 +8,7 @@
     "mainSharedLibsFolder"	: "Plugins",
 	"executables"			: [],
     "staticLibs" 			: ["Obake"],
-    "sharedLibs" 			: ["Window", "OglRenderer"],
+    "sharedLibs" 			: ["Window", "VkRenderer"],
 	"externIncludes" 		: [],
     "compilerFlags" 		: ["-std=c++14", "-march=native", "-O2", "-fno-exceptions"],
     "fullStatic"			: false,

@@ -15,7 +15,7 @@
 	"compilerFlags"		: ["-std=c++11"],
 	"Windows":
 	{
-    "internLibs" : ["external/EASTL/libEASTL.a"],
+		"internLibs" 		: ["external/EASTL/libEASTL.a"],
 	    "headersFolders"	: ["..\\Window\\Win32"],
 	    "externIncludes"	: ["C:/VulkanSDK/1.0.21.0/Include"],
 	    "externLibs"		: ["vulkan-1", "user32", "gdi32", "EASTL"],

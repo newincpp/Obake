@@ -153,6 +153,8 @@ void Window::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			break;
 		}
 		break;
+	case WM_SIZING :
+		break;
 		//case WM_SYSKEYDOWN:
 		//	swprintf_s(msg, L"WM_SYSKEYDOWN: 0x%x\n", wParam);
 		//	OutputDebugString(msg);
@@ -199,6 +201,13 @@ void Window::messageLoop()
 			isExiting = true;
 			_core->eventsManager.executeEvent<void, bool>("Set Renderer Exit State", isExiting);
 		}
+		if (_msg.message == WM_SIZING)
+		{
+			std::cout <<"without you it's hard to surviiiiiiiiiiiiive\n";
+			std::cout <<"cout: " << _core;	
+			_core->eventsManager.executeEvent<void>("Window Update");
+		}
+		std::cout << _msg.message << std::endl;
 		TranslateMessage(&_msg);
 		DispatchMessage(&_msg);
 	}

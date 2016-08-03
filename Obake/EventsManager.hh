@@ -40,8 +40,12 @@ namespace Obake
 
 			if (_events.find(eventName_) != _events.end())
 			{
+	
 				Event<void, ARGS...>* event = static_cast<Event<RETURN_TYPE, ARGS...>*>(_events[eventName_]);
-				(*event)(params...);
+				if (event != nullptr)
+				{
+					(*event)(params...);
+				}
 			}
 		}
 
