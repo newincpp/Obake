@@ -8,6 +8,14 @@ using namespace System;
 
 OBAKE_PLUGIN(VkRenderer, "Vulkan Renderer", "0.1.2")
 
+const std::vector<VkRenderer::sVertex> gVertices =
+{
+	{ { 0.0f, -0.5f, 0.0f },{ 1.0f, 1.0f, 1.0f },{ 0.0f, -0.5f } },
+	{ { 0.5f,  0.5f, 0.0f },{ 0.0f, 1.0f, 0.0f },{ 0.0f, -0.5f } },
+	{ { -0.5f,  0.5f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, -0.5f } }
+};
+
+
 VkRenderer::VkRenderer()
 	: Renderer()
 {
@@ -23,7 +31,7 @@ void
 VkRenderer::initialize()
 {
 	Renderer::initialize();
-
+	_core->eventsManager.bindEvent("Window Update", this, &VkRenderer::evUpdateSurface);
 
 	OBAKE_ADD(initVulkan);
 	OBAKE_ADD(mainLoop);
@@ -34,10 +42,11 @@ VkRenderer::unload()
 {
 	destroySemaphore();
 	destroyCommandBuffers();
+	destroyVertexBuffer();
 	destroyCommandPool();
 	destroyFramebuffers();
 	destroyGraphicsPipeline();
-	destroyShaderModule();
+//	destroyShaderModule();
 	destroyRenderPass();
 	destroyImageViews();
 	destroySwapchain();
@@ -80,7 +89,17 @@ VkRenderer::drawFrame()
 		VkSemaphore waitSemaphores[] = { _imageAvailableSemaphore };
 		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
 
-		vkAcquireNextImageKHR(_device, _swapchain, std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+		VkResult result = vkAcquireNextImageKHR(_device, _swapchain, std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR)
+		{
+			recreateSwapchain();
+			return;
+		}
+		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR)
+		{
+			VK_CHECK_RESULT(result);
+		}
 
 		VkSubmitInfo submitInfo =
 		{
@@ -111,7 +130,18 @@ VkRenderer::drawFrame()
 			presentInfo.pImageIndices = &imageIndex
 		};
 
-		VK_CHECK_RESULT(vkQueuePresentKHR(_queueHandles.presentQueue, &presentInfo));
+		VkResult result = vkQueuePresentKHR(_queueHandles.presentQueue, &presentInfo);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR)
+		{
+			recreateSwapchain();
+			return;
+		}
+		else if (result != VK_SUCCESS)
+		{
+			VK_CHECK_RESULT(result);
+		}
+
 	}
 }
 
@@ -135,6 +165,7 @@ VkRenderer::initVulkan()
 	createGraphicsPipeline();
 	createFramebuffers();
 	createCommandPool();
+	createVertexBuffer();
 	createCommandBuffers();
 	createSemaphore();
 }
@@ -151,7 +182,6 @@ VkRenderer::recreateSwapchain()
 	destroyGraphicsPipeline();
 	destroyRenderPass();
 	destroyImageViews();
-	destroySwapchain();
 
 	createSwapchain();
 	createImageViews();
@@ -159,6 +189,7 @@ VkRenderer::recreateSwapchain()
 	createGraphicsPipeline();
 	createFramebuffers();
 	createCommandBuffers();
+	drawFrame();
 }
 
 void
@@ -533,10 +564,19 @@ VkRenderer::createSwapchain()
 		createInfo.presentMode = presentMode,
 		// Indicates whether the Vulkan implementation is allowed to discard rendering operations that affect regions of the surface which aren’t visible.
 		createInfo.clipped = VK_TRUE,
-		createInfo.oldSwapchain = VK_NULL_HANDLE
+		// If not VK_NULL_HANDLE, specifies the swapchain that will be replaced by the new swapchain being created
+		createInfo.oldSwapchain = _swapchain
 	};
 
-	VK_CHECK_RESULT(vkCreateSwapchainKHR(_device, &createInfo, nullptr, &_swapchain));
+	VkSwapchainKHR oldSwapchain = _swapchain;
+	createInfo.oldSwapchain = oldSwapchain;
+
+	VkSwapchainKHR newSwapchain;
+	VK_CHECK_RESULT(vkCreateSwapchainKHR(_device, &createInfo, nullptr, &newSwapchain));
+	if (oldSwapchain != VK_NULL_HANDLE)
+		vkDestroySwapchainKHR(_device, oldSwapchain, nullptr);
+
+	*&_swapchain = newSwapchain;
 
 	vkGetSwapchainImagesKHR(_device, _swapchain, &imageCount, nullptr);
 	_swapchainImages.resize(imageCount);
@@ -796,6 +836,11 @@ VkRenderer::createGraphicsPipeline()
 
 	VkPipelineShaderStageCreateInfo shaderStages[] = { vertShaderStageInfo, fragShaderStageInfo };
 
+	// The struct that describes how to pass this data format to the vertex shader once it's been uploaded into GPU memory.
+	VkVertexInputBindingDescription bindingDescription = sVertex::getBindingDescription();
+	// The structure that describes how to handle vertex input is VkVertexInputAttributeDescription
+	std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions = sVertex::getAttributeDescriptions();
+
 	// Describes the format of the vertex data that will be passed to the vertex shader
 	VkPipelineVertexInputStateCreateInfo vertexInputInfo =
 	{
@@ -806,13 +851,13 @@ VkRenderer::createGraphicsPipeline()
 		// - Is reserved for future use -
 		vertexInputInfo.flags = 0,
 		// The number of vertex binding descriptions provided in pVertexBindingDescriptions
-		vertexInputInfo.vertexBindingDescriptionCount = 0,
+		vertexInputInfo.vertexBindingDescriptionCount = 1,
 		// A pointer to an array of VkVertexInputBindingDescription structures
-		vertexInputInfo.pVertexBindingDescriptions = nullptr,
+		vertexInputInfo.pVertexBindingDescriptions = &bindingDescription,
 		// The number of vertex attribute descriptions provided in pVertexAttributeDescriptions
-		vertexInputInfo.vertexAttributeDescriptionCount = 0,
+		vertexInputInfo.vertexAttributeDescriptionCount = attributeDescriptions.size(),
 		// A pointer to an array of VkVertexInputAttributeDescriptions structures
-		vertexInputInfo.pVertexAttributeDescriptions = nullptr
+		vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data()
 	};
 
 	// Mainly describes what kind of geometry will be drawn from the vetices
@@ -995,10 +1040,11 @@ VkRenderer::destroyGraphicsPipeline()
 	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY GRAPHICS PIPELINE");
 	vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
 	vkDestroyPipeline(_device, _graphicsPipeline, nullptr);
+	destroyShaderModule();
 }
 
 void
-VkRenderer::createShaderModule(const std::vector<char>& code, VkShaderModule& shaderModule)
+VkRenderer::createShaderModule(const std::vector<char>& code_, VkShaderModule& shaderModule_)
 {
 	VkShaderModuleCreateInfo createInfo =
 	{
@@ -1009,13 +1055,13 @@ VkRenderer::createShaderModule(const std::vector<char>& code, VkShaderModule& sh
 		// - Is reserved for future use -
 		createInfo.flags = 0,
 		// The size, in bytes, of the code pointed to by pCode
-		createInfo.codeSize = code.size(),
+		createInfo.codeSize = code_.size(),
 		// Points to code that is used to create the shader module.
 		// The type and format of the code is determined from the content of the memory addressed by pCode
-		createInfo.pCode = (uint32_t*)code.data()
+		createInfo.pCode = (uint32_t*)code_.data()
 	};
 
-	VK_CHECK_RESULT(vkCreateShaderModule(_device, &createInfo, nullptr, &shaderModule));
+	VK_CHECK_RESULT(vkCreateShaderModule(_device, &createInfo, nullptr, &shaderModule_));
 }
 
 void
@@ -1070,7 +1116,8 @@ VkRenderer::destroyFramebuffers()
 		vkDestroyFramebuffer(_device, framebuffer, nullptr);
 }
 
-void System::VkRenderer::createCommandPool()
+void
+VkRenderer::createCommandPool()
 {
 	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE COMMAND POOL");
 
@@ -1089,14 +1136,94 @@ void System::VkRenderer::createCommandPool()
 	VK_CHECK_RESULT(vkCreateCommandPool(_device, &cmdPoolInfo, nullptr, &_commandPool));
 }
 
-void System::VkRenderer::destroyCommandPool()
+void
+VkRenderer::destroyCommandPool()
 {
 	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY COMMAND POOL");
 
 	vkDestroyCommandPool(_device, _commandPool, nullptr);
 }
 
-void System::VkRenderer::createCommandBuffers()
+void
+VkRenderer::createVertexBuffer()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE VERTEX BUFFER");
+
+	VkBufferCreateInfo bufferInfo =
+	{
+		// (MANDATORY) sType is the type of the structure
+		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		bufferInfo.pNext = nullptr,
+		// A bitmask describing additional parameters of the buffer
+		bufferInfo.flags = 0,
+		// The size in bytes of the buffer to be created
+		bufferInfo.size = sizeof(gVertices[0]) * gVertices.size(),
+		// A bitmask describing the allowed usages of the buffer
+		bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+		// The sharing mode of the buffer when it will be accessed by multiple queue families
+		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+		// Is the number of entries in the pQueueFamilyIndices array
+		bufferInfo.queueFamilyIndexCount = 0,
+		// A list of queue families that will access this buffer
+		bufferInfo.pQueueFamilyIndices = nullptr
+	};
+
+	vkCreateBuffer(_device, &bufferInfo, nullptr, &_vertexBuffer);
+
+	VkMemoryRequirements memRequirements;
+	vkGetBufferMemoryRequirements(_device, _vertexBuffer, &memRequirements);
+
+	VkMemoryAllocateInfo allocInfo =
+	{
+		// (MANDATORY) sType is the type of the structure
+		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+		allocInfo.pNext = nullptr,
+		// The size of the allocation in bytes
+		allocInfo.allocationSize = memRequirements.size,
+		// The memory type index, which selects the properties of the memory to be allocated, as well as the heap the memory will come from
+		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+	};
+
+	vkAllocateMemory(_device, &allocInfo, nullptr, &_vertexBufferMemory);
+
+	vkBindBufferMemory(_device, _vertexBuffer, _vertexBufferMemory, 0);
+
+	void* data;
+	vkMapMemory(_device, _vertexBufferMemory, 0, bufferInfo.size, 0, &data);
+	memcpy(data, gVertices.data(), (size_t)bufferInfo.size);
+	vkUnmapMemory(_device, _vertexBufferMemory);
+}
+
+void
+VkRenderer::destroyVertexBuffer()
+{
+	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY VERTEX BUFFER");
+
+	vkFreeMemory(_device, _vertexBufferMemory, nullptr);
+	vkDestroyBuffer(_device, _vertexBuffer, nullptr);
+}
+
+uint32_t
+VkRenderer::findMemoryType(uint32_t typeFilter_, VkMemoryPropertyFlags properties_)
+{
+	VkPhysicalDeviceMemoryProperties memProperties;
+	vkGetPhysicalDeviceMemoryProperties(_physicalDevice, &memProperties);
+
+	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
+	{
+		if ((typeFilter_ & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties_) == properties_)
+		{
+			return i;
+		}
+	}
+
+	PRINT("## [VKRENDERER] [ERROR] [" << __FILE__ << "] FAILED TO FIND SUITABLE MEMORY TYPE");
+}
+
+void
+VkRenderer::createCommandBuffers()
 {
 	PRINT("## [VKRENDERER] [" << __FILE__ << "] ALLOCATE COMMAND BUFFERS");
 
@@ -1135,6 +1262,8 @@ void System::VkRenderer::createCommandBuffers()
 
 			vkBeginCommandBuffer(_commandBuffers[i], &beginInfo);
 			{
+				VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
+
 				VkRenderPassBeginInfo renderPassInfo =
 				{
 					// (MANDATORY) sType is the type of the structure
@@ -1149,21 +1278,21 @@ void System::VkRenderer::createCommandBuffers()
 					renderPassInfo.renderArea.offset = { 0, 0 },
 					renderPassInfo.renderArea.extent = _swapchainExtent,
 					// The number of elements in pClearValues
-					renderPassInfo.clearValueCount = 0,
+					renderPassInfo.clearValueCount = 1,
 					// An array of VkClearValue structures that contains clear values for each attachment, if the attachment uses a loadOp value of
 					// VK_ATTACHMENT_LOAD_OP_CLEAR or if the attachment has a depth/stencil format and uses a stencilLoadOp value of VK_ATTACHMENT_LOAD_OP_CLEAR
-					renderPassInfo.pClearValues = nullptr
+					renderPassInfo.pClearValues = &clearColor
 				};
-
-				VkClearValue clearColor = { 0.0f, 0.0f, 0.0f, 1.0f };
-				renderPassInfo.clearValueCount = 1;
-				renderPassInfo.pClearValues = &clearColor;
 
 				vkCmdBeginRenderPass(_commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 				{
 					vkCmdBindPipeline(_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, _graphicsPipeline);
 
-					vkCmdDraw(_commandBuffers[i], 3, 1, 0, 0);
+					VkBuffer vertexBuffers[] = { _vertexBuffer };
+					VkDeviceSize offsets[] = { 0 };
+					vkCmdBindVertexBuffers(_commandBuffers[i], 0, 1, vertexBuffers, offsets);
+
+					vkCmdDraw(_commandBuffers[i], gVertices.size(), 1, 0, 0);
 				}
 				vkCmdEndRenderPass(_commandBuffers[i]);
 			}
@@ -1172,14 +1301,16 @@ void System::VkRenderer::createCommandBuffers()
 	}
 }
 
-void System::VkRenderer::destroyCommandBuffers()
+void
+VkRenderer::destroyCommandBuffers()
 {
 	PRINT("## [VKRENDERER] [" << __FILE__ << "] FREE COMMAND BUFFERS");
 
 	vkFreeCommandBuffers(_device, _commandPool, _commandBuffers.size(), _commandBuffers.data());
 }
 
-void System::VkRenderer::createSemaphore()
+void
+VkRenderer::createSemaphore()
 {
 	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE SEMAPHORE");
 
@@ -1197,7 +1328,8 @@ void System::VkRenderer::createSemaphore()
 	VK_CHECK_RESULT(vkCreateSemaphore(_device, &semaphoreInfo, nullptr, &_renderFinishedSemaphore));
 }
 
-void System::VkRenderer::destroySemaphore()
+void
+VkRenderer::destroySemaphore()
 {
 	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY SEMAPHORE");
 

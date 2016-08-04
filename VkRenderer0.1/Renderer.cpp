@@ -68,7 +68,6 @@ Renderer::evGetWinPtr(xcb_connection_t* connection_, xcb_window_t window_)
 void
 Renderer::evUpdateSurface()
 {
-	std::cout << "CAUSE EVERYTIME WE TOUCH I GET THIS FEELING !\n";
 }
 
 // # # # # # # # # # # # # # # //
