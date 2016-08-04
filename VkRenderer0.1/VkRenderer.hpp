@@ -10,6 +10,7 @@ namespace System
 {
 	class VkRenderer : public Renderer
 	{
+	public:
 	typedef struct
 	{
 		int graphicsFamily = -1;
@@ -33,6 +34,50 @@ namespace System
 		std::vector<VkSurfaceFormatKHR> formats;
 		std::vector<VkPresentModeKHR>	presentModes;
 	} sSwapChainSupportDetails;
+
+	typedef struct
+	{
+		glm::vec3 pos;
+		glm::vec3 normal;
+		glm::vec2 uvMap;
+
+		static VkVertexInputBindingDescription getBindingDescription()
+		{
+			VkVertexInputBindingDescription bindingDescription =
+			{
+				// The binding number that this structure describes.
+				bindingDescription.binding = 0,
+				// The distance in bytes between two consecutive elements within the buffer
+				bindingDescription.stride = sizeof(sVertex),
+				// Specifies whether vertex attribute addressing is a function of the vertex index or of the instance index.
+				bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX
+			};
+
+			return bindingDescription;
+		}
+
+		static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions()
+		{
+			std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions = {};
+
+			attributeDescriptions[0].location = 0;
+			attributeDescriptions[0].binding = 0;
+			attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
+			attributeDescriptions[0].offset = offsetof(sVertex, pos);
+
+			attributeDescriptions[1].location = 1;
+			attributeDescriptions[1].binding = 0;
+			attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
+			attributeDescriptions[1].offset = offsetof(sVertex, normal);
+
+			attributeDescriptions[2].location = 2;
+			attributeDescriptions[2].binding = 0;
+			attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
+			attributeDescriptions[2].offset = offsetof(sVertex, uvMap);
+
+			return attributeDescriptions;
+		};
+	}  sVertex;
 
 	public:
 		VkRenderer();
@@ -63,18 +108,22 @@ namespace System
 		VkExtent2D					_swapchainExtent;
 		VkFormat					_swapchainImageFormat;
 
-		VkShaderModule _vertShaderModule;
-		VkShaderModule _fragShaderModule;
+		VkShaderModule _vertShaderModule = VK_NULL_HANDLE;
+		VkShaderModule _fragShaderModule = VK_NULL_HANDLE;
 
-		VkRenderPass		_renderPass;
-		VkPipelineLayout	_pipelineLayout;
-		VkPipeline			_graphicsPipeline;
+		VkRenderPass		_renderPass			= VK_NULL_HANDLE;
+		VkPipelineLayout	_pipelineLayout		= VK_NULL_HANDLE;
+		VkPipeline			_graphicsPipeline	= VK_NULL_HANDLE;
 
-		VkCommandPool					_commandPool;
-		std::vector<VkCommandBuffer>	_commandBuffers;
+		VkCommandPool _commandPool = VK_NULL_HANDLE;
 
-		VkSemaphore _imageAvailableSemaphore;
-		VkSemaphore _renderFinishedSemaphore;
+		VkBuffer		_vertexBuffer		= VK_NULL_HANDLE;
+		VkDeviceMemory	_vertexBufferMemory	= VK_NULL_HANDLE;
+
+		std::vector<VkCommandBuffer> _commandBuffers;
+
+		VkSemaphore _imageAvailableSemaphore = VK_NULL_HANDLE;
+		VkSemaphore _renderFinishedSemaphore = VK_NULL_HANDLE;
 		// !Vulkan
 	
 	public:
@@ -110,7 +159,7 @@ namespace System
 		sSwapChainSupportDetails	querySwapChainSupport(VkPhysicalDevice device_);
 		VkSurfaceFormatKHR			chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> & availableFormats_);
 		VkPresentModeKHR			chooseSwapPresentMode(const std::vector<VkPresentModeKHR> & availablePresentModes);
-		VkExtent2D					chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+		VkExtent2D					chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities_);
 
 		void createImageViews();
 		void destroyImageViews();
@@ -120,7 +169,7 @@ namespace System
 
 		void createGraphicsPipeline();
 		void destroyGraphicsPipeline();
-		void createShaderModule(const std::vector<char>& code, VkShaderModule& shaderModule);
+		void createShaderModule(const std::vector<char>& code_, VkShaderModule& shaderModule_);
 		void destroyShaderModule();
 
 		void createFramebuffers();
@@ -128,12 +177,18 @@ namespace System
 
 		void createCommandPool();
 		void destroyCommandPool();
-		void createCommandBuffers();
+
+		void		createVertexBuffer();
+		void		destroyVertexBuffer();
+		uint32_t	findMemoryType(uint32_t typeFilter_, VkMemoryPropertyFlags properties_);
+
+			void createCommandBuffers();
 		void destroyCommandBuffers();
 
 		void createSemaphore();
 		void destroySemaphore();
+
 		// !Vulkan
 	};	
-}
 
+}
