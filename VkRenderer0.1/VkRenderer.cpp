@@ -4,21 +4,33 @@
 
 #include "VkRenderer.hpp"
 
+#include "Mesh.hpp"
+
 using namespace System;
 
 OBAKE_PLUGIN(VkRenderer, "Vulkan Renderer", "0.1.2")
 
-const std::vector<VkRenderer::sVertex> gVertices =
+std::vector<const char*> gInstanceExtensions =
 {
-	{ { 0.0f, -0.5f, 0.0f },{ 1.0f, 1.0f, 1.0f },{ 0.0f, -0.5f } },
-	{ { 0.5f,  0.5f, 0.0f },{ 0.0f, 1.0f, 0.0f },{ 0.0f, -0.5f } },
-	{ { -0.5f,  0.5f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, -0.5f } }
+	PLATFORM_SURFACE_EXTENSION_NAME,
+	VK_KHR_SURFACE_EXTENSION_NAME,
+#ifdef VULKAN_VALIDATION_LAYER
+	VK_EXT_DEBUG_REPORT_EXTENSION_NAME
+#endif
 };
 
+std::vector<const char*> gDeviceExtensions =
+{
+	VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+	// RenderDoc
+	VK_EXT_DEBUG_MARKER_EXTENSION_NAME
+};
 
 VkRenderer::VkRenderer()
 	: Renderer()
 {
+	_enableValidation = VULKAN_VALIDATION_LAYER;
+
 }
 
 VkRenderer::~VkRenderer()
@@ -150,7 +162,15 @@ VkRenderer::drawFrame()
 void
 VkRenderer::initVulkan()
 {
-	_enableValidation = VULKAN_VALIDATION_LAYER;
+
+
+	std::vector<VkRenderer::sVertex> gVertices =
+	{
+		{ { 0.0f, -0.5f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -0.5f } },
+		{ { 0.5f,  0.5f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -0.5f } },
+		{ { -0.5f, 0.5f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -0.5f } }
+	};
+
 
 	// This is done at the construction of VkDebug but you can call it again
 	// to specify debug flags
@@ -165,9 +185,15 @@ VkRenderer::initVulkan()
 	createGraphicsPipeline();
 	createFramebuffers();
 	createCommandPool();
-	createVertexBuffer();
+
+	Mesh * mesh = new Mesh(_device, _physicalDevice);
+	mesh->loadVertexBuffer(gVertices);
+	_meshList.push_back(mesh);
+
+//	createVertexBuffer();
 	createCommandBuffers();
 	createSemaphore();
+
 }
 
 void
@@ -195,7 +221,7 @@ VkRenderer::recreateSwapchain()
 void
 VkRenderer::createInstance()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE INSTANCE");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE INSTANCE");
 	// Contains info in regards to the application
 	VkApplicationInfo applicationInfo =
 	{
@@ -215,17 +241,6 @@ VkRenderer::createInstance()
 		applicationInfo.apiVersion = VK_MAKE_VERSION(1, 0, 21)
 	};
 
-	// Enable surface extensions depending on os
-	std::vector<const char*> enabledExtensions = {};
-	{
-		enabledExtensions.push_back(PLATFORM_SURFACE_EXTENSION_NAME);
-		enabledExtensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-		if (_enableValidation)
-		{
-			enabledExtensions.push_back(VK_EXT_DEBUG_REPORT_EXTENSION_NAME);
-		}
-	}
-
 	// Contains info in regards to the Vulkan instance
 	VkInstanceCreateInfo instanceCreateInfo =
 	{
@@ -242,9 +257,9 @@ VkRenderer::createInstance()
 		// An array of pointer that contains the names of the layers to activate
 		instanceCreateInfo.ppEnabledLayerNames = (_enableValidation) ? (_debug._validationLayerNames.data()) : (nullptr),
 		// The number of extensions that are enabled
-		instanceCreateInfo.enabledExtensionCount = enabledExtensions.size(),
+		instanceCreateInfo.enabledExtensionCount = gInstanceExtensions.size(),
 		// An array of pointers that contains the names of the extensions to activate
-		instanceCreateInfo.ppEnabledExtensionNames = enabledExtensions.data()
+		instanceCreateInfo.ppEnabledExtensionNames = gInstanceExtensions.data()
 	};
 
 	VK_CHECK_RESULT(vkCreateInstance(&instanceCreateInfo, nullptr, &_instance));
@@ -253,14 +268,14 @@ VkRenderer::createInstance()
 void
 VkRenderer::destroyInstance()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY INSTANCE");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY INSTANCE");
 	vkDestroyInstance(_instance, nullptr);
 }
 
 void
 VkRenderer::createSurface()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE SURFACE");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE SURFACE");
 
 #ifdef _WIN32
 	// Contains info in regards to the Win32 specific surface
@@ -303,14 +318,14 @@ VkRenderer::createSurface()
 void
 VkRenderer::destroySurface()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY SURFACE");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY SURFACE");
 	vkDestroySurfaceKHR(_instance, _surface, nullptr);
 }
 
 void
 VkRenderer::createDevice()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE DEVICE");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE DEVICE");
 	pickPhysicalDevice();
 	createLogicalDevice();
 }
@@ -331,6 +346,8 @@ VkRenderer::pickPhysicalDevice()
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	VK_CHECK_RESULT(vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data()));
 
+	std::cout << "### " << deviceCount << " Devices Found\n";
+
 	// We go through all compatible devices to see if they match our criterias
 	for (decltype(devices)::value_type & device : devices)
 	{
@@ -343,7 +360,7 @@ VkRenderer::pickPhysicalDevice()
 
 	if (_physicalDevice == VK_NULL_HANDLE)
 	{
-		PRINT("## [VKRENDERER] [" << __FILE__ << "] [" << __LINE__ << "] No valid gpu found")
+		PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] [" << __LINE__ << "] No valid gpu found")
 			assert(_physicalDevice != VK_NULL_HANDLE);
 	}
 }
@@ -387,12 +404,6 @@ VkRenderer::createLogicalDevice()
 
 	// Setup and create the device
 	{
-
-		std::vector<const char*> deviceExtensions = {};
-		{
-			deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-		}
-
 		VkPhysicalDeviceFeatures deviceFeatures = {};
 
 		// Contains info in regards to the Vukan device
@@ -413,9 +424,9 @@ VkRenderer::createLogicalDevice()
 			// (DEPRECATED)
 			deviceCreateInfo.ppEnabledLayerNames = nullptr,
 			// The number of extensions that are enabled
-			deviceCreateInfo.enabledExtensionCount = deviceExtensions.size(),
+			deviceCreateInfo.enabledExtensionCount = gDeviceExtensions.size(),
 			// An array of pointers that contains the names of the extensions to activate
-			deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data(),
+			deviceCreateInfo.ppEnabledExtensionNames = gDeviceExtensions.data(),
 			// Is NULL or a pointer to a VkPhysicalDeviceFeatures structure that contains boolean indicators of all the features to be enabled
 			deviceCreateInfo.pEnabledFeatures = &deviceFeatures
 		};
@@ -436,12 +447,13 @@ VkRenderer::isDeviceSuitable(VkPhysicalDevice device_)
 	findQueueFamilies(device_, VK_QUEUE_GRAPHICS_BIT);
 	extensionsSupported = checkDeviceExtensionSupport(device_);
 
-	if (extensionsSupported) {
+	if (extensionsSupported)
+	{
 		sSwapChainSupportDetails swapChainSupport = querySwapChainSupport(device_);
 		swapchainAqequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
 	}
 
-	return _queueIndices.isComplete();
+	return _queueIndices.isComplete() && swapchainAqequate;
 }
 
 void
@@ -479,38 +491,41 @@ VkRenderer::findQueueFamilies(VkPhysicalDevice device_, VkQueueFlags flags_)
 bool
 VkRenderer::checkDeviceExtensionSupport(VkPhysicalDevice device_)
 {
-	// List of extensions the device needs to support
-	std::vector<const char*> deviceExtensions = {};
-	{
-		deviceExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
-	}
-
 	uint32_t extensionCount;
 	vkEnumerateDeviceExtensionProperties(device_, nullptr, &extensionCount, nullptr);
 	std::vector<VkExtensionProperties> availableExtensions(extensionCount);
 	vkEnumerateDeviceExtensionProperties(device_, nullptr, &extensionCount, availableExtensions.data());
 
-	for (decltype(deviceExtensions)::value_type & deviceExtension : deviceExtensions)
+	for (decltype(gDeviceExtensions)::iterator it = gDeviceExtensions.begin(); it < gDeviceExtensions.end(); it++)
 	{
 		bool isPresent = false;
 
 		for (decltype(availableExtensions)::value_type & availableExtension : availableExtensions)
 		{
-			isPresent |= (deviceExtension == availableExtension.extensionName);
+			std::string A(availableExtension.extensionName);
+			std::string B(*it);
+
+//			std::cout << "DeviceExtension: " << B << " | AvailableExtension: " << A << '\n';
+			isPresent = (A == B) ? true : false;
 			if (isPresent)
 				break;
 		}
 		if (!isPresent)
-			return false;
+		{
+			PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DEVICE EXTENSION UNAVAILABLE: " << *it);
+			gDeviceExtensions.erase(it);	
+		}
 	}
 
+	if (gDeviceExtensions.size() < 1)
+		return false;
 	return true;
 }
 
 void
 VkRenderer::createSwapchain()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE SWAPCHAIN");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE SWAPCHAIN");
 	sSwapChainSupportDetails swapChainSupport = querySwapChainSupport(_physicalDevice);
 
 	// Checking to find the best configuration for our swapchain
@@ -589,7 +604,7 @@ VkRenderer::createSwapchain()
 void
 VkRenderer::destroySwapchain()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY SWAPCHAIN");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY SWAPCHAIN");
 	vkDestroySwapchainKHR(_device, _swapchain, nullptr);
 }
 
@@ -671,7 +686,7 @@ VkRenderer::chooseSwapExtent(const VkSurfaceCapabilitiesKHR & capabilities_)
 void
 VkRenderer::createImageViews()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE IMAGE VIEWS");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE IMAGE VIEWS");
 
 	_swapchainImageViews.resize(_swapchainImages.size());
 
@@ -710,7 +725,7 @@ VkRenderer::createImageViews()
 void
 VkRenderer::destroyImageViews()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY IMAGE VIEWS");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY IMAGE VIEWS");
 
 	for (decltype(_swapchainImageViews)::value_type imageView : _swapchainImageViews)
 	{
@@ -721,7 +736,7 @@ VkRenderer::destroyImageViews()
 void
 VkRenderer::createRenderPass()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE RENDER PASS");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE RENDER PASS");
 
 	// COMMENT !!!
 	VkAttachmentDescription colorAttachment =
@@ -784,14 +799,14 @@ VkRenderer::createRenderPass()
 void
 VkRenderer::destroyRenderPass()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY RENDER PASS");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY RENDER PASS");
 	vkDestroyRenderPass(_device, _renderPass, nullptr);
 }
 
 void
 VkRenderer::createGraphicsPipeline()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE GRAPHICS PIPELINE");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE GRAPHICS PIPELINE");
 
 	std::vector<char> vertShaderCode = Tools::readFile("shaders/vert.spv");
 	std::vector<char> fragShaderCode = Tools::readFile("shaders/frag.spv");
@@ -1037,7 +1052,7 @@ VkRenderer::createGraphicsPipeline()
 void
 VkRenderer::destroyGraphicsPipeline()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY GRAPHICS PIPELINE");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY GRAPHICS PIPELINE");
 	vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
 	vkDestroyPipeline(_device, _graphicsPipeline, nullptr);
 	destroyShaderModule();
@@ -1074,7 +1089,7 @@ VkRenderer::destroyShaderModule()
 void
 VkRenderer::createFramebuffers()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE FRAMEBUFFERS");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE FRAMEBUFFERS");
 
 	_swapchainFramebuffers.resize(_swapchainImageViews.size());
 
@@ -1110,7 +1125,7 @@ VkRenderer::createFramebuffers()
 void
 VkRenderer::destroyFramebuffers()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY FRAMEBUFFERS");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY FRAMEBUFFERS");
 
 	for (decltype(_swapchainFramebuffers)::value_type framebuffer : _swapchainFramebuffers)
 		vkDestroyFramebuffer(_device, framebuffer, nullptr);
@@ -1119,7 +1134,7 @@ VkRenderer::destroyFramebuffers()
 void
 VkRenderer::createCommandPool()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE COMMAND POOL");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE COMMAND POOL");
 
 	VkCommandPoolCreateInfo cmdPoolInfo =
 	{
@@ -1139,70 +1154,73 @@ VkRenderer::createCommandPool()
 void
 VkRenderer::destroyCommandPool()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY COMMAND POOL");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY COMMAND POOL");
 
 	vkDestroyCommandPool(_device, _commandPool, nullptr);
 }
 
-void
-VkRenderer::createVertexBuffer()
-{
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE VERTEX BUFFER");
-
-	VkBufferCreateInfo bufferInfo =
-	{
-		// (MANDATORY) sType is the type of the structure
-		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
-		bufferInfo.pNext = nullptr,
-		// A bitmask describing additional parameters of the buffer
-		bufferInfo.flags = 0,
-		// The size in bytes of the buffer to be created
-		bufferInfo.size = sizeof(gVertices[0]) * gVertices.size(),
-		// A bitmask describing the allowed usages of the buffer
-		bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-		// The sharing mode of the buffer when it will be accessed by multiple queue families
-		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-		// Is the number of entries in the pQueueFamilyIndices array
-		bufferInfo.queueFamilyIndexCount = 0,
-		// A list of queue families that will access this buffer
-		bufferInfo.pQueueFamilyIndices = nullptr
-	};
-
-	vkCreateBuffer(_device, &bufferInfo, nullptr, &_vertexBuffer);
-
-	VkMemoryRequirements memRequirements;
-	vkGetBufferMemoryRequirements(_device, _vertexBuffer, &memRequirements);
-
-	VkMemoryAllocateInfo allocInfo =
-	{
-		// (MANDATORY) sType is the type of the structure
-		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
-		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
-		allocInfo.pNext = nullptr,
-		// The size of the allocation in bytes
-		allocInfo.allocationSize = memRequirements.size,
-		// The memory type index, which selects the properties of the memory to be allocated, as well as the heap the memory will come from
-		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
-	};
-
-	vkAllocateMemory(_device, &allocInfo, nullptr, &_vertexBufferMemory);
-
-	vkBindBufferMemory(_device, _vertexBuffer, _vertexBufferMemory, 0);
-
-	void* data;
-	vkMapMemory(_device, _vertexBufferMemory, 0, bufferInfo.size, 0, &data);
-	memcpy(data, gVertices.data(), (size_t)bufferInfo.size);
-	vkUnmapMemory(_device, _vertexBufferMemory);
-}
+//void
+//VkRenderer::createVertexBuffer()
+//{
+//	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE VERTEX BUFFER");
+//
+//	VkBufferCreateInfo bufferInfo =
+//	{
+//		// (MANDATORY) sType is the type of the structure
+//		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+//		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+//		bufferInfo.pNext = nullptr,
+//		// A bitmask describing additional parameters of the buffer
+//		bufferInfo.flags = 0,
+//		// The size in bytes of the buffer to be created
+//		bufferInfo.size = sizeof(gVertices[0]) * gVertices.size(),
+//		// A bitmask describing the allowed usages of the buffer
+//		bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
+//		// The sharing mode of the buffer when it will be accessed by multiple queue families
+//		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
+//		// Is the number of entries in the pQueueFamilyIndices array
+//		bufferInfo.queueFamilyIndexCount = 0,
+//		// A list of queue families that will access this buffer
+//		bufferInfo.pQueueFamilyIndices = nullptr
+//	};
+//
+//	vkCreateBuffer(_device, &bufferInfo, nullptr, &_vertexBuffer);
+//
+//	VkMemoryRequirements memRequirements;
+//	vkGetBufferMemoryRequirements(_device, _vertexBuffer, &memRequirements);
+//
+//	VkMemoryAllocateInfo allocInfo =
+//	{
+//		// (MANDATORY) sType is the type of the structure
+//		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
+//		// (MANDATORY) pNext is a nullptr or a pointer to an extension-specific structure.
+//		allocInfo.pNext = nullptr,
+//		// The size of the allocation in bytes
+//		allocInfo.allocationSize = memRequirements.size,
+//		// The memory type index, which selects the properties of the memory to be allocated, as well as the heap the memory will come from
+//		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
+//	};
+//
+//	vkAllocateMemory(_device, &allocInfo, nullptr, &_vertexBufferMemory);
+//
+//	vkBindBufferMemory(_device, _vertexBuffer, _vertexBufferMemory, 0);
+//
+//	void* data;
+//	vkMapMemory(_device, _vertexBufferMemory, 0, bufferInfo.size, 0, &data);
+//	memcpy(data, gVertices.data(), (size_t)bufferInfo.size);
+//	vkUnmapMemory(_device, _vertexBufferMemory);
+//}
 
 void
 VkRenderer::destroyVertexBuffer()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY VERTEX BUFFER");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY VERTEX BUFFER");
 
-	vkFreeMemory(_device, _vertexBufferMemory, nullptr);
-	vkDestroyBuffer(_device, _vertexBuffer, nullptr);
+//	vkFreeMemory(_device, _vertexBufferMemory, nullptr);
+//	vkDestroyBuffer(_device, _vertexBuffer, nullptr);
+
+	for (decltype(_meshList)::value_type mesh : _meshList)
+		mesh->cleanup();
 }
 
 uint32_t
@@ -1219,13 +1237,13 @@ VkRenderer::findMemoryType(uint32_t typeFilter_, VkMemoryPropertyFlags propertie
 		}
 	}
 
-	PRINT("## [VKRENDERER] [ERROR] [" << __FILE__ << "] FAILED TO FIND SUITABLE MEMORY TYPE");
+	PRINT("## [VKRENDERER] [ERROR] [" << __FUNCTION__ << "] FAILED TO FIND SUITABLE MEMORY TYPE");
 }
 
 void
 VkRenderer::createCommandBuffers()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] ALLOCATE COMMAND BUFFERS");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] ALLOCATE COMMAND BUFFERS");
 
 	_commandBuffers.resize(_swapchainFramebuffers.size());
 
@@ -1284,17 +1302,16 @@ VkRenderer::createCommandBuffers()
 					renderPassInfo.pClearValues = &clearColor
 				};
 
-				vkCmdBeginRenderPass(_commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+				for (decltype(_meshList)::value_type mesh : _meshList)
 				{
-					vkCmdBindPipeline(_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, _graphicsPipeline);
+					vkCmdBeginRenderPass(_commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+					{
+						vkCmdBindPipeline(_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, _graphicsPipeline);
 
-					VkBuffer vertexBuffers[] = { _vertexBuffer };
-					VkDeviceSize offsets[] = { 0 };
-					vkCmdBindVertexBuffers(_commandBuffers[i], 0, 1, vertexBuffers, offsets);
-
-					vkCmdDraw(_commandBuffers[i], gVertices.size(), 1, 0, 0);
+						mesh->uploadToGPU(_commandBuffers[i]);
+					}
+					vkCmdEndRenderPass(_commandBuffers[i]);
 				}
-				vkCmdEndRenderPass(_commandBuffers[i]);
 			}
 			VK_CHECK_RESULT(vkEndCommandBuffer(_commandBuffers[i]));
 		}
@@ -1304,7 +1321,7 @@ VkRenderer::createCommandBuffers()
 void
 VkRenderer::destroyCommandBuffers()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] FREE COMMAND BUFFERS");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] FREE COMMAND BUFFERS");
 
 	vkFreeCommandBuffers(_device, _commandPool, _commandBuffers.size(), _commandBuffers.data());
 }
@@ -1312,7 +1329,7 @@ VkRenderer::destroyCommandBuffers()
 void
 VkRenderer::createSemaphore()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] CREATE SEMAPHORE");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE SEMAPHORE");
 
 	VkSemaphoreCreateInfo semaphoreInfo =
 	{
@@ -1331,7 +1348,7 @@ VkRenderer::createSemaphore()
 void
 VkRenderer::destroySemaphore()
 {
-	PRINT("## [VKRENDERER] [" << __FILE__ << "] DESTROY SEMAPHORE");
+	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY SEMAPHORE");
 
 	vkDestroySemaphore(_device, _imageAvailableSemaphore, nullptr);
 	vkDestroySemaphore(_device, _renderFinishedSemaphore, nullptr);

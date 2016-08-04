@@ -80,7 +80,7 @@ Debug::setupDebugging(VkDebugReportFlagsEXT flags_)
 void
 Debug::createDebugging(VkInstance instance_)
 {
-	PRINT("## [DEBUG] [" << __FILE__ << "] CREATE DEBUGGING");
+	PRINT("## [DEBUG] [" << __FUNCTION__ << "] CREATE DEBUGGING");
 	CreateDebugReportCallback = (PFN_vkCreateDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkCreateDebugReportCallbackEXT");
 	DestroyDebugReportCallback = (PFN_vkDestroyDebugReportCallbackEXT)vkGetInstanceProcAddr(instance_, "vkDestroyDebugReportCallbackEXT");
 
@@ -95,7 +95,7 @@ Debug::createDebugging(VkInstance instance_)
 void
 Debug::freeDebugCallback(VkInstance instance_)
 {
-	PRINT("## [DEBUG] [" << __FILE__ << "] DESTROY DEBUGGING");
+	PRINT("## [DEBUG] [" << __FUNCTION__ << "] DESTROY DEBUGGING");
 	if (_msgCallback != VK_NULL_HANDLE)
 	{
 		DestroyDebugReportCallback(instance_, _msgCallback, nullptr);

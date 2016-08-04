@@ -5,6 +5,7 @@
 #include "Renderer.hpp"
 #include "Debug.hpp"
 
+class Mesh;
 
 namespace System
 {
@@ -80,13 +81,15 @@ namespace System
 	}  sVertex;
 
 	public:
-		VkRenderer();
-		virtual ~VkRenderer();	
+		// - - -
 	protected:
 		// - - -
 	private:
 		bool			_enableValidation = false;
 		Platy::Debug	_debug;
+		bool			_debugMarker = false;
+
+		std::vector<Mesh*> _meshList;
 
 		// Vulkan
 		VkInstance 					_instance 		= VK_NULL_HANDLE;
@@ -127,6 +130,9 @@ namespace System
 		// !Vulkan
 	
 	public:
+		VkRenderer();
+		virtual ~VkRenderer();
+
 		virtual void mainLoop();
 		virtual void initialize();
 		virtual void unload();

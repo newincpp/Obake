@@ -67,7 +67,7 @@ void Window::unload()
 
 void Window::evCreateWindow()
 {
-	PRINT("## [WINDOW] [" << __FILE__ << "] CREATE WINDOW");
+	PRINT("## [WINDOW] [" << __FUNCTION__ << "] CREATE WINDOW");
 	// Current Instance
 	_windowInstance = GetModuleHandle(NULL);
 
@@ -132,7 +132,7 @@ void Window::evCreateWindow()
 
 void Window::evDestroyWindow()
 {
-	PRINT("## [WINDOW] [" << __FILE__ << "] DESTROY WINDOW");
+	PRINT("## [WINDOW] [" << __FUNCTION__ << "] DESTROY WINDOW");
 }
 
 void Window::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

@@ -6,7 +6,7 @@
 	"outFolder"			: "Bin",
 	"staticLibsDeps"	: ["Obake"],
 	"sharedLibsDeps"	: [],
-	"excludeSrc"		: [],
+	"excludeSrc"		: ["Importer.cpp"],
 	"srcFolders"		: ["."],
 	"headersFolders"	: [".", "vulkan", "external"],
 	"internLibs"		: [],
