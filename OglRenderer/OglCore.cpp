@@ -23,11 +23,13 @@ void OglCore::import(std::string file_) {
 	_scene.push_back(iscene._meshBuffer.top());
 	iscene._meshBuffer.pop();
     }
+    c = iscene._mainCamera;
 }
 
 void OglCore::renderScene() {
     for (Mesh& m : _scene) {
-        checkGlError m.render();
+	m.render();
+	checkGlError;
     }
 }
 
@@ -36,7 +38,7 @@ void OglCore::init() {
 
     checkGlError glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
-    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     std::vector<GLfloat> vertices = {
     	//vertexPos		//normal		//uvCoord
         -1.5f,  1.0f,5.5f, 	0.0f,0.0f,1.0f, 	0.0f,0.0f, // Top-left
@@ -71,35 +73,36 @@ void OglCore::init() {
     checkGlError _renderTarget.uploadToGPU(vertices, elements);
 
 
-    checkGlError gBuffer.init();
-    gBuffer.addBuffer(); // Position
-    gBuffer.addBuffer(); // Normal
-    gBuffer.addBuffer(); // albedo
-    checkGlError gBuffer.enable();
+    checkGlError _gBuffer.init();
+    _gBuffer.addBuffer(); // Position
+    _gBuffer.addBuffer(); // Normal
+    _gBuffer.addBuffer(); // albedo
+    checkGlError _gBuffer.enable();
 }
 
 unsigned long OglCore::render() {
     std::chrono::time_point<std::chrono::high_resolution_clock> beginFrame = std::chrono::high_resolution_clock::now();
     GLfloat time = std::chrono::duration_cast<std::chrono::milliseconds>(beginFrame - _beginTime).count();
     uTime = time;
-    checkGlError uTime.upload();
+    uTime.upload();
     c.refresh();
 
     _sgBuffer.use();
-    gBuffer.enable();
+    _gBuffer.enable();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    checkGlError renderScene();
-    gBuffer.disable();
+    renderScene();
+    _gBuffer.disable();
+    checkGlError;
 
     //_srender.use();
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //renderScene();
 
-    gBuffer.bindGBuffer();
     _sPostProc.use();
+    _gBuffer.bindGBuffer();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _renderTarget.render();
-    checkGlError 
+    checkGlError;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> endFrame = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>(endFrame-beginFrame).count();

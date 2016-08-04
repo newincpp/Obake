@@ -34,6 +34,14 @@ void Importer::load(std::string& file) {
 	std::cout << "fuu: " << importer.GetErrorString() << '\n';
     }
     genMesh(scene);
+    aiMatrix4x4 m;
+    scene->mCameras[0]->GetCameraMatrix(m);
+    std::cout << "position: " << scene->mCameras[0]->mPosition[0] << ' ' << scene->mCameras[0]->mPosition[1] << ' ' << scene->mCameras[0]->mPosition[2] << '\n';
+
+    //_mainCamera.setMatrix(aiMatrix4x4ToGlm(m));
+    //_mainCamera.fieldOfview(c->mHorizontalFOV);
+    //_mainCamera.clipPlane(glm::vec2(c->mClipPlaneNear, c->mClipPlaneFar));
+    //_mainCamera.upVector(glm::vec3(c->mUp[0], c->mUp[1], c->mUp[2]));
 }
 
 void Importer::genMesh(const aiScene* scene_) {

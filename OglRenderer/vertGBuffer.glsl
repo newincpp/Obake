@@ -13,7 +13,11 @@ layout(location = 1) out vec3 vInfVertexNormal_;
 layout(location = 2) out vec2 vInfUvCoord_;
 
 void main() {    
-    vInfVertexPos_ = vertexPos_;
+    vec3 displacement = vec3(sin(time * .001), 0.0f, sin(time*0.003));
+    vec4 rPos = camera * meshTransform * vec4(vertexPos_ + displacement, 1.0);
+    gl_Position = rPos;
+
+    vInfVertexPos_ = rPos.xyz;
     vInfVertexNormal_ = vertexNormal_;
     vInfUvCoord_ = uvCoord_;
 }  
