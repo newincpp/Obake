@@ -9,61 +9,68 @@ Importer::Importer(VkDevice & device_, VkPhysicalDevice &	physicalDevice_)
 
 
 void
-Importer::load(std::string file)
+Importer::load(std::string file_)
 {
-	// Create an instance of the Importer class
-	Assimp::Importer importer;
-	// And have it read the given file with some example postprocessing
-	// Usually - if speed is not the most important aspect for you - you'll 
-	// propably to request more postprocessing than we do in this example.
-	const aiScene* scene = importer.ReadFile(file,
-		aiProcess_CalcTangentSpace |
-		aiProcess_Triangulate |
-		aiProcess_JoinIdenticalVertices |
-		aiProcess_SortByPType);
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string err;
 
-	// If the import failed, report it
-	if (!scene)
-	{
-		std::cout << "fuu: " << importer.GetErrorString() << '\n';
-	}
-	genMesh(scene);
+	if (!tinyobj::LoadObj(shapes, materials, err, file_.c_str()))
+		std::cerr << err << std::endl;
+
+	genMesh(shapes);
 }
 
 void
-Importer::genMesh(const aiScene* scene_) {
-	for (unsigned int m = 0; m < scene_->mNumMeshes; ++m)
+Importer::genMesh(std::vector<tinyobj::shape_t> & shapes_)
+{
+	std::cout << "# of shapes    : " << shapes_.size() << std::endl;
+
+	for (size_t i = 0; i < shapes_.size(); i++)
 	{
-		std::vector<float> vertexBuffer;
-		aiMesh* mesh = scene_->mMeshes[m];
-		vertexBuffer.reserve(mesh->mNumVertices * 8);
-
-
-		for (int i = 0; i < mesh->mNumVertices; ++i)
+		printf("shape[%ld].vertices: %ld\n", i, shapes_[i].mesh.positions.size());
+		assert((shapes_[i].mesh.positions.size() % 3) == 0);
+		for (size_t v = 0; v < shapes_[i].mesh.positions.size() / 3; v++)
 		{
-			vertexBuffer.push_back(mesh->mVertices[i].x);
-			vertexBuffer.push_back(mesh->mVertices[i].y);
-			vertexBuffer.push_back(mesh->mVertices[i].z);
-			vertexBuffer.push_back(mesh->mNormals[i].x);
-			vertexBuffer.push_back(mesh->mNormals[i].y);
-			vertexBuffer.push_back(mesh->mNormals[i].z);
-
-
-			if (mesh->HasTextureCoords(0))
-			{
-				vertexBuffer.push_back(mesh->mTextureCoords[0][i].x);
-				vertexBuffer.push_back(mesh->mTextureCoords[0][i].y);
-			}
-			else
-			{
-				vertexBuffer.push_back(0.0f);
-				vertexBuffer.push_back(0.0f);
-			}
+			printf("  v[%ld] = (%f, %f, %f)\n", v,
+				shapes_[i].mesh.positions[3 * v + 0],
+				shapes_[i].mesh.positions[3 * v + 1],
+				shapes_[i].mesh.positions[3 * v + 2]);
 		}
-
-		_meshBuffer.emplace(_device, _physicalDevice);
-		_meshBuffer.top().loadVertexBuffer(vertexBuffer);
 	}
+
+//	for (std::remove_reference<decltype(scene_)>::type::value_type mesh : scene_)
+//	{
+//		std::vector<float> vertexBuffer;
+//		aiMesh* mesh = scene_->mMeshes[m];
+//		vertexBuffer.reserve(mesh->mNumVertices * 8);
+//
+//
+//		for (int i = 0; i < mesh->mNumVertices; ++i)
+//		{
+//			vertexBuffer.push_back(mesh->mVertices[i].x);
+//			vertexBuffer.push_back(mesh->mVertices[i].y);
+//			vertexBuffer.push_back(mesh->mVertices[i].z);
+//			vertexBuffer.push_back(mesh->mNormals[i].x);
+//			vertexBuffer.push_back(mesh->mNormals[i].y);
+//			vertexBuffer.push_back(mesh->mNormals[i].z);
+//
+//
+//			if (mesh->HasTextureCoords(0))
+//			{
+//				vertexBuffer.push_back(mesh->mTextureCoords[0][i].x);
+//				vertexBuffer.push_back(mesh->mTextureCoords[0][i].y);
+//			}
+//			else
+//			{
+//				vertexBuffer.push_back(0.0f);
+//				vertexBuffer.push_back(0.0f);
+//			}
+//		}
+//
+//		_meshBuffer.emplace(_device, _physicalDevice);
+//		_meshBuffer.top().loadVertexBuffer(vertexBuffer);
+//	}
 }
 
 void

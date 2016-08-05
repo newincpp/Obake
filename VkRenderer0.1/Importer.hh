@@ -2,9 +2,7 @@
 
 #include <stack>
 #include "glm/glm.hpp"
-#include "assimp/Importer.hpp"      // C++ importer interface
-#include "assimp/scene.h"           // Output data structure
-#include "assimp/postprocess.h"     // Post processing fla
+#include "tiny_obj_loader.h"
 #include "vulkan/vulkan.h"
 #include "Mesh.hpp"
 
@@ -22,12 +20,12 @@ private:
 public:
 	Importer(VkDevice & device_, VkPhysicalDevice &	physicalDevice_);
 
-	void load(std::string file);
+	void load(std::string file_);
 	void uploadToGPU(VkCommandBuffer commandBuffer_);
 	bool empty();
 
 protected:
-	void genMesh(const aiScene* scene_);
+	void genMesh(std::vector<tinyobj::shape_t> & shapes_);
 private:
 	// - - -
 };
