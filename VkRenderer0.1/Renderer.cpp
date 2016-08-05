@@ -19,7 +19,6 @@ Renderer::initialize()
 {
 	_core->eventsManager.bindEvent("Set Renderer Exit State", this, &Renderer::evSetExit);
 	_core->eventsManager.bindEvent("Receive Window Info", this, &Renderer::evGetWinPtr);
-	std::cout << "forgive me my weakness I just don't know why\n";
 	_core->eventsManager.bindEvent("Window Update", this, &Renderer::evUpdateSurface);
 	OBAKE_ADD(start);
 

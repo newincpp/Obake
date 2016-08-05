@@ -6,7 +6,7 @@ Mesh::Mesh(VkDevice & device_, VkPhysicalDevice & physicalDevice_)
 }
 
 void
-Mesh::loadVertexBuffer(const std::vector<System::VkRenderer::sVertex> vertices_)
+Mesh::loadVertexBuffer(const std::vector<float> & vertices_)
 {
 	_vertexSize = vertices_.size();
 	VkBufferCreateInfo bufferInfo =

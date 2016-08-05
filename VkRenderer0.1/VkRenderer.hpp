@@ -1,11 +1,12 @@
 #pragma once
+
 #include "PLATFORM.h"
 #include "DEBUG.h"
 
 #include "Renderer.hpp"
 #include "Debug.hpp"
 
-class Mesh;
+#include "Importer.hh"
 
 namespace System
 {
@@ -89,7 +90,7 @@ namespace System
 		Platy::Debug	_debug;
 		bool			_debugMarker = false;
 
-		std::vector<Mesh*> _meshList;
+		Importer * _meshImporter;
 
 		// Vulkan
 		VkInstance 					_instance 		= VK_NULL_HANDLE;

@@ -6,7 +6,7 @@
 	"outFolder"			: "Bin",
 	"staticLibsDeps"	: ["Obake"],
 	"sharedLibsDeps"	: [],
-	"excludeSrc"		: ["Importer.cpp"],
+	"excludeSrc"		: [],
 	"srcFolders"		: ["."],
 	"headersFolders"	: [".", "vulkan", "external"],
 	"internLibs"		: [],
@@ -18,8 +18,8 @@
 		"internLibs" 		: ["external/EASTL/libEASTL.a"],
 	    "headersFolders"	: ["..\\Window\\Win32"],
 	    "externIncludes"	: ["C:/VulkanSDK/1.0.21.0/Include"],
-	    "externLibs"		: ["vulkan-1", "user32", "gdi32", "EASTL"],
-	    "compilerFlags"		: ["-DEA_COMPILER_NO_VARIADIC_TEMPLATES", "-L./Obake/external/EASTL/Win", "-LC:/VulkanSDK/1.0.21.0/Bin"]
+	    "externLibs"		: ["vulkan-1", "user32", "gdi32", "EASTL", "assimp"],
+	    "compilerFlags"		: ["-DEA_COMPILER_NO_VARIADIC_TEMPLATES", "-L./Obake/external/EASTL/Win", "-LC:/VulkanSDK/1.0.21.0/Bin", "-L./VkRenderer0.1/libs"]
 	}
     }
 }

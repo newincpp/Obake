@@ -7,8 +7,6 @@
 #include "glm/glm.hpp"
 #include "vulkan/vulkan.h"
 
-#include "VkRenderer.hpp"
-
 class Mesh
 {
 public:
@@ -27,7 +25,7 @@ private:
 public:
 	Mesh(VkDevice & device_, VkPhysicalDevice &	physicalDevice_);
 
-	void loadVertexBuffer(const std::vector <System::VkRenderer::sVertex> verticesList_);
+	void loadVertexBuffer(const std::vector<float> & verticesList_);
 	void uploadToGPU(VkCommandBuffer commandBuffer_);
 	uint32_t	findMemoryType(uint32_t typeFilter_, VkMemoryPropertyFlags properties_);
 

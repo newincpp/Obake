@@ -1,22 +1,33 @@
+#pragma once
+
 #include <stack>
-#include "Mesh.hh"
-#include "glew.h"
+#include "glm/glm.hpp"
 #include "assimp/Importer.hpp"      // C++ importer interface
 #include "assimp/scene.h"           // Output data structure
 #include "assimp/postprocess.h"     // Post processing fla
+#include "vulkan/vulkan.h"
+#include "Mesh.hpp"
 
-class Material {
-};
 
-class Importer {
-    public:
+class Importer
+{
+public:
 	std::stack<Mesh> _meshBuffer;
-	std::stack<Material> _materialBuffer;
-	Importer(std::string file);
-	inline glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4& from);
-	inline bool empty() {
-	    return _meshBuffer.empty();
-	}
+protected:
+	// - - -
+private:
+	VkDevice			_device			= VK_NULL_HANDLE;
+	VkPhysicalDevice	_physicalDevice = VK_NULL_HANDLE;
+
+public:
+	Importer(VkDevice & device_, VkPhysicalDevice &	physicalDevice_);
+
+	void load(std::string file);
+	void uploadToGPU(VkCommandBuffer commandBuffer_);
+	bool empty();
+
+protected:
 	void genMesh(const aiScene* scene_);
-	void load(std::string& file);
+private:
+	// - - -
 };

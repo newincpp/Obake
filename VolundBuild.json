@@ -10,6 +10,7 @@
     "staticLibs" 			: ["Obake"],
     "sharedLibs" 			: ["Window", "VkRenderer"],
 	"externIncludes" 		: [],
+	"externLibs"			: [],
     "compilerFlags" 		: ["-std=c++14", "-march=native", "-O2", "-fno-exceptions"],
     "fullStatic"			: false,
 	"Windows":

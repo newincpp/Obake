@@ -4,8 +4,6 @@
 
 #include "VkRenderer.hpp"
 
-#include "Mesh.hpp"
-
 using namespace System;
 
 OBAKE_PLUGIN(VkRenderer, "Vulkan Renderer", "0.1.2")
@@ -58,7 +56,7 @@ VkRenderer::unload()
 	destroyCommandPool();
 	destroyFramebuffers();
 	destroyGraphicsPipeline();
-//	destroyShaderModule();
+	//	destroyShaderModule();
 	destroyRenderPass();
 	destroyImageViews();
 	destroySwapchain();
@@ -163,12 +161,18 @@ void
 VkRenderer::initVulkan()
 {
 
-
-	std::vector<VkRenderer::sVertex> gVertices =
+	std::vector<VkRenderer::sVertex> gVertices1 =
 	{
-		{ { 0.0f, -0.5f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -0.5f } },
-		{ { 0.5f,  0.5f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -0.5f } },
-		{ { -0.5f, 0.5f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -0.5f } }
+		{ { 0.0f, -0.7f, 0.0f }, { 1.0f, 1.0f, 1.0f }, { 0.0f, -0.5f } },
+		{ { 0.7f,  0.7f, 0.0f }, { 0.0f, 1.0f, 1.0f }, { 0.0f, -0.5f } },
+		{ { -0.7f, 0.7f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, -0.5f } }
+	};
+
+	std::vector<VkRenderer::sVertex> gVertices2 =
+	{
+		{ { 0.0f, -0.3f, 0.0f },{ 1.0f, 0.0f, 0.0f },{ 0.0f, -0.5f } },
+		{ { 0.3f,  0.3f, 0.0f },{ 0.0f, 1.0f, 0.0f },{ 0.0f, -0.5f } },
+		{ { -0.3f, 0.3f, 0.0f },{ 0.0f, 0.0f, 1.0f },{ 0.0f, -0.5f } }
 	};
 
 
@@ -186,11 +190,10 @@ VkRenderer::initVulkan()
 	createFramebuffers();
 	createCommandPool();
 
-	Mesh * mesh = new Mesh(_device, _physicalDevice);
-	mesh->loadVertexBuffer(gVertices);
-	_meshList.push_back(mesh);
+	_meshImporter = new Importer(_device, _physicalDevice);
+	_meshImporter->load("./models/cube.dae");
 
-//	createVertexBuffer();
+	//	createVertexBuffer();
 	createCommandBuffers();
 	createSemaphore();
 
@@ -345,8 +348,6 @@ VkRenderer::pickPhysicalDevice()
 	assert(deviceCount > 0);
 	std::vector<VkPhysicalDevice> devices(deviceCount);
 	VK_CHECK_RESULT(vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data()));
-
-	std::cout << "### " << deviceCount << " Devices Found\n";
 
 	// We go through all compatible devices to see if they match our criterias
 	for (decltype(devices)::value_type & device : devices)
@@ -505,7 +506,7 @@ VkRenderer::checkDeviceExtensionSupport(VkPhysicalDevice device_)
 			std::string A(availableExtension.extensionName);
 			std::string B(*it);
 
-//			std::cout << "DeviceExtension: " << B << " | AvailableExtension: " << A << '\n';
+			//			std::cout << "DeviceExtension: " << B << " | AvailableExtension: " << A << '\n';
 			isPresent = (A == B) ? true : false;
 			if (isPresent)
 				break;
@@ -513,7 +514,7 @@ VkRenderer::checkDeviceExtensionSupport(VkPhysicalDevice device_)
 		if (!isPresent)
 		{
 			PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DEVICE EXTENSION UNAVAILABLE: " << *it);
-			gDeviceExtensions.erase(it);	
+			gDeviceExtensions.erase(it);
 		}
 	}
 
@@ -526,6 +527,7 @@ void
 VkRenderer::createSwapchain()
 {
 	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] CREATE SWAPCHAIN");
+
 	sSwapChainSupportDetails swapChainSupport = querySwapChainSupport(_physicalDevice);
 
 	// Checking to find the best configuration for our swapchain
@@ -690,7 +692,7 @@ VkRenderer::createImageViews()
 
 	_swapchainImageViews.resize(_swapchainImages.size());
 
-	for (uint32_t i = 0; i < _swapchainImages.size(); i++) 
+	for (uint32_t i = 0; i < _swapchainImages.size(); i++)
 	{
 		VkImageViewCreateInfo createInfo =
 		{
@@ -1216,29 +1218,26 @@ VkRenderer::destroyVertexBuffer()
 {
 	PRINT("## [VKRENDERER] [" << __FUNCTION__ << "] DESTROY VERTEX BUFFER");
 
-//	vkFreeMemory(_device, _vertexBufferMemory, nullptr);
-//	vkDestroyBuffer(_device, _vertexBuffer, nullptr);
-
-	for (decltype(_meshList)::value_type mesh : _meshList)
-		mesh->cleanup();
+	//	vkFreeMemory(_device, _vertexBufferMemory, nullptr);
+	//	vkDestroyBuffer(_device, _vertexBuffer, nullptr);
 }
 
-uint32_t
-VkRenderer::findMemoryType(uint32_t typeFilter_, VkMemoryPropertyFlags properties_)
-{
-	VkPhysicalDeviceMemoryProperties memProperties;
-	vkGetPhysicalDeviceMemoryProperties(_physicalDevice, &memProperties);
-
-	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
-	{
-		if ((typeFilter_ & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties_) == properties_)
-		{
-			return i;
-		}
-	}
-
-	PRINT("## [VKRENDERER] [ERROR] [" << __FUNCTION__ << "] FAILED TO FIND SUITABLE MEMORY TYPE");
-}
+//uint32_t
+//VkRenderer::findMemoryType(uint32_t typeFilter_, VkMemoryPropertyFlags properties_)
+//{
+//	VkPhysicalDeviceMemoryProperties memProperties;
+//	vkGetPhysicalDeviceMemoryProperties(_physicalDevice, &memProperties);
+//
+//	for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
+//	{
+//		if ((typeFilter_ & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties_) == properties_)
+//		{
+//			return i;
+//		}
+//	}
+//
+//	PRINT("## [VKRENDERER] [ERROR] [" << __FUNCTION__ << "] FAILED TO FIND SUITABLE MEMORY TYPE");
+//}
 
 void
 VkRenderer::createCommandBuffers()
@@ -1247,7 +1246,7 @@ VkRenderer::createCommandBuffers()
 
 	_commandBuffers.resize(_swapchainFramebuffers.size());
 
-	VkCommandBufferAllocateInfo allocInfo = 
+	VkCommandBufferAllocateInfo allocInfo =
 	{
 		// (MANDATORY) sType is the type of the structure
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
@@ -1302,16 +1301,12 @@ VkRenderer::createCommandBuffers()
 					renderPassInfo.pClearValues = &clearColor
 				};
 
-				for (decltype(_meshList)::value_type mesh : _meshList)
+				vkCmdBeginRenderPass(_commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 				{
-					vkCmdBeginRenderPass(_commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
-					{
-						vkCmdBindPipeline(_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, _graphicsPipeline);
-
-						mesh->uploadToGPU(_commandBuffers[i]);
-					}
-					vkCmdEndRenderPass(_commandBuffers[i]);
+					vkCmdBindPipeline(_commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, _graphicsPipeline);
+					_meshImporter->uploadToGPU(_commandBuffers[i]);
 				}
+				vkCmdEndRenderPass(_commandBuffers[i]);
 			}
 			VK_CHECK_RESULT(vkEndCommandBuffer(_commandBuffers[i]));
 		}
