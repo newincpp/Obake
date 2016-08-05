@@ -35,17 +35,28 @@ void Importer::load(std::string& file) {
     }
     genMesh(scene);
     aiMatrix4x4 m;
-    scene->mCameras[0]->GetCameraMatrix(m);
-    std::cout << "position: " << scene->mCameras[0]->mPosition[0] << ' ' << scene->mCameras[0]->mPosition[1] << ' ' << scene->mCameras[0]->mPosition[2] << '\n';
-    aiCamera* c = scene->mCameras[0];
+    //scene->mCameras[0]->GetCameraMatrix(m);
+    std::cout << scene->mNumCameras << '\n';
+    if (scene->mNumCameras) {
+	aiCamera* c = scene->mCameras[0];
+	std::cout << "position: " << scene->mCameras[0]->mPosition[0] << ' ' << scene->mCameras[0]->mPosition[1] << ' ' << scene->mCameras[0]->mPosition[2] << '\n';
+	c->GetCameraMatrix(m);
+	_mainCamera.setMatrix(aiMatrix4x4ToGlm(m));
 
-    //_mainCamera.setMatrix(aiMatrix4x4ToGlm(m));
-
-    //_mainCamera.lookAt(glm::vec3(c->mLookAt[0], c->mLookAt[1], c->mLookAt[2]));
-    //_mainCamera.setPos(glm::vec3(c->mPosition[0], c->mPosition[1], c->mPosition[2]));
-    //_mainCamera.fieldOfview(c->mHorizontalFOV);
-    //_mainCamera.clipPlane(glm::vec2(c->mClipPlaneNear, c->mClipPlaneFar));
-    //_mainCamera.upVector(glm::vec3(c->mUp[0], c->mUp[1], c->mUp[2]));
+	//_mainCamera.lookAt(glm::vec3(c->mLookAt[0], c->mLookAt[1], c->mLookAt[2]));
+	//_mainCamera.setPos(glm::vec3(c->mPosition[0], c->mPosition[1], c->mPosition[2]));
+	//_mainCamera.fieldOfview(c->mHorizontalFOV);
+	//_mainCamera.clipPlane(glm::vec2(c->mClipPlaneNear, c->mClipPlaneFar));
+	//_mainCamera.upVector(glm::vec3(c->mUp[0], c->mUp[1], c->mUp[2]));
+    } else {
+	std::cout << "no Camera Detected\n";
+	//_mainCamera.lookAt(glm::vec3(136.0f,231.0f , 218.0f+ 1));
+	_mainCamera.lookAt(glm::vec3(59.0f, 131.0f, 582.0f));
+	_mainCamera.setPos(glm::vec3(136.0f, 231.0f, 218.0f));
+	_mainCamera.fieldOfview(1.623f);
+	_mainCamera.clipPlane(glm::vec2(0.1f, 10000.0f));
+	_mainCamera.upVector(glm::vec3(0.0f,1.0f,0.0f));
+    }
 }
 
 void Importer::genMesh(const aiScene* scene_) {

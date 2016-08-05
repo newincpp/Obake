@@ -2,7 +2,7 @@
 #include <stack>
 #include "OglCore.hh"
 
-void OglCore::getGlError(const char* file_, unsigned long line_) {
+void getGlError(const char* file_, unsigned long line_) {
     GLenum e = glGetError();
     if (e != GL_NO_ERROR) {
 	std::cout << "in file: \033[0;1m" << file_ << "\033[0m line: \033[1m" << line_ << "\033[0m: "; 
@@ -27,6 +27,7 @@ void OglCore::import(std::string file_) {
 }
 
 void OglCore::renderScene() {
+unsigned long i = 0;
     for (Mesh& m : _scene) {
 	m.render();
 	checkGlError;
@@ -52,6 +53,8 @@ void OglCore::init() {
         2, 3, 0
     };
 
+
+
     _sgBuffer.add("./fragGBuffer.glsl", GL_FRAGMENT_SHADER);
     _sgBuffer.add("./vertGBuffer.glsl", GL_VERTEX_SHADER);
     _sgBuffer.link({"vInfVertexPos_", "vInfVertexNormal_", "vInfUvCoord_"});
@@ -72,12 +75,13 @@ void OglCore::init() {
 
     checkGlError _renderTarget.uploadToGPU(vertices, elements);
 
-
-    checkGlError _gBuffer.init();
+    _gBuffer.init();
+    checkGlError;
     _gBuffer.addBuffer(); // Position
     _gBuffer.addBuffer(); // Normal
     _gBuffer.addBuffer(); // albedo
-    checkGlError _gBuffer.enable();
+    _gBuffer.enable();
+    checkGlError;
 }
 
 unsigned long OglCore::render() {

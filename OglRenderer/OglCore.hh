@@ -9,6 +9,7 @@
 #include "Camera.hh"
 
 #define checkGlError getGlError(__FILE__, __LINE__);
+void getGlError(const char* file_, unsigned long line_);
 
 class RenderTexture {
     public:
@@ -66,9 +67,6 @@ class FrameBuffer {
 		}
 		glDrawBuffers(_rtt.size(), attachments);
 	    }
-	    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE) {
-		std::cout << "\033[32mframeBuffer valid \\o/\033[0m" << '\n';
-	    }
 	}
 	void addBuffer() {
 	    _rtt.emplace_back(_rtt.size());
@@ -106,6 +104,6 @@ class OglCore {
 	void init();
 	void import(std::string);
 	void renderScene();
-	inline void getGlError(const char* file_, unsigned long line_);
 	unsigned long render();
 };
+

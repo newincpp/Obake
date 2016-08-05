@@ -11,7 +11,7 @@ layout(location = 2)in vec2  uvCoord_;
 out vec3 frag;
 
 void main() {
-    vec3 displacement = vec3(sin(time * .001), 0.0f, sin(time*0.003)) * 40.0f;
+    vec3 displacement = vec3(sin(time * .001), 0.0f, sin(time*0.003)) * 2.0f;
     frag = vec3(vertexNormal_);
     gl_Position = camera * meshTransform * vec4(vertexPos_ + displacement, 1.0);
 }

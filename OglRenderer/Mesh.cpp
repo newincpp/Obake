@@ -10,6 +10,7 @@ void Mesh::uploadToGPU(std::vector<GLfloat>& vbo_, std::vector<GLuint>& ebo_) {
     glGenBuffers(1, &_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, _vbo);
     glBufferData(GL_ARRAY_BUFFER, vbo_.size() * sizeof(__remove_reference__<decltype(vbo_)>::type::value_type), &(vbo_[0]), GL_STATIC_DRAW);
+
     //vertex
     glEnableVertexAttribArray(0); 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), 0); 
