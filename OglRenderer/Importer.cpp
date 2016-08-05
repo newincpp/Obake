@@ -37,8 +37,12 @@ void Importer::load(std::string& file) {
     aiMatrix4x4 m;
     scene->mCameras[0]->GetCameraMatrix(m);
     std::cout << "position: " << scene->mCameras[0]->mPosition[0] << ' ' << scene->mCameras[0]->mPosition[1] << ' ' << scene->mCameras[0]->mPosition[2] << '\n';
+    aiCamera* c = scene->mCameras[0];
 
     //_mainCamera.setMatrix(aiMatrix4x4ToGlm(m));
+
+    //_mainCamera.lookAt(glm::vec3(c->mLookAt[0], c->mLookAt[1], c->mLookAt[2]));
+    //_mainCamera.setPos(glm::vec3(c->mPosition[0], c->mPosition[1], c->mPosition[2]));
     //_mainCamera.fieldOfview(c->mHorizontalFOV);
     //_mainCamera.clipPlane(glm::vec2(c->mClipPlaneNear, c->mClipPlaneFar));
     //_mainCamera.upVector(glm::vec3(c->mUp[0], c->mUp[1], c->mUp[2]));

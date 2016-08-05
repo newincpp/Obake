@@ -41,10 +41,10 @@ void OglCore::init() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     std::vector<GLfloat> vertices = {
     	//vertexPos		//normal		//uvCoord
-        -1.5f,  1.0f,5.5f, 	0.0f,0.0f,1.0f, 	0.0f,0.0f, // Top-left
-        1.5f,  1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,0.0f, // Top-right
-        1.5f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	0.0f,1.0f, // Bottom-right
-        -1.0f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,1.0f  // Bottom-left
+        -1.0f,  1.0f,5.5f, 	0.0f,0.0f,1.0f, 	0.0f,0.0f, // Top-left
+        1.0f,  1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,0.0f, // Top-right
+        1.0f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,1.0f, // Bottom-right
+        -1.0f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	0.0f,1.0f  // Bottom-left
     };
 
     std::vector<GLuint> elements = {
@@ -54,18 +54,18 @@ void OglCore::init() {
 
     _sgBuffer.add("./fragGBuffer.glsl", GL_FRAGMENT_SHADER);
     _sgBuffer.add("./vertGBuffer.glsl", GL_VERTEX_SHADER);
-    _sgBuffer.link({"outColour"});
+    _sgBuffer.link({"vInfVertexPos_", "vInfVertexNormal_", "vInfUvCoord_"});
 
     _srender.add("./frag.glsl", GL_FRAGMENT_SHADER);
     _srender.add("./vert.glsl", GL_VERTEX_SHADER);
-    _srender.link({"vInfVertexPos_", "vInfVertexNormal_", "vInfUvCoord_"});
+    _srender.link({"outColour"});
 
     _sPostProc.add("./postProcess.glsl",GL_FRAGMENT_SHADER);
     _sPostProc.add("./postProcessVert.glsl",GL_VERTEX_SHADER);
     _sPostProc.link({"outColour"});
 
 
-    import("neloNoArm.dae");
+    import("DemoCity.obj");
     Mesh m;
     m.uploadToGPU(vertices, elements);
     _scene.push_back(m);
@@ -89,20 +89,20 @@ unsigned long OglCore::render() {
 
     _sgBuffer.use();
     _gBuffer.enable();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_DEPTH_BUFFER_BIT);
     renderScene();
     _gBuffer.disable();
     checkGlError;
 
-    //_srender.use();
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //renderScene();
-
-    _sPostProc.use();
-    _gBuffer.bindGBuffer();
+    _srender.use();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    _renderTarget.render();
-    checkGlError;
+    renderScene();
+
+    //_sPostProc.use();
+    //_gBuffer.bindGBuffer();
+    //glClear(GL_DEPTH_BUFFER_BIT);
+    //_renderTarget.render();
+    //checkGlError;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> endFrame = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>(endFrame-beginFrame).count();
