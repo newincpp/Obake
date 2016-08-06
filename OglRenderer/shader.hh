@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <streambuf>
+#include "Uniform.hh"
 
 #include "glew.h"
 
@@ -35,7 +36,14 @@ class Shader {
 	Shader();
 	void add(std::string, GLenum);
 	void link(const std::vector<std::string>&& fragDataOutPut_);
+	template <typename T>
+		void relocateUniform(Uniform<T>&&, const char* name_);
 	inline void use() {
 	    glUseProgram(_programId);
 	}
 };
+
+template <typename T>
+void Shader::relocateUniform(Uniform<T>&& u_, const char* name_) {
+	u_._location = glGetUniformLocation(_programId, name_);
+}

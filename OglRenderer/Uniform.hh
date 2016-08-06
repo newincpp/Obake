@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include "glew.h"
 
 template <typename T>
@@ -11,5 +12,11 @@ class Uniform {
 	operator T() { return _value; }
 	void operator=(T v_) { _value = v_; }
 	void upload(); 
+	void _resetLocation(const char* name_) {
+		GLint programId;
+		glGetIntegerv(GL_CURRENT_PROGRAM, &programId);
+		_location = glGetUniformLocation(programId, name_);
+	}
+#define autoRelocate(var) var._resetLocation(#var);
 };
 

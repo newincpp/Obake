@@ -1,8 +1,8 @@
-#version 440 core
+#version 410 core
 
-layout(location = 1) uniform float time;
-layout(location = 2) uniform mat4 camera;
-layout(location = 3) uniform mat4 meshTransform;
+uniform float uTime;
+uniform mat4 uCamera;
+uniform mat4 uMeshTransform;
 
 layout(location = 0) in vec3  vertexPos_;
 layout(location = 1) in vec3  vertexNormal_;
@@ -13,8 +13,8 @@ layout(location = 1) out vec3 vInfVertexNormal_;
 layout(location = 2) out vec2 vInfUvCoord_;
 
 void main() {    
-    vec3 displacement = vec3(sin(time * .001), 0.0f, sin(time*0.003));
-    vec4 rPos = camera * meshTransform * vec4(vertexPos_ + displacement, 1.0);
+    vec3 displacement = vec3(sin(uTime * .001), 0.0f, sin(uTime*0.003));
+    vec4 rPos = uCamera * uMeshTransform * vec4(vertexPos_ + displacement, 1.0);
     gl_Position = rPos;
 
     vInfVertexPos_ = rPos.xyz;

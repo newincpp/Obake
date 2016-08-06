@@ -27,7 +27,6 @@ void OglCore::import(std::string file_) {
 }
 
 void OglCore::renderScene() {
-unsigned long i = 0;
     for (Mesh& m : _scene) {
 	m.render();
 	checkGlError;
@@ -66,7 +65,7 @@ void OglCore::init() {
     _sPostProc.link({"outColour"});
 
 
-    import("DemoCity.obj");
+    import("./DemoCity.obj");
     Mesh m;
     m.uploadToGPU(vertices, elements);
     _scene.push_back(m);
@@ -75,9 +74,9 @@ void OglCore::init() {
 
     _gBuffer.init();
     checkGlError;
-    _gBuffer.addBuffer(); // Position
-    _gBuffer.addBuffer(); // Normal
-    _gBuffer.addBuffer(); // albedo
+    _gBuffer.addBuffer("gPosition"); // Position
+    _gBuffer.addBuffer("gNormal"); // Normal
+    _gBuffer.addBuffer("gAlbedoSpec"); // albedo
     _gBuffer.enable();
     checkGlError;
 }
@@ -86,23 +85,29 @@ unsigned long OglCore::render() {
     std::chrono::time_point<std::chrono::high_resolution_clock> beginFrame = std::chrono::high_resolution_clock::now();
     GLfloat time = std::chrono::duration_cast<std::chrono::milliseconds>(beginFrame - _beginTime).count();
     uTime = time;
+    
+    _sgBuffer.use();
+    autoRelocate(uTime);
     uTime.upload();
     c.refresh();
-
-    _sgBuffer.use();
     _gBuffer.enable();
-    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderScene();
     _gBuffer.disable();
     checkGlError;
 
     //_srender.use();
+    //autoRelocate(uTime);
+    //uTime.upload();
+    //c.refresh();
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     //renderScene();
 
     _sPostProc.use();
+    autoRelocate(uTime);
+    uTime.upload();
     _gBuffer.bindGBuffer();
-    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT |GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _renderTarget.render();
     checkGlError;
 

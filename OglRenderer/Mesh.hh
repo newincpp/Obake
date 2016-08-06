@@ -26,9 +26,9 @@ class Mesh {
 	GLuint _vao;
 	GLuint _vbo;
 	GLuint _ebo;
-	unsigned long size;
+	int size;
     public:
-	Uniform<glm::mat4> _transform;
+	Uniform<glm::mat4> uMeshTransform;
 	std::string _name;
 	Mesh();
 	void uploadToGPU(std::vector<GLfloat>& vbo_, std::vector<GLuint>& ebo_);

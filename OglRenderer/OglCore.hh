@@ -15,7 +15,8 @@ class RenderTexture {
     public:
 	GLuint _id;
 	GLuint _attachment;
-	RenderTexture(unsigned short attachment_) {
+    const char* _name;
+    RenderTexture(unsigned short attachment_, std::string& name_) : _name(name_.c_str()) {
 	    if (attachment_ > 15) {
 		std::cout << "opengl Does not support more than 15 framebuffer" << std::endl;
 		return;
@@ -31,8 +32,10 @@ class RenderTexture {
 	void bind(unsigned int i_) {
 	    glActiveTexture(GL_TEXTURE0 + i_);
 	    glBindTexture(GL_TEXTURE_2D, _id);
-	    std::cout << "i: " << i_ + 4 << " " << i_ << std::endl;
-	    glUniform1i(i_ + 4, i_); 
+        
+		GLint programId;
+		glGetIntegerv(GL_CURRENT_PROGRAM, &programId);
+	    glUniform1i(glGetUniformLocation(programId, _name), _id);
 	}
 	GLuint getAttachment() {
 	    return _attachment;
@@ -60,6 +63,7 @@ class FrameBuffer {
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, _rbo);
 	}
 	void enable() {
+	    glBindRenderbuffer(GL_RENDERBUFFER, _rbo);
 	    glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
 	    if (_rtt.size()) {
 		GLuint attachments[_rtt.size()];
@@ -69,8 +73,8 @@ class FrameBuffer {
 		glDrawBuffers(_rtt.size(), attachments);
 	    }
 	}
-	void addBuffer() {
-	    _rtt.emplace_back(_rtt.size());
+    void addBuffer(std::string&& name_) {
+	    _rtt.emplace_back(_rtt.size(), name_);
 	}
 	void bindGBuffer() {
 	    unsigned int i = 0;

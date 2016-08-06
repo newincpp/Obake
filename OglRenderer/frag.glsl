@@ -1,8 +1,8 @@
-#version 440 core
+#version 410 core
 
-layout(location = 1) uniform float time;
-layout(location = 2) uniform mat4 camera;
-layout(location = 3) uniform mat4 transformation;
+uniform float uTime;
+//uniform mat4 uCamera;
+//uniform mat4 uMeshTransform;
 
 in vec3 frag;
 
@@ -10,5 +10,5 @@ out vec4 outColour;
 
 void main() {
     outColour = vec4(frag, 0.0f);
-//    outColour = vec4(sin(time), sin(time), sin(time*10), 1.0);
+//    outColour = vec4(sin(uTime), sin(uTime), sin(uTime*10), 1.0);
 }

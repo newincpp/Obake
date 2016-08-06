@@ -34,12 +34,18 @@ void Shader::link(const std::vector<std::string>&& fragDataOutPut_) {
     if (_geometryId) {
 	glAttachShader(_programId, _geometryId);
     }
+
+    if (fragDataOutPut_.size() > GL_MAX_DRAW_BUFFERS) {
+	std::cout << "max draw output exeeded! Max=" << GL_MAX_DRAW_BUFFERS << '\n';
+    }
     unsigned int i = 0;
     for (const std::string& output : fragDataOutPut_) {
-	std::cout << i << ' ' << output << '\n';
 	glBindFragDataLocation(_programId, i, output.c_str());
 	++i;
     }
     glLinkProgram(_programId);
     glUseProgram(_programId);
 }
+
+template <typename T>
+void relocateUniform(Uniform<T>&&);

@@ -27,6 +27,7 @@ void Camera::setPos(glm::vec3&& newPos_) {
     uCamera = glm::perspective(_fov, 1920.0f / 1080.0f, _clipPlane.x, _clipPlane.y) * glm::lookAt( _position, _target, _upVector);
 }
 void Camera::refresh() {
+	autoRelocate(uCamera);
     //uCamera = glm::perspective(_fov, 1920.0f / 1080.0f, _clipPlane.x, _clipPlane.y) * glm::lookAt( _position, _target, _upVector);
     uCamera.upload();
 }
