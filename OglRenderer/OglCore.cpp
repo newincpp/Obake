@@ -53,8 +53,6 @@ void OglCore::init() {
         2, 3, 0
     };
 
-
-
     _sgBuffer.add("./fragGBuffer.glsl", GL_FRAGMENT_SHADER);
     _sgBuffer.add("./vertGBuffer.glsl", GL_VERTEX_SHADER);
     _sgBuffer.link({"vInfVertexPos_", "vInfVertexNormal_", "vInfUvCoord_"});
@@ -93,20 +91,20 @@ unsigned long OglCore::render() {
 
     _sgBuffer.use();
     _gBuffer.enable();
-    glClear(GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     renderScene();
     _gBuffer.disable();
     checkGlError;
 
-    _srender.use();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderScene();
+    //_srender.use();
+    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //renderScene();
 
-    //_sPostProc.use();
-    //_gBuffer.bindGBuffer();
-    //glClear(GL_DEPTH_BUFFER_BIT);
-    //_renderTarget.render();
-    //checkGlError;
+    _sPostProc.use();
+    _gBuffer.bindGBuffer();
+    glClear(GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT |GL_DEPTH_BUFFER_BIT);
+    _renderTarget.render();
+    checkGlError;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> endFrame = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>(endFrame-beginFrame).count();

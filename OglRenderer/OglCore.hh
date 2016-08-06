@@ -31,7 +31,8 @@ class RenderTexture {
 	void bind(unsigned int i_) {
 	    glActiveTexture(GL_TEXTURE0 + i_);
 	    glBindTexture(GL_TEXTURE_2D, _id);
-	    glUniform1i(i_ + 2, _id); 
+	    std::cout << "i: " << i_ + 4 << " " << i_ << std::endl;
+	    glUniform1i(i_ + 4, i_); 
 	}
 	GLuint getAttachment() {
 	    return _attachment;
