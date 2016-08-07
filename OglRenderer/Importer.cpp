@@ -63,12 +63,11 @@ void Importer::genMesh(const aiScene* scene_) {
 	std::vector<GLfloat> vertexBuffer;
 	std::vector<GLuint> indiceBuffer;
 	aiMesh* mesh = scene_->mMeshes[m]; 
-	int iMeshFaces = mesh->mNumFaces; 
 	vertexBuffer.reserve(mesh->mNumVertices * 8);
 	indiceBuffer.reserve(mesh->mNumFaces * 3);
 
 
-	for (int i = 0; i < mesh->mNumVertices; ++i) {
+	for (unsigned int i = 0; i < mesh->mNumVertices; ++i) {
 	    vertexBuffer.push_back(mesh->mVertices[i].x);
 	    vertexBuffer.push_back(mesh->mVertices[i].y);
 	    vertexBuffer.push_back(mesh->mVertices[i].z);
@@ -89,7 +88,7 @@ void Importer::genMesh(const aiScene* scene_) {
 	    //vertexBuffer.push_back(mesh->mBitangents[i].y);
 	    //vertexBuffer.push_back(mesh->mBitangents[i].z);
 	}
-	for (int i = 0; i < mesh->mNumFaces; ++i) {
+	for (unsigned int i = 0; i < mesh->mNumFaces; ++i) {
 	    indiceBuffer.push_back(mesh->mFaces[i].mIndices[0]);
 	    indiceBuffer.push_back(mesh->mFaces[i].mIndices[1]);
 	    indiceBuffer.push_back(mesh->mFaces[i].mIndices[2]);
