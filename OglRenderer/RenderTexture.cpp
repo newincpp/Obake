@@ -1,4 +1,5 @@
 #include "RenderTexture.hh"
+#include "OglCore.hh"
 
 RenderTexture::RenderTexture(unsigned short attachment_, std::string&& name_, GLint mode_ = GL_RGB, glm::vec2 resolution_ = glm::vec2(1920, 1080)) : _name(name_) {
     if (attachment_ > 15) {
@@ -7,13 +8,22 @@ RenderTexture::RenderTexture(unsigned short attachment_, std::string&& name_, GL
     }
     glGenTextures(1, &_id);
     glBindTexture(GL_TEXTURE_2D, _id);
-    glTexImage2D(GL_TEXTURE_2D, 0, mode_, resolution_.x, resolution_.y, 0, mode_, GL_UNSIGNED_BYTE, NULL);
+    if (mode_ == GL_DEPTH_COMPONENT) {
+	glTexImage2D(GL_TEXTURE_2D, 0, mode_, resolution_.x, resolution_.y, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
+    } else {
+	glTexImage2D(GL_TEXTURE_2D, 0, mode_, resolution_.x, resolution_.y, 0, mode_, GL_UNSIGNED_BYTE, NULL);
+    }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment_ + GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _id, 0);
-    _attachment = attachment_ + GL_COLOR_ATTACHMENT0;
+    if (mode_ == GL_DEPTH_COMPONENT) {
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, _id, 0);
+	_attachment = GL_DEPTH_ATTACHMENT;
+    } else {
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachment_ + GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _id, 0);
+	_attachment = attachment_ + GL_COLOR_ATTACHMENT0;
+    }
 }
 void RenderTexture::bind(unsigned int i_) {
     glActiveTexture(GL_TEXTURE0 + i_);

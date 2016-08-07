@@ -7,7 +7,7 @@ uniform float uTime;
 uniform sampler2D gPosition;
 uniform sampler2D gNormal;
 uniform sampler2D gAlbedoSpec;
-//uniform sampler2D gDepth;
+uniform sampler2D gDepth;
 
 in vec2 TexCoords;
 
@@ -18,6 +18,10 @@ void main() {
     vec3 cp = texture(gPosition, distCoord).rgb;
     vec3 cn = texture(gNormal, distCoord - vec2(1.0f,0.0f)).rgb;
     vec3 ca = texture(gAlbedoSpec, distCoord - vec2(0.0f,1.0f)).rgb;
-    //vec3 cd = texture(gDepth, distCoord - vec2(1.0f,1.0f)).rgb;
-    outColour = cn + cp + ca;// + cd;
+    float z = texture(gDepth, distCoord - vec2(1.0f,1.0f)).r;
+    float near = 0.1;                                // the near plane
+    float far = 10000.0;                               // the far plane
+    float c = (2.0 * near) / (far + near - z * (far - near));  // convert to linear values 
+    vec3 cd = vec3(c);
+    outColour = cn + cp + ca + cd;
 }
