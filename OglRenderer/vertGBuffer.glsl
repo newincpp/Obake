@@ -17,7 +17,7 @@ void main() {
     vec3 displacement = vec3(sin(uTime * .001), 0.0f, sin(uTime*0.003));
     gl_Position = uCamera * uMeshTransform * vec4(vertexPos_ + displacement, 1.0);
 
-    vInfVertexPos_ = gl_Position.xyz;
+    vInfVertexPos_ = (uMeshTransform * vec4(vertexPos_ + displacement, 1.0)).xyz;
     vInfVertexNormal_ = vertexNormal_;
     vInfUvCoord_ = uvCoord_;
 }  
