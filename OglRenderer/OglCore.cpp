@@ -65,7 +65,7 @@ void OglCore::init() {
     _sPostProc.link({"outColour"});
 
 
-    import("./DemoCity.obj");
+    import("./shrine.fbx");
     Mesh m;
     m.uploadToGPU(vertices, elements);
     _scene.push_back(m);
