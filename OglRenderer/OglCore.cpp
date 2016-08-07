@@ -77,6 +77,7 @@ void OglCore::init() {
     _gBuffer.addBuffer("gPosition");
     _gBuffer.addBuffer("gNormal");
     _gBuffer.addBuffer("gAlbedoSpec");
+    _gBuffer.addBuffer("gDepth", GL_DEPTH_COMPONENT);
     _gBuffer.enable();
     checkGlError;
 }

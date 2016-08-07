@@ -36,7 +36,6 @@ void Importer::load(std::string& file) {
     genMesh(scene);
     aiMatrix4x4 m;
     //scene->mCameras[0]->GetCameraMatrix(m);
-    std::cout << scene->mNumCameras << '\n';
     if (scene->mNumCameras) {
 	aiCamera* c = scene->mCameras[0];
 	std::cout << "position: " << scene->mCameras[0]->mPosition[0] << ' ' << scene->mCameras[0]->mPosition[1] << ' ' << scene->mCameras[0]->mPosition[2] << '\n';

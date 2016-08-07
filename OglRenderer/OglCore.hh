@@ -17,15 +17,14 @@ class RenderTexture {
 	GLuint _id;
 	GLuint _attachment;
 	std::string _name;
-	RenderTexture(unsigned short attachment_, std::string&& name_) : _name(name_) {
-	    std::cout << '\n';
+	RenderTexture(unsigned short attachment_, std::string&& name_, GLint mode_ = GL_RGB, glm::vec2 resolution_ = glm::vec2(1920, 1080)) : _name(name_) {
 	    if (attachment_ > 15) {
 		std::cout << "opengl Does not support more than 15 framebuffer" << std::endl;
 		return;
 	    }
 	    glGenTextures(1, &_id);
 	    glBindTexture(GL_TEXTURE_2D, _id);
-	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	    glTexImage2D(GL_TEXTURE_2D, 0, mode_, resolution_.x, resolution_.y, 0, mode_, GL_UNSIGNED_BYTE, NULL);
 	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -77,8 +76,8 @@ class FrameBuffer {
 		glDrawBuffers(_rtt.size(), attachments);
 	    }
 	}
-	void addBuffer(std::string&& name_) {
-	    _rtt.emplace_back(_rtt.size(), std::move(name_));
+	void addBuffer(std::string&& name_, GLint mode_ = GL_RGB, glm::vec2 resolution_ = glm::vec2(1920, 1080)) {
+	    _rtt.emplace_back(_rtt.size(), std::move(name_),mode_, resolution_);
 	}
 	void bindGBuffer() {
 	    unsigned int i = 0;
