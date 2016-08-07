@@ -65,7 +65,8 @@ void OglCore::init() {
     _sPostProc.link({"outColour"});
 
 
-    import("./DemoCity.fbx");
+    //import("./DemoCity.fbx");
+    import("./DemoCity.obj");
     Mesh m;
     m.uploadToGPU(vertices, elements);
     _scene.push_back(m);
@@ -77,7 +78,8 @@ void OglCore::init() {
     _gBuffer.addBuffer("gPosition");
     _gBuffer.addBuffer("gNormal");
     _gBuffer.addBuffer("gAlbedoSpec");
-    //_gBuffer.addBuffer("gDepth", GL_DEPTH_COMPONENT);
+    _gBuffer.addDepthBuffer("gDepth");
+    checkGlError;
     _gBuffer.enable();
     checkGlError;
 }
@@ -86,7 +88,7 @@ unsigned long OglCore::render() {
     std::chrono::time_point<std::chrono::high_resolution_clock> beginFrame = std::chrono::high_resolution_clock::now();
     GLfloat time = std::chrono::duration_cast<std::chrono::milliseconds>(beginFrame - _beginTime).count();
     uTime = time;
-    
+
     _sgBuffer.use();
     autoRelocate(uTime);
     uTime.upload();
@@ -96,13 +98,6 @@ unsigned long OglCore::render() {
     renderScene();
     _gBuffer.disable();
     checkGlError;
-
-    //_srender.use();
-    //autoRelocate(uTime);
-    //uTime.upload();
-    //c.refresh();
-    //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    //renderScene();
 
     _sPostProc.use();
     autoRelocate(uTime);
