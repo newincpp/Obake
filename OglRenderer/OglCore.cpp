@@ -41,10 +41,10 @@ void OglCore::init() {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     std::vector<GLfloat> vertices = {
     	//vertexPos		//normal		//uvCoord
-        -1.0f,  1.0f,5.5f, 	0.0f,0.0f,1.0f, 	0.0f,0.0f, // Top-left
-        1.0f,  1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,0.0f, // Top-right
-        1.0f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,1.0f, // Bottom-right
-        -1.0f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	0.0f,1.0f  // Bottom-left
+        -1.0f,  1.0f,5.5f, 	0.0f,0.0f,1.0f, 	0.0f,1.0f, // Top-left
+        1.0f,  1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,1.0f, // Top-right
+        1.0f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	1.0f,0.0f, // Bottom-right
+        -1.0f, -1.0f, 5.5f, 	0.0f,0.0f,1.0f, 	0.0f,0.0f  // Bottom-left
     };
 
     std::vector<GLuint> elements = {
@@ -54,7 +54,7 @@ void OglCore::init() {
 
     _sgBuffer.add("./fragGBuffer.glsl", GL_FRAGMENT_SHADER);
     _sgBuffer.add("./vertGBuffer.glsl", GL_VERTEX_SHADER);
-    _sgBuffer.link({"vInfVertexPos_", "vInfVertexNormal_", "vInfUvCoord_"});
+    _sgBuffer.link({"gPosition", "gNormal", "gAlbedoSpec"});
 
     _srender.add("./frag.glsl", GL_FRAGMENT_SHADER);
     _srender.add("./vert.glsl", GL_VERTEX_SHADER);
@@ -74,9 +74,9 @@ void OglCore::init() {
 
     _gBuffer.init();
     checkGlError;
-    _gBuffer.addBuffer("gPosition"); // Position
-    _gBuffer.addBuffer("gNormal"); // Normal
-    _gBuffer.addBuffer("gAlbedoSpec"); // albedo
+    _gBuffer.addBuffer("gPosition");
+    _gBuffer.addBuffer("gNormal");
+    _gBuffer.addBuffer("gAlbedoSpec");
     _gBuffer.enable();
     checkGlError;
 }

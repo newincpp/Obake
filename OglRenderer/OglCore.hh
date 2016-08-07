@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <iostream>
+#include <utility>
 #include "shader.hh"
 #include "glew.h"
 #include <chrono>
@@ -15,8 +16,9 @@ class RenderTexture {
     public:
 	GLuint _id;
 	GLuint _attachment;
-    const char* _name;
-    RenderTexture(unsigned short attachment_, std::string& name_) : _name(name_.c_str()) {
+	std::string _name;
+	RenderTexture(unsigned short attachment_, std::string&& name_) : _name(name_) {
+	    std::cout << '\n';
 	    if (attachment_ > 15) {
 		std::cout << "opengl Does not support more than 15 framebuffer" << std::endl;
 		return;
@@ -26,16 +28,18 @@ class RenderTexture {
 	    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1920, 1080, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	    glFramebufferTexture2D(GL_FRAMEBUFFER, attachment_ + GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _id, 0);
 	    _attachment = attachment_ + GL_COLOR_ATTACHMENT0;
 	}
 	void bind(unsigned int i_) {
 	    glActiveTexture(GL_TEXTURE0 + i_);
 	    glBindTexture(GL_TEXTURE_2D, _id);
-        
-		GLint programId;
-		glGetIntegerv(GL_CURRENT_PROGRAM, &programId);
-	    glUniform1i(glGetUniformLocation(programId, _name), _id);
+
+	    GLint programId;
+	    glGetIntegerv(GL_CURRENT_PROGRAM, &programId);
+	    glUniform1i(glGetUniformLocation(programId, _name.c_str()), i_);
 	}
 	GLuint getAttachment() {
 	    return _attachment;
@@ -73,8 +77,8 @@ class FrameBuffer {
 		glDrawBuffers(_rtt.size(), attachments);
 	    }
 	}
-    void addBuffer(std::string&& name_) {
-	    _rtt.emplace_back(_rtt.size(), name_);
+	void addBuffer(std::string&& name_) {
+	    _rtt.emplace_back(_rtt.size(), std::move(name_));
 	}
 	void bindGBuffer() {
 	    unsigned int i = 0;

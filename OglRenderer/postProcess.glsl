@@ -10,12 +10,12 @@ uniform sampler2D gAlbedoSpec;
 
 in vec2 TexCoords;
 
-out vec4 outColour;
+out vec3 outColour;
 
 void main() { 
-    //color = vec4(sin(uTime * 0.001f), 0.3f, 0.3f, 1.0f);
-    vec3 cp = vec3(0.2f, 0.3f, 0.2f);
-    //vec3 cp = texture(gNormal, TexCoords).rgb; 
-    vec3 cn = texture(gNormal, TexCoords).rgb; 
-    outColour = vec4(mix(cp, cn, sin(uTime * 0.001f)), 1.0f);
+    vec2 distCoord = TexCoords * 2.0f;
+    vec3 cp = texture(gPosition, distCoord).rgb;  // normal
+    vec3 cn = texture(gNormal, distCoord - vec2(1.0f,0.0f)).rgb;   // diffuse
+    vec3 ca = texture(gAlbedoSpec, distCoord - vec2(0.0f,1.0f)).rgb; // 
+    outColour = cn + cp + ca;
 }
