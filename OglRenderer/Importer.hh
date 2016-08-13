@@ -13,7 +13,7 @@ class Importer {
     public:
 	std::stack<Mesh> _meshBuffer;
 	std::stack<Material> _materialBuffer;
-	Camera _mainCamera;
+	//Camera _mainCamera;
 	Importer(std::string file);
 	inline glm::mat4 aiMatrix4x4ToGlm(const aiMatrix4x4& from);
 	inline bool empty() {

@@ -4,6 +4,7 @@
 FrameBuffer::FrameBuffer() {
     glGenFramebuffers(1, &_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+    _rtt.reserve(15);
 }
 
 void FrameBuffer::enable() {
@@ -19,6 +20,10 @@ void FrameBuffer::enable() {
     }
 }
 void FrameBuffer::addBuffer(std::string&& name_, glm::vec2 resolution_) {
+    if (_rtt.size() > 15) {
+	std::cout << "opengl Does not support more than 15 framebuffer\n" << std::endl;
+	return;
+    }
     _rtt.emplace_back(_rtt.size(), std::move(name_), resolution_);
 }
 void FrameBuffer::addDepthBuffer(std::string&& name_, glm::vec2 resolution_) {
@@ -33,7 +38,6 @@ void FrameBuffer::bindGBuffer() {
     _rttDepth.bind(i);
 }
 void FrameBuffer::disable() {
-    //glBindRenderbuffer(GL_RENDERBUFFER, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 FrameBuffer::~FrameBuffer() {

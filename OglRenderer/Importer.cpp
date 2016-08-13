@@ -35,6 +35,7 @@ void Importer::load(std::string& file) {
     }
     genMesh(scene);
     //scene->mCameras[0]->GetCameraMatrix(m);
+    /*
     if (scene->mNumCameras) {
 	aiCamera* c = scene->mCameras[0];
 	std::cout << "position: " << scene->mCameras[0]->mPosition[0] << ' ' << scene->mCameras[0]->mPosition[1] << ' ' << scene->mCameras[0]->mPosition[2] << '\n';
@@ -55,7 +56,7 @@ void Importer::load(std::string& file) {
 	_mainCamera.fieldOfview(1.623f);
 	_mainCamera.clipPlane(glm::vec2(0.1f, 10000.0f));
 	_mainCamera.upVector(glm::vec3(0.0f,1.0f,0.0f));
-    }
+    }*/
 }
 
 void Importer::genMesh(const aiScene* scene_) {
@@ -101,8 +102,6 @@ void Importer::genMesh(const aiScene* scene_) {
 	aiNode* n = scene_->mRootNode->FindNode(mesh->mName);
 	if (n) {
 		_meshBuffer.top().uMeshTransform = aiMatrix4x4ToGlm(n->mTransformation);
-	} else {
-		std::cout << mesh->mName.C_Str() << " not found ! :'(\n";
 	}
     } 
 }

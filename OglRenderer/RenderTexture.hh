@@ -27,26 +27,29 @@ class RenderTexture {
 };
 
 template <GLuint MODE>
-RenderTexture<MODE>::RenderTexture() : _name("") {
+RenderTexture<MODE>::RenderTexture() : _name(""), _id(0) {
+    std::cout << "RenderTexture<MODE>::RenderTexture()" << std::endl;
 }
 
 template <GLuint MODE>
 RenderTexture<MODE>::~RenderTexture() {
-    glDeleteTextures(1, &_id);
+    std::cout << "RenderTexture<MODE>::~RenderTexture()" << " " << _name << std::endl;
+    if (_id) {
+	glDeleteTextures(1, &_id);
+    } else {
+    	std::cout << "trying to delete not init texture" << std::endl;
+    }
 }
 
 template <GLuint MODE>
 RenderTexture<MODE>::RenderTexture(unsigned short attachment_, std::string&& name_, glm::vec2 resolution_) : _name(name_) {
+    std::cout << "RenderTexture<MODE>::RenderTexture(" << _name << ')' << std::endl;
     init(attachment_, std::move(name_), resolution_);
 }
 
 template <GLuint MODE>
 void RenderTexture<MODE>::init(unsigned short attachment_, std::string&& name_, glm::vec2 resolution_) {
     _name = std::move(name_);
-    if (attachment_ > 15) {
-	std::cout << "opengl Does not support more than 15 framebuffer" << std::endl;
-	return;
-    }
     glGenTextures(1, &_id);
     glBindTexture(GL_TEXTURE_2D, _id);
     glTexImage2D(GL_TEXTURE_2D, 0, MODE, resolution_.x, resolution_.y, 0, MODE, GL_UNSIGNED_BYTE, NULL);
