@@ -8,8 +8,6 @@ Camera::Camera() :
     _upVector(glm::vec3(0.0f, 1.0f, 0.0f)),
     _fov(1.745f),
     _clipPlane(0.1f, 1000.0f), _gBuffer() {
-    std::cout << "+++++++++++++Creating Camera\n";
-
     _gBuffer.addBuffer("gPosition");
     _gBuffer.addBuffer("gNormal");
     _gBuffer.addBuffer("gAlbedoSpec");
@@ -42,6 +40,8 @@ void Camera::use() {
 }
 void Camera::unUse() {
     _gBuffer.disable();
+}
+void Camera::bindFramebuffer() {
     _gBuffer.bindGBuffer();
 }
 void Camera::fieldOfview(float fov_) {

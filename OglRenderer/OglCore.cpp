@@ -70,6 +70,7 @@ unsigned long OglCore::render() {
     checkGlError;
 
     _sPostProc.use();
+    _s.bindGBuffer(0);
     autoRelocate(uTime);
     uTime.upload();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

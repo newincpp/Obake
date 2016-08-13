@@ -28,12 +28,10 @@ class RenderTexture {
 
 template <GLuint MODE>
 RenderTexture<MODE>::RenderTexture() : _id(0), _name("") {
-    std::cout << "RenderTexture<MODE>::RenderTexture()" << std::endl;
 }
 
 template <GLuint MODE>
 RenderTexture<MODE>::~RenderTexture() {
-    std::cout << "RenderTexture<MODE>::~RenderTexture()" << " " << _name << std::endl;
     if (_id) {
 	glDeleteTextures(1, &_id);
     } else {
@@ -43,7 +41,6 @@ RenderTexture<MODE>::~RenderTexture() {
 
 template <GLuint MODE>
 RenderTexture<MODE>::RenderTexture(unsigned short attachment_, std::string&& name_, glm::vec2 resolution_) : _name(name_) {
-    std::cout << "RenderTexture<MODE>::RenderTexture(" << _name << ')' << std::endl;
     init(attachment_, std::move(name_), resolution_);
 }
 
@@ -68,5 +65,6 @@ void RenderTexture<MODE>::bind(unsigned int i_) {
 
     GLint programId;
     glGetIntegerv(GL_CURRENT_PROGRAM, &programId);
+    std::cout << "texname: " << _name.c_str() << ' ' << programId << ' ' << glGetUniformLocation(programId, _name.c_str()) <<  std::endl;
     glUniform1i(glGetUniformLocation(programId, _name.c_str()), i_);
 }

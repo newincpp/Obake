@@ -25,4 +25,5 @@ class Camera {
 	void setMatrix(glm::mat4&&);
 	void use();
 	void unUse();
+	void bindFramebuffer();
 };
