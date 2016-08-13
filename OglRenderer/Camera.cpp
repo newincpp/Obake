@@ -7,7 +7,7 @@ Camera::Camera() :
     _position(glm::vec3(15.0f, 5.2f, 15.0f)),
     _upVector(glm::vec3(0.0f, 1.0f, 0.0f)),
     _fov(1.745f),
-    _clipPlane(0.1f, 1000.0f) {
+    _clipPlane(0.1f, 1000.0f), _gBuffer() {
     std::cout << "+++++++++++++Creating Camera\n";
 
     _gBuffer.addBuffer("gPosition");
@@ -20,9 +20,7 @@ Camera::Camera() :
 void Camera::setMatrix(glm::mat4&& m_) {
     uCamera = m_;
     glm::vec4 p = m_ * glm::vec4(0.0f,0.0f,0.0f,1.0f) ;
-    std::cout << "pos: " << p[0] << ' ' << p[1] << ' ' << p[2] << '\n';
-    //uCamera = glm::perspective(_fov, 1920.0f / 1080.0f, _clipPlane.x, _clipPlane.y) * glm::lookAt( _position, _target, _upVector);
-    //uCamera = glm::perspective(_fov, 1920.0f / 1080.0f, _clipPlane.x, _clipPlane.y) * m_;
+    std::cout << "setMatrix pos: " << p[0] << ' ' << p[1] << ' ' << p[2] << '\n';
 }
 
 void Camera::lookAt(glm::vec3&& target_) {

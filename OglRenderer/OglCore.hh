@@ -6,8 +6,7 @@
 #include "shader.hh"
 #include "glew.h"
 #include "Uniform.hh"
-#include "Importer.hh"
-#include "Camera.hh"
+#include "Scene.hh"
 
 #define checkGlError getGlError(__FILE__, __LINE__);
 void getGlError(const char* file_, unsigned long line_);
@@ -20,13 +19,11 @@ class OglCore {
 	Shader _sgBuffer;
 	Shader _srender;
 	Shader _sPostProc;
-	std::vector<Mesh> _scene;
+	Scene _s;
 	Mesh _renderTarget;
-	Camera* c;
     public:
 	OglCore() : uTime(1, 0.0f), _uPostPRocessTexture(2) { }
 	void init();
-	void import(std::string);
 	void renderScene();
 	unsigned long render();
 };

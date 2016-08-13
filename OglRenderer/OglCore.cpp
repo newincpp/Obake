@@ -1,6 +1,7 @@
 #include <ctime>
 #include <stack>
 #include "OglCore.hh"
+#include "Importer.hh"
 
 void getGlError(const char* file_, unsigned long line_) {
     GLenum e = glGetError();
@@ -13,23 +14,6 @@ void getGlError(const char* file_, unsigned long line_) {
 	else if (e == GL_OUT_OF_MEMORY) 			{ std::cout << "\033[31mGL_INVAGL_OUT_OF_MEMORY\033[0m: There is not enough memory left to execute the command. The state of the GL is undefined, except for the state of the error flags, after this error is recorded.\n"; }
 	else if (e == GL_STACK_UNDERFLOW) 			{ std::cout << "\033[31mGL_INVAGL_STACK_UNDERFLOW\033[0m: An attempt has been made to perform an operation that would cause an internal stack to underflow.\n"; }
 	else if (e == GL_STACK_OVERFLOW) 			{ std::cout << "\033[31mGL_INVAGL_STACK_OVERFLOW\033[0m: An attempt has been made to perform an operation that would cause an internal stack to overflow.\n"; }
-    }
-}
-
-void OglCore::import(std::string file_) {
-    Importer iscene(file_);
-    checkGlError;
-    while (!iscene.empty()) {
-	_scene.push_back(iscene._meshBuffer.top());
-	iscene._meshBuffer.pop();
-    }
-    //*c = iscene._mainCamera;
-}
-
-void OglCore::renderScene() {
-    for (Mesh& m : _scene) {
-	m.render();
-	checkGlError;
     }
 }
 
@@ -56,21 +40,20 @@ void OglCore::init() {
     _sgBuffer.add("./vertGBuffer.glsl", GL_VERTEX_SHADER);
     _sgBuffer.link({"gPosition", "gNormal", "gAlbedoSpec"});
 
-    _srender.add("./frag.glsl", GL_FRAGMENT_SHADER);
-    _srender.add("./vert.glsl", GL_VERTEX_SHADER);
-    _srender.link({"outColour"});
+    //_srender.add("./frag.glsl", GL_FRAGMENT_SHADER);
+    //_srender.add("./vert.glsl", GL_VERTEX_SHADER);
+    //_srender.link({"outColour"});
 
     _sPostProc.add("./postProcess.glsl",GL_FRAGMENT_SHADER);
     _sPostProc.add("./postProcessVert.glsl",GL_VERTEX_SHADER);
     _sPostProc.link({"outColour"});
 
 
-    c = new Camera();
     //import("./DemoCity.fbx");
-    import("./DemoCity.obj");
+    Importer iscene("./DemoCity.obj", _s);
     Mesh m;
     m.uploadToGPU(vertices, elements);
-    _scene.push_back(m);
+    _s._meshes.push_back(m);
 
     checkGlError _renderTarget.uploadToGPU(vertices, elements);
 }
@@ -83,9 +66,7 @@ unsigned long OglCore::render() {
     _sgBuffer.use();
     autoRelocate(uTime);
     uTime.upload();
-    c->use();
-    	renderScene();
-    c->unUse();
+    _s.render();
     checkGlError;
 
     _sPostProc.use();

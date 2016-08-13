@@ -27,7 +27,7 @@ class RenderTexture {
 };
 
 template <GLuint MODE>
-RenderTexture<MODE>::RenderTexture() : _name(""), _id(0) {
+RenderTexture<MODE>::RenderTexture() : _id(0), _name("") {
     std::cout << "RenderTexture<MODE>::RenderTexture()" << std::endl;
 }
 
