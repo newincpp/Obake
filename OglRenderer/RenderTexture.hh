@@ -65,6 +65,5 @@ void RenderTexture<MODE>::bind(unsigned int i_) {
 
     GLint programId;
     glGetIntegerv(GL_CURRENT_PROGRAM, &programId);
-    std::cout << "texname: " << _name.c_str() << ' ' << programId << ' ' << glGetUniformLocation(programId, _name.c_str()) <<  std::endl;
     glUniform1i(glGetUniformLocation(programId, _name.c_str()), i_);
 }
