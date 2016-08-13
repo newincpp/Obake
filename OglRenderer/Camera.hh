@@ -1,5 +1,6 @@
 #pragma once
 #include "Uniform.hh"
+#include "FrameBuffer.hh"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -13,6 +14,7 @@ class Camera {
 	glm::vec3 _upVector;
 	float _fov;
 	glm::vec2 _clipPlane;
+	FrameBuffer _gBuffer;
     public:
 	Camera();
 	void lookAt(glm::vec3&&);
@@ -21,5 +23,6 @@ class Camera {
 	void clipPlane(glm::vec2&&);
 	void upVector(glm::vec3&&);
 	void setMatrix(glm::mat4&&);
-	void refresh();
+	void use();
+	void unUse();
 };

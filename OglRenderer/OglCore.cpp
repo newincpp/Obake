@@ -23,7 +23,7 @@ void OglCore::import(std::string file_) {
 	_scene.push_back(iscene._meshBuffer.top());
 	iscene._meshBuffer.pop();
     }
-    c = iscene._mainCamera;
+    //*c = iscene._mainCamera;
 }
 
 void OglCore::renderScene() {
@@ -65,6 +65,7 @@ void OglCore::init() {
     _sPostProc.link({"outColour"});
 
 
+    c = new Camera();
     //import("./DemoCity.fbx");
     import("./DemoCity.obj");
     Mesh m;
@@ -72,16 +73,6 @@ void OglCore::init() {
     _scene.push_back(m);
 
     checkGlError _renderTarget.uploadToGPU(vertices, elements);
-
-    _gBuffer.init();
-    checkGlError;
-    _gBuffer.addBuffer("gPosition");
-    _gBuffer.addBuffer("gNormal");
-    _gBuffer.addBuffer("gAlbedoSpec");
-    _gBuffer.addDepthBuffer("gDepth");
-    checkGlError;
-    _gBuffer.enable();
-    checkGlError;
 }
 
 unsigned long OglCore::render() {
@@ -92,17 +83,14 @@ unsigned long OglCore::render() {
     _sgBuffer.use();
     autoRelocate(uTime);
     uTime.upload();
-    c.refresh();
-    _gBuffer.enable();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    renderScene();
-    _gBuffer.disable();
+    c->use();
+    	renderScene();
+    c->unUse();
     checkGlError;
 
     _sPostProc.use();
     autoRelocate(uTime);
     uTime.upload();
-    _gBuffer.bindGBuffer();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _renderTarget.render();
     checkGlError;

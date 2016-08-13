@@ -14,6 +14,7 @@ class RenderTexture {
 	GLuint _attachment;
 	std::string _name;
 	RenderTexture();
+	~RenderTexture();
 	RenderTexture(unsigned short attachment_, std::string&&, glm::vec2 resolution_ = glm::vec2(1920, 1080));
 	void init(unsigned short attachment_, std::string&&, glm::vec2 resolution_ = glm::vec2(1920, 1080));
 	void bind(unsigned int i_);
@@ -27,6 +28,11 @@ class RenderTexture {
 
 template <GLuint MODE>
 RenderTexture<MODE>::RenderTexture() : _name("") {
+}
+
+template <GLuint MODE>
+RenderTexture<MODE>::~RenderTexture() {
+    glDeleteTextures(1, &_id);
 }
 
 template <GLuint MODE>

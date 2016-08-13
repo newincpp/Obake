@@ -8,7 +8,6 @@
 #include "Uniform.hh"
 #include "Importer.hh"
 #include "Camera.hh"
-#include "FrameBuffer.hh"
 
 #define checkGlError getGlError(__FILE__, __LINE__);
 void getGlError(const char* file_, unsigned long line_);
@@ -23,8 +22,7 @@ class OglCore {
 	Shader _sPostProc;
 	std::vector<Mesh> _scene;
 	Mesh _renderTarget;
-	Camera c;
-	FrameBuffer _gBuffer;
+	Camera* c;
     public:
 	OglCore() : uTime(1, 0.0f), _uPostPRocessTexture(2) { }
 	void init();

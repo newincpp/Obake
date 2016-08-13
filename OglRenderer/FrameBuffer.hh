@@ -5,13 +5,11 @@
 class FrameBuffer {
     private:
 	GLuint _fbo;
-	GLuint _rbo;
     public:
 	std::vector<RenderTexture<GL_RGB>> _rtt;
 	RenderTexture<GL_DEPTH_COMPONENT> _rttDepth;
 
     	FrameBuffer();
-	void init();
 	void enable();
 	void addBuffer(std::string&&, glm::vec2 = glm::vec2(1920, 1080));
 	void addDepthBuffer(std::string&&, glm::vec2 = glm::vec2(1920, 1080));
