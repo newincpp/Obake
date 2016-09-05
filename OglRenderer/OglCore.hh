@@ -22,7 +22,7 @@ class OglCore {
 	Scene _s;
 	Mesh _renderTarget;
     public:
-	OglCore() : uTime(1, 0.0f), _uPostPRocessTexture(2) { }
+	OglCore() : uTime(0.0f), _uPostPRocessTexture(2) { }
 	void init();
 	void renderScene();
 	unsigned long render();

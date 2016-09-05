@@ -46,6 +46,3 @@ void Shader::link(const std::vector<std::string>&& fragDataOutPut_) {
     glLinkProgram(_programId);
     glUseProgram(_programId);
 }
-
-template <typename T>
-void relocateUniform(Uniform<T>&&);

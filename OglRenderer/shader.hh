@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <streambuf>
+#include <functional>
 #include "Uniform.hh"
 
 #include "glew.h"
@@ -13,6 +14,12 @@ class Shader {
 	GLuint _fragmentId;
 	GLuint _geometryId;
 	GLuint _programId;
+	struct _VirtualUniform {
+		GLint location;
+		unsigned short& ref;
+		std::function<void(GLint)> up;
+	};
+	std::vector<_VirtualUniform> _uTable;
 
 	inline bool _checkValidity(GLenum id_, const char* src_, std::string& filename_)const {
 	    GLint compileStatus;
