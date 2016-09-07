@@ -4,6 +4,8 @@
 #include <array>
 #include <type_traits>
 
+#include "Tools.hpp"
+
 #include "glm/glm.hpp"
 #include "vulkan/vulkan.h"
 
