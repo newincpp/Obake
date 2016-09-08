@@ -35,19 +35,22 @@ void OglCore::init() {
         2, 3, 0
     };
 
-    _sgBuffer.add("./fragGBuffer.glsl", GL_FRAGMENT_SHADER);
-    _sgBuffer.add("./vertGBuffer.glsl", GL_VERTEX_SHADER);
-    _sgBuffer.link({"gPosition", "gNormal", "gAlbedoSpec"});
+    _s.load();
 
     _sPostProc.add("./postProcess.glsl",GL_FRAGMENT_SHADER);
     _sPostProc.add("./postProcessVert.glsl",GL_VERTEX_SHADER);
     _sPostProc.link({"outColour"});
+//uniform float uTime;
+//uniform sampler2D gPosition;
+//uniform sampler2D gNormal;
+//uniform sampler2D gAlbedoSpec;
+//uniform sampler2D gDepth;
 
     //import("./DemoCity.fbx");
     Importer iscene("./DemoCity.obj", _s);
     Mesh m;
     m.uploadToGPU(vertices, elements);
-    _s._meshes.push_back(m);
+    _s._sgBuffer.referenceUniform(uTime, "uTime");
 
     _renderTarget.uploadToGPU(vertices, elements);
 }
@@ -57,7 +60,6 @@ unsigned long OglCore::render() {
     GLfloat time = std::chrono::duration_cast<std::chrono::milliseconds>(beginFrame - _beginTime).count();
     uTime = time;
 
-    _sgBuffer.use();
     _s.render();
 
     _sPostProc.use();

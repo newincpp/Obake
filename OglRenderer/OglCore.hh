@@ -16,7 +16,6 @@ class OglCore {
 	std::chrono::time_point<std::chrono::high_resolution_clock> _beginTime;
 	Uniform<float> uTime;
 	Uniform<int> _uPostPRocessTexture;
-	Shader _sgBuffer;
 	Shader _srender;
 	Shader _sPostProc;
 	Scene _s;

@@ -3,6 +3,15 @@
 Shader::Shader() : _vertexId(0), _fragmentId(0), _geometryId(0), _programId(0) {
 }
 
+void Shader::updateUniform() {
+    for (_VirtualUniform& u : _uTable) {
+    	if (u.updateCountRef) {
+	    u.update(u.location);
+	    --u.updateCountRef;
+	}
+    }
+}
+
 void Shader::add(std::string sourceFile_, GLenum type_) {
     std::ifstream t(sourceFile_);
     std::string str((std::istreambuf_iterator<char>(t)),

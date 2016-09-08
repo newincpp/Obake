@@ -1,9 +1,5 @@
 #version 410 core
 
-//uniform float uTime;
-//uniform mat4 uCamera;
-//uniform mat4 uMeshTransform;
-
 in vec3 vInfVertexPos_;
 in vec3 vInfVertexNormal_;
 in vec2 vInfUvCoord_;
