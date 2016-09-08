@@ -29,7 +29,7 @@ Mesh::loadVertexBuffer(const std::vector<float> & vertices_)
 		bufferInfo.pQueueFamilyIndices = nullptr
 	};
 
-	vkCreateBuffer(_device, &bufferInfo, nullptr, &_vertexBuffer);
+	VK_CHECK_RESULT(vkCreateBuffer(_device, &bufferInfo, nullptr, &_vertexBuffer));
 
 	VkMemoryRequirements memRequirements;
 	vkGetBufferMemoryRequirements(_device, _vertexBuffer, &memRequirements);
@@ -46,12 +46,12 @@ Mesh::loadVertexBuffer(const std::vector<float> & vertices_)
 		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
 	};
 
-	vkAllocateMemory(_device, &allocInfo, nullptr, &_vertexBufferMemory);
+	VK_CHECK_RESULT(vkAllocateMemory(_device, &allocInfo, nullptr, &_vertexBufferMemory));
 
-	vkBindBufferMemory(_device, _vertexBuffer, _vertexBufferMemory, 0);
+	VK_CHECK_RESULT(vkBindBufferMemory(_device, _vertexBuffer, _vertexBufferMemory, 0));
 
 	void* data;
-	vkMapMemory(_device, _vertexBufferMemory, 0, bufferInfo.size, 0, &data);
+	VK_CHECK_RESULT(vkMapMemory(_device, _vertexBufferMemory, 0, bufferInfo.size, 0, &data));
 	memcpy(data, vertices_.data(), (size_t)bufferInfo.size);
 	vkUnmapMemory(_device, _vertexBufferMemory);
 }
