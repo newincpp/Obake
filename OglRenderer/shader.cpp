@@ -5,10 +5,10 @@ Shader::Shader() : _vertexId(0), _fragmentId(0), _geometryId(0), _programId(0) {
 
 void Shader::updateUniform() {
     for (_VirtualUniform& u : _uTable) {
-    	if (u.updateCountRef) {
+    	//if (u.updateCountRef) {
 	    u.update(u.location);
-	    --u.updateCountRef;
-	}
+	 //   --u.updateCountRef;
+	//}
     }
 }
 

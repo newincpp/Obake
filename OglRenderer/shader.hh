@@ -63,7 +63,7 @@ void Shader::referenceUniform(Uniform<T>& u_, const char* name_) {
     glGetProgramInterfaceiv(_programId, GL_UNIFORM, GL_ACTIVE_RESOURCES, &numActiveUniforms);
     GLint loc = glGetUniformLocation(_programId, name_);
     std::cout << "programid: " << _programId << " name:" << name_ << " location found:" << loc << std::endl;
-    _uTable.emplace_back( u_._updateCount, [&u_](GLint loc_){ std::cout << "updating Uniform at location: " << loc_ << '\n'; u_.upload(loc_); }, loc);
+    _uTable.emplace_back( u_._updateCount, [&u_](GLint loc_){ u_.upload(loc_); }, loc);
 
 // Code from stackoverflow.com/questions/440144/in-opengl-is-there-a-way-to-get-a-list-of-all-uniforms-attribs-used-by-a-shade#12611619 that get uniform value names...
 // will be used to check the validity of name_
