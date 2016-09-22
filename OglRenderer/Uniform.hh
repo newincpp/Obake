@@ -4,19 +4,13 @@
 
 template <typename T>
 class Uniform {
-    public:
-	GLint _location;
+    private:
 	T _value;
-    	explicit Uniform(T v_) : _value(v_) {}
-    	explicit Uniform(GLint l_, T v_) : _location(l_), _value(v_) {}
-	operator T() { return _value; }
-	void operator=(T v_) { _value = v_; }
-	void upload(); 
-	void _resetLocation(const char* name_) {
-		GLint programId;
-		glGetIntegerv(GL_CURRENT_PROGRAM, &programId);
-		_location = glGetUniformLocation(programId, name_);
-	}
-#define autoRelocate(var) var._resetLocation(#var);
+	unsigned short _shaderRefCount; // how many shader the uniform is referanced in
+    public:
+	unsigned short _updateCount; // remining update
+    	explicit Uniform(T v_) : _value(v_), _shaderRefCount(0), _updateCount(0) {}
+	operator T() { _updateCount = _shaderRefCount; return _value; }
+	void operator=(T v_) { _updateCount = _shaderRefCount; _value = v_; }
+	void upload(GLint); 
 };
-

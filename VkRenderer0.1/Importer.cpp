@@ -24,20 +24,61 @@ Importer::load(std::string file_)
 void
 Importer::genMesh(std::vector<tinyobj::shape_t> & shapes_)
 {
+	std::vector<float> vertexBuffer;
+
 	std::cout << "# of shapes    : " << shapes_.size() << std::endl;
 
 	for (size_t i = 0; i < shapes_.size(); i++)
 	{
-		printf("shape[%ld].vertices: %ld\n", i, shapes_[i].mesh.positions.size());
+		printf("5 shape[%ld].vertices: %ld\n", i, shapes_[i].mesh.positions.size());
 		assert((shapes_[i].mesh.positions.size() % 3) == 0);
+		assert((shapes_[i].mesh.normals.size() % 3) == 0);
+		assert((shapes_[i].mesh.texcoords.size() % 2) == 0);
 		for (size_t v = 0; v < shapes_[i].mesh.positions.size() / 3; v++)
 		{
-			printf("  v[%ld] = (%f, %f, %f)\n", v,
-				shapes_[i].mesh.positions[3 * v + 0],
-				shapes_[i].mesh.positions[3 * v + 1],
-				shapes_[i].mesh.positions[3 * v + 2]);
+//			printf("  v[%ld] = (%f, %f, %f)\n", v,
+//				shapes_[i].mesh.positions[3 * v + 0],
+//				shapes_[i].mesh.positions[3 * v + 1],
+//				shapes_[i].mesh.positions[3 * v + 2]);
+			if (shapes_[i].mesh.positions.size() > 3 * v + 2)
+			{
+				vertexBuffer.push_back(shapes_[i].mesh.positions[3 * v + 0]);
+				vertexBuffer.push_back(shapes_[i].mesh.positions[3 * v + 1]);
+				vertexBuffer.push_back(shapes_[i].mesh.positions[3 * v + 2]);
+			}
+			else
+			{
+				vertexBuffer.push_back(0.0f);
+				vertexBuffer.push_back(0.0f);
+				vertexBuffer.push_back(0.0f);
+			}
+			if (shapes_[i].mesh.normals.size() > 3 * v + 2)
+			{
+				vertexBuffer.push_back(shapes_[i].mesh.normals[3 * v + 0]);
+				vertexBuffer.push_back(shapes_[i].mesh.normals[3 * v + 1]);
+				vertexBuffer.push_back(shapes_[i].mesh.normals[3 * v + 2]);
+			}
+			else
+			{
+				vertexBuffer.push_back(0.0f);
+				vertexBuffer.push_back(0.0f);
+				vertexBuffer.push_back(0.0f);
+			}
+			if (shapes_[i].mesh.texcoords.size() > 2 * v + 1)
+			{
+				vertexBuffer.push_back(shapes_[i].mesh.texcoords[2 * v + 0]);
+				vertexBuffer.push_back(shapes_[i].mesh.texcoords[2 * v + 1]);
+			}
+			else
+			{
+				vertexBuffer.push_back(0.0f);
+				vertexBuffer.push_back(0.0f);
+			}
 		}
+		_meshBuffer.emplace(_device, _physicalDevice);
+		_meshBuffer.top().loadVertexBuffer(vertexBuffer);
 	}
+
 
 //	for (std::remove_reference<decltype(scene_)>::type::value_type mesh : scene_)
 //	{

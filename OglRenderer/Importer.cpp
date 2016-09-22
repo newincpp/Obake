@@ -61,7 +61,7 @@ void Importer::load(std::string& file, Scene& s_) {
 }
 
 void Importer::genMesh(const aiScene* scene_, Scene& s_) {
-    s_._meshes.reserve(scene_->mNumMeshes);
+    s_.allocateAsset(scene_->mNumMeshes);
     for(unsigned int m = 0 ; m < scene_->mNumMeshes ; ++m) { 
 	std::vector<GLfloat> vertexBuffer;
 	std::vector<GLuint> indiceBuffer;
@@ -97,9 +97,9 @@ void Importer::genMesh(const aiScene* scene_, Scene& s_) {
 	    indiceBuffer.push_back(mesh->mFaces[i].mIndices[2]);
 	}
 
-	s_._meshes.emplace_back();
-	s_._meshes[s_._meshes.size() - 1].uploadToGPU(vertexBuffer, indiceBuffer);
-	s_._meshes[s_._meshes.size() - 1]._name = mesh->mName.C_Str();
+	Asset3D& assetRef = s_.emplaceAsset();
+	assetRef._mesh.uploadToGPU(vertexBuffer, indiceBuffer);
+	assetRef._mesh._name = mesh->mName.C_Str();
 
 	//_meshBuffer.emplace();
 	//_meshBuffer.top().uploadToGPU(vertexBuffer, indiceBuffer);
@@ -107,7 +107,7 @@ void Importer::genMesh(const aiScene* scene_, Scene& s_) {
 
 	aiNode* n = scene_->mRootNode->FindNode(mesh->mName);
 	if (n) {
-	s_._meshes[s_._meshes.size() - 1].uMeshTransform = aiMatrix4x4ToGlm(n->mTransformation);
+	    assetRef._mesh.uMeshTransform = aiMatrix4x4ToGlm(n->mTransformation);
 	}
     } 
 }

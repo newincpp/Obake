@@ -20,7 +20,6 @@ void getGlError(const char* file_, unsigned long line_) {
 void OglCore::init() {
     _beginTime = std::chrono::high_resolution_clock::now();
 
-    checkGlError glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     std::vector<GLfloat> vertices = {
@@ -36,26 +35,24 @@ void OglCore::init() {
         2, 3, 0
     };
 
-    _sgBuffer.add("./fragGBuffer.glsl", GL_FRAGMENT_SHADER);
-    _sgBuffer.add("./vertGBuffer.glsl", GL_VERTEX_SHADER);
-    _sgBuffer.link({"gPosition", "gNormal", "gAlbedoSpec"});
-
-    //_srender.add("./frag.glsl", GL_FRAGMENT_SHADER);
-    //_srender.add("./vert.glsl", GL_VERTEX_SHADER);
-    //_srender.link({"outColour"});
+    _s.load();
 
     _sPostProc.add("./postProcess.glsl",GL_FRAGMENT_SHADER);
     _sPostProc.add("./postProcessVert.glsl",GL_VERTEX_SHADER);
     _sPostProc.link({"outColour"});
-
+//uniform float uTime;
+//uniform sampler2D gPosition;
+//uniform sampler2D gNormal;
+//uniform sampler2D gAlbedoSpec;
+//uniform sampler2D gDepth;
 
     //import("./DemoCity.fbx");
     Importer iscene("./DemoCity.obj", _s);
     Mesh m;
     m.uploadToGPU(vertices, elements);
-    _s._meshes.push_back(m);
+    _s._sgBuffer.referenceUniform(uTime, "uTime");
 
-    checkGlError _renderTarget.uploadToGPU(vertices, elements);
+    _renderTarget.uploadToGPU(vertices, elements);
 }
 
 unsigned long OglCore::render() {
@@ -63,19 +60,12 @@ unsigned long OglCore::render() {
     GLfloat time = std::chrono::duration_cast<std::chrono::milliseconds>(beginFrame - _beginTime).count();
     uTime = time;
 
-    _sgBuffer.use();
-    autoRelocate(uTime);
-    uTime.upload();
     _s.render();
-    checkGlError;
 
     _sPostProc.use();
     _s.bindGBuffer(0);
-    autoRelocate(uTime);
-    uTime.upload();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     _renderTarget.render();
-    checkGlError;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> endFrame = std::chrono::high_resolution_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>(endFrame-beginFrame).count();
