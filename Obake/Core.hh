@@ -17,6 +17,7 @@
 
 #include "glm/glm.hpp"
 #include "config.hh"
+#include "TypesManager.hh"
 #include "ASystem.hh"
 #include "EventsManager.hh"
 #include "SharedLibrary.hh"
